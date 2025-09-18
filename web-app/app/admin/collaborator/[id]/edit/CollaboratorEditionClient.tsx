@@ -1,0 +1,214 @@
+'use client';
+
+import {CompanyResponse} from "@/api/company/company.api";
+import {Card, CardContent} from "@/components/ui/card"
+import {ChevronRight, Save} from "lucide-react"
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import Link from "next/link";
+import {displayStatus, toUpdateCollaboratorRequest} from "@/app/admin/collaborator/collaborator.service";
+import {CollaboratorSearch} from "../CollaboratorSearch";
+import {ToggleSidebarButton} from "@/app/admin/components/ToggleSidebarButton";
+import Badge, {IconType} from "@/components/ui/Badge";
+import {
+    UpdateCollaboratorRequest,
+    useCollaborator,
+    useModifyCollaboratorPicture,
+    useUpdateCollaborator
+} from "@/api/collaborator/collaborators.api";
+import {NotesCard} from "@/app/admin/collaborator/[id]/containers/NotesCard";
+import {DocumentsCard} from "@/app/admin/collaborator/[id]/containers/DocumentsCard";
+import {PageSpinner} from "@/components/ui/icons/Spinner";
+import {ModifyCollaborator} from "@/app/admin/collaborator/[id]/containers/ModifyCollaborator";
+import {ActionButton} from "@/components/ui/buttons/ActionButton";
+import {getStatusBorderColor} from "@/app/admin/components/table.service";
+import {OutlineButton} from "@/components/ui/buttons/OutlineButton";
+import {useRouter} from "next/navigation";
+import {ModifyCollaboratorExtern} from "../containers/ModifyCollaboratorExtern";
+
+type Props = {
+    company: CompanyResponse;
+    collaboratorId: string;
+};
+
+export const CollaboratorEditionClient = ({company, collaboratorId}: Props) => {
+    const router = useRouter();
+    const {data: collaborator, isError, isPending} = useCollaborator(company.id, collaboratorId);
+    const {
+        mutate: updateCollaborator,
+        isPending: isUpdatePending,
+        isError: isUpdateError
+    } = useUpdateCollaborator();
+    const {mutate: modifyPicture, isPending: modifyPicturePending} = useModifyCollaboratorPicture();
+    const [modifiedCollaborator, setModifiedCollaborator] = useState<UpdateCollaboratorRequest>();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const initialCollaborator = useMemo(() => {
+        return collaborator ? toUpdateCollaboratorRequest(collaborator) : undefined;
+    }, [collaborator]);
+
+    useEffect(() => {
+        if (initialCollaborator) {
+            setModifiedCollaborator(initialCollaborator);
+        }
+    }, [initialCollaborator]);
+
+    if (isPending) {
+        return <PageSpinner/>
+    }
+
+    if (!collaborator || isError) {
+        return <div>Collaborateur introuvable</div>
+    }
+
+    function handleInputChange(field: string, value?: string | boolean | number | string[]) {
+        setModifiedCollaborator((prev) => prev ? {...prev, [field]: value} : undefined);
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50">
+            {/* Breadcrumb and Search */}
+            <div className="bg-white border-b border-slate-200 pl-2 pr-6 py-1">
+                <div className="flex items-center">
+                    <div className="flex items-center space-x-2 text-xs text-slate-600">
+                        <ToggleSidebarButton/>
+
+                        <div className="h-14 w-px bg-slate-200 mx-4"></div>
+
+                        <Link href="/admin" className="hover:text-slate-900">
+                            Copilote Admin
+                        </Link>
+
+                        <ChevronRight className="w-4 h-4"/>
+
+                        <span className="text-slate-700 text-xs">{collaborator.firstname} {collaborator.lastname}</span>
+                    </div>
+
+                    <div className="h-14 w-px bg-slate-200 mx-4"></div>
+
+                    <div className="flex-1 mx-4">
+                        <CollaboratorSearch companyId={company.id}/>
+                    </div>
+                </div>
+            </div>
+
+            <div className="md:px-[10%] py-6 space-y-6">
+                {/* Profile Header */}
+                <Card className="border-2 border-sky-900">
+                    <CardContent className="p-6">
+                        <div
+                            className="flex items-start md:items-center justify-between flex-col gap-4 md:flex-row md:gap-0">
+                            <div>
+                                <div
+                                    className="flex items-center space-x-4 flex-col gap-4 w-full md:flex-row md:gap-0 md:w-auto">
+                                    {collaborator.picture && collaborator.picture.length > 0 ? (
+                                        <img src={collaborator.picture}
+                                             alt={collaborator.firstname + " " + collaborator.lastname}
+                                             className={`w-[80px] h-[80px] rounded-full ${getStatusBorderColor(collaborator?.status)}`}/>
+                                    ) : (<div
+                                            className={`w-[80px] h-[80px] bg-slate-200 rounded-full flex items-center justify-center text-xl font-bold text-slate-700 ${getStatusBorderColor(collaborator?.status)}`}>
+                                            {collaborator.firstname.charAt(0).toUpperCase()} {collaborator.lastname.charAt(0).toUpperCase()}
+                                        </div>
+                                    )}
+                                    <div>
+                                        <div className="flex flex-col space-x-1 space-y-1">
+                                            <h1 className="text-2xl font-bold text-slate-900">{collaborator.firstname} {collaborator.lastname}</h1>
+                                            <div className="flex items-center space-x-2">
+                                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                <span
+                                                    className="text-sm text-slate-600">{displayStatus(collaborator?.status)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-4">
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            if (e.target.files && e.target.files[0])
+                                                modifyPicture({
+                                                    file: e.target.files[0],
+                                                    companyId: company.id,
+                                                    collaboratorId: collaborator.id
+                                                })
+                                        }}
+                                        ref={fileInputRef}
+                                    />
+                                    <OutlineButton
+                                        onClick={() => fileInputRef.current?.click()}
+                                        disabled={modifyPicturePending}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                             strokeWidth={1.5}
+                                             stroke="currentColor" className="size-6 text-gray-500">
+                                            <path strokeLinecap="round" strokeLinejoin="round"
+                                                  d="M12 9.75v6.75m0 0-3-3m3 3 3-3m-8.25 6a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"/>
+                                        </svg>
+
+                                        {collaborator.picture && collaborator.picture.length > 0 ? "Modifier la photo" : "Ajouter une photo"}
+                                    </OutlineButton>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-[max-content,1fr] items-center gap-2">
+                                {[
+                                    {
+                                        label: 'Fonction :',
+                                        icon: 'Briefcase',
+                                        value: collaborator.professionalSituation?.jobTitle
+                                    },
+                                    {
+                                        label: 'Contrat :',
+                                        icon: 'DocumentText',
+                                        value: collaborator.professionalSituation?.contractType
+                                    },
+                                    {
+                                        label: 'Date de début :',
+                                        icon: 'Calendar',
+                                        value: collaborator.professionalSituation?.hireDate
+                                    },
+                                    {
+                                        label: 'Responsable :',
+                                        icon: 'User',
+                                        value: collaborator.professionalSituation?.responsible
+                                    }
+                                ].map((item) => (
+                                    <React.Fragment key={item.label}>
+                                        <span className="text-sm text-gray-500 whitespace-nowrap">{item.label}</span>
+                                        <div className="flex items-center gap-2">
+                                            <Badge icon={item.icon as IconType} text={item.value}/>
+                                        </div>
+                                    </React.Fragment>
+                                ))}
+                            </div>
+
+                            <div className="flex flex-col space-y-4 w-full md:w-auto">
+                                <OutlineButton onClick={() => router.back()}>Retour</OutlineButton>
+                                <ActionButton disabled={isUpdatePending || isUpdateError || !modifiedCollaborator}
+                                              icon={<Save className="w-4 h-4"/>}
+                                              onClick={() => modifiedCollaborator && updateCollaborator({
+                                                  collaborator: modifiedCollaborator,
+                                                  companyId: company.id
+                                              })}>
+                                    Sauvegarder
+                                </ActionButton>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {modifiedCollaborator && modifiedCollaborator !== undefined &&
+                    (modifiedCollaborator?.contractType === "EXT"
+                        ? <ModifyCollaboratorExtern collaborator={modifiedCollaborator}
+                                                    handleInputChange={handleInputChange}/>
+                        :
+                        <ModifyCollaborator collaborator={modifiedCollaborator} handleInputChange={handleInputChange}/>)
+                }
+
+                <NotesCard collaborator={collaborator} companyId={company.id}/>
+
+                <DocumentsCard collaborator={collaborator} companyId={company.id}/>
+            </div>
+        </div>
+    )
+};

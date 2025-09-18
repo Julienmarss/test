@@ -1,0 +1,16 @@
+namePrefix: prod-
+namespace: production
+
+resources:
+  - ../base
+  - service-secrets.yaml
+
+secretGenerator:
+  - name: service-secrets
+    behavior: create
+    envs:
+      - service-secrets.env
+
+images:
+  - name: justiana-service
+    newTag: "v1.0.0"

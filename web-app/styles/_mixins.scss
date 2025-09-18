@@ -1,0 +1,25 @@
+@use "sass:map";
+
+$breakpoints: (
+        "mobil": 576px,
+        "tablet": 992px,
+        "lg": 1280px,
+        "xl": 1440px
+);
+
+@mixin for($size) {
+  @if map.has-key($breakpoints, $size) {
+    @media (max-width: map.get($breakpoints, $size)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint #{$size} non défini dans la map.";
+  }
+}
+
+@supports (-moz-appearance: none) {
+  img {
+    object-fit: contain !important;
+    display: block !important;
+  }
+}

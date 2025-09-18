@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service
+  template:
+    metadata:
+      labels:
+        app: service
+    spec:
+      containers:
+        - name: service
+          image: rg.fr-par.scw.cloud/legipilot-production/legipilot-service:1.0.3
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: service-secrets
+          volumeMounts:
+            - name: db-cert
+              mountPath: /certs/db/
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+      imagePullSecrets:
+        - name: regitry-prod-credentials
+      volumes:
+        - name: db-cert
+          secret:
+            secretName: databases-ssl-cert
+            items:
+              - key: rdb-legipilot-postgresql.pem
+                path: rdb-legipilot-postgresql.pem

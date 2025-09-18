@@ -1,0 +1,45 @@
+{
+  "Version": "2023-04-17",
+  "Statement": [
+    {
+      "Sid": "AllowAllAccessToOwner",
+      "Effect": "Allow",
+      "Principal": {
+        "SCW": [
+          "application_id:d03a3106-13b5-44e6-9c2c-017f7e5a7e40",
+          "user_id:239364a0-9d25-49c5-975b-a609666a97a1",
+          "user_id:5220a231-47f4-4b53-a6c1-37a81f67e100",
+          "user_id:d76b1617-43b7-4d1d-9e97-964499a437c4"
+        ]
+      },
+      "Action": "s3:*",
+      "Resource": "legipilot-documents"
+    },
+    {
+      "Sid": "AllowAllAccessToOwnerObjects",
+      "Effect": "Allow",
+      "Principal": {
+        "SCW": [
+          "application_id:d03a3106-13b5-44e6-9c2c-017f7e5a7e40",
+          "user_id:239364a0-9d25-49c5-975b-a609666a97a1",
+          "user_id:5220a231-47f4-4b53-a6c1-37a81f67e100",
+          "user_id:d76b1617-43b7-4d1d-9e97-964499a437c4"
+        ]
+      },
+      "Action": "s3:*",
+      "Resource": "legipilot-documents/*"
+    },
+    {
+      "Sid": "AllowPublicReadOnPublicFolder",
+      "Effect": "Allow",
+      "Principal": {
+        "SCW": "*"
+      },
+      "Action": "s3:GetObject",
+      "Resource": [
+        "legipilot-documents/public",
+        "legipilot-documents/public/*"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=legipilotdb
+      - POSTGRES_USER=service
+      - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: "pg_isready -U postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  s3:
+    image: minio/minio
+    restart: always
+    ports:
+      - "9000:9000" # API S3
+      - "9001:9001" # Console Web
+    environment:
+      MINIO_ROOT_USER: service
+      MINIO_ROOT_PASSWORD: password
+    command: server --console-address ":9001" /data
+    volumes:
+      - documents:/data
+
+#  front:
+#    build: web-app
+#    restart: always
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./front:/app
+#
+#  service:
+#    build: service
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./service:/app
+
+volumes:
+  db:
+    driver: local
+  documents:
