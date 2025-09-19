@@ -77,4 +77,10 @@ public class DatabaseAdministratorRepository implements AdministratorRepository 
                 .toList();
     }
 
+    @Override
+    public Optional<Administrator> findByEmail(String email) {
+        return jpaAdministratorRepository.findByEmail(email)
+                .map(this::toDomain);
+    }
+
 }

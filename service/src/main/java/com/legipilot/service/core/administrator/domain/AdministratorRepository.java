@@ -11,6 +11,8 @@ public interface AdministratorRepository {
 
     Optional<AuthenticatedAdministratorDetails> getConnected(String email);
 
+    Optional<Administrator> findByEmail(String email);
+
     Administrator get(String username, String password);
 
     Administrator get(String username);
