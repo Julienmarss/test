@@ -7,12 +7,14 @@ import {Input} from "@/components/ui/Input";
 
 interface CompanySearchProps {
     onCompanySelect: (company: CompanyDto) => void
+    onManualInput?: (value: string) => void
     placeholder?: string
     value?: string
 }
 
 export default function CompanySearch({
                                           onCompanySelect,
+                                          onManualInput,
                                           placeholder = "Saisissez le nom de votre entreprise...",
                                           value = ""
                                       }: CompanySearchProps) {
@@ -60,6 +62,10 @@ export default function CompanySearch({
         const newQuery = e.target.value
         setQuery(newQuery)
 
+        if (onManualInput) {
+            onManualInput(newQuery)
+        }
+
         if (debounceRef.current) {
             clearTimeout(debounceRef.current)
         }
@@ -89,7 +95,6 @@ export default function CompanySearch({
                     placeholder={placeholder}
                     value={query}
                     onChange={handleInputChange}
-                    // onFocus={() => query.length >= 2 && setShowResults(true)}
                     className="rounded-t-md"
                 />
                 {isLoading && (

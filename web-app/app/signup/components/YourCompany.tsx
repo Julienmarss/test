@@ -26,6 +26,10 @@ export const YourCompany = ({formData, handleInputChange, handleCompanySelect, h
         formData.idcc && formData.idcc.length >= 2
     );
 
+    const handleManualCompanyNameInput = (value: string) => {
+        handleInputChange("companyName", value);
+    };
+
     return (
         <div className="flex-col">
             <div className="flex items-center md:flex-row flex-col">
@@ -36,6 +40,7 @@ export const YourCompany = ({formData, handleInputChange, handleCompanySelect, h
             <div className="mt-8">
                 <CompanySearch
                     onCompanySelect={handleCompanySelect}
+                    onManualInput={handleManualCompanyNameInput}
                     placeholder="Le nom de votre entreprise"
                     value={formData.companyName}
                 />
@@ -69,7 +74,6 @@ export const YourCompany = ({formData, handleInputChange, handleCompanySelect, h
                     placeholder="Saisissez votre domaine d'activité"
                     value={formData.activityDomain}
                     onChange={(e) => handleInputChange("activityDomain", e.target.value)}
-
                     className="w-full"
                     classNameLabel="mt-4"
                 />

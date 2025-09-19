@@ -19,9 +19,3 @@ export const isValidPhoneNumber = (phone: string): boolean => {
         return false;
     });
 };
-
-export const isValidDateFormat = (date: string) =>
-    /^\d{2}\.\d{2}\.\d{4}$/.test(date);
-
-export const isValidSocialSecurityNumber = (value: string) =>
-    /^\d{15}$/.test(value.replace(/\s/g, ''));

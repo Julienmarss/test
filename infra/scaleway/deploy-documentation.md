@@ -12,8 +12,8 @@ Update pom.xml and package.json to allign versions with updated code (chore, fea
 
 ```bash
 docker build --platform=linux/amd64 -t legipilot-service ./service
-docker tag legipilot-service rg.fr-par.scw.cloud/legipilot-production/legipilot-service:1.0.3
-docker push rg.fr-par.scw.cloud/legipilot-production/legipilot-service:1.0.3
+docker tag legipilot-service rg.fr-par.scw.cloud/legipilot-production/legipilot-service:1.0.4
+docker push rg.fr-par.scw.cloud/legipilot-production/legipilot-service:1.0.4
 ```
 
 **Front**:

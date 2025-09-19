@@ -11,7 +11,7 @@
 
     <groupId>com.legipilot</groupId>
     <artifactId>service</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <name>service</name>
     <description>Règle business du SaaS Legipilot, qui permet de piloter vos ressources humaines de l’embauche à la fin
         du contrat de travail et garantissez votre conformité juridique.
