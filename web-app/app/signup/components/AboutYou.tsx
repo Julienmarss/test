@@ -1,15 +1,19 @@
 import {Input} from "@/components/ui/Input";
 import {Select} from "@/components/ui/Select";
-import {FormErrors, SignUpRequest} from "@/app/signup/signup.service";
+import {FormErrors, SignUpRequest, validateEmail} from "@/app/signup/signup.service";
 import {Button} from "@/components/ui/buttons/Button";
+import {useState} from "react";
 
 type Props = {
     formData: SignUpRequest,
     formErrors: FormErrors,
     handleInputChange: (key: string, value: string | boolean | string[]) => void
     handleContinue: () => void
+    setFormErrors: (errors: FormErrors) => void
 };
-export const AboutYou = ({formData, formErrors, handleInputChange, handleContinue}: Props) => {
+
+export const AboutYou = ({formData, formErrors, handleInputChange, handleContinue, setFormErrors}: Props) => {
+    const [isValidatingEmail, setIsValidatingEmail] = useState(false);
 
     const isStepValid = () => (
         formData.firstName && formData.firstName.length >= 2 &&
@@ -19,6 +23,51 @@ export const AboutYou = ({formData, formErrors, handleInputChange, handleContinu
         formData.phone && formData.phone.length >= 10
         && formErrors.email === '' && formErrors.phone === ''
     );
+
+    const handleContinueWithValidation = async () => {
+        console.log('=== AboutYou validation started ===');
+        console.log('Email to validate:', formData.email);
+        console.log('Current formErrors:', formErrors);
+
+        if (!isStepValid()) {
+            console.log('Step not valid, returning');
+            return;
+        }
+
+        setIsValidatingEmail(true);
+        try {
+            console.log('Calling validateEmail...');
+            const emailValidation = await validateEmail(formData.email);
+            console.log('Email validation result:', emailValidation);
+
+            if (!emailValidation.isValid) {
+                console.log('Email validation failed:', emailValidation.message);
+                setFormErrors({
+                    ...formErrors,
+                    email: emailValidation.message || "Erreur de validation email"
+                });
+                return;
+            }
+
+            console.log('Email validation passed, continuing to next step');
+            handleContinue();
+        } catch (error) {
+            console.error('Error during email validation:', error);
+            setFormErrors({
+                ...formErrors,
+                email: "Erreur lors de la validation de l'email"
+            });
+        } finally {
+            setIsValidatingEmail(false);
+        }
+    };
+
+    const handleEmailChange = (value: string) => {
+        handleInputChange("email", value);
+        if (formErrors.email) {
+            setFormErrors({...formErrors, email: ''});
+        }
+    };
 
     return (
         <div className="md:m-8 mx-0 space-y-6">
@@ -63,7 +112,7 @@ export const AboutYou = ({formData, formErrors, handleInputChange, handleContinu
                     label="E-mail"
                     placeholder="Saisissez votre adresse e-mail"
                     value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    onChange={(e) => handleEmailChange(e.target.value)}
                     aria-errormessage={formErrors.email}
                     error={formErrors.email}
                 />
@@ -82,11 +131,11 @@ export const AboutYou = ({formData, formErrors, handleInputChange, handleContinu
 
             <div className="justify-self-end">
                 <Button
-                    onClick={handleContinue}
-                    disabled={!isStepValid()}
+                    onClick={handleContinueWithValidation}
+                    disabled={!isStepValid() || isValidatingEmail}
                     className="px-8 h-12 justify-self-end bg-sky-500 hover:bg-blue-600 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Continuer
+                    {isValidatingEmail ? "Validation..." : "Continuer"}
                 </Button>
             </div>
         </div>

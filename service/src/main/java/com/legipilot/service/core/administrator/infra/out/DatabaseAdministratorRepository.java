@@ -27,6 +27,12 @@ public class DatabaseAdministratorRepository implements AdministratorRepository 
     }
 
     @Override
+    public Optional<Administrator> findByEmail(String email) {
+        return repository.findByEmail(email)
+                .map(AdministratorDto::toDomain);
+    }
+
+    @Override
     @Transactional
     public Administrator get(String username, String password) {
         return repository.findByEmail(username)
@@ -76,11 +82,4 @@ public class DatabaseAdministratorRepository implements AdministratorRepository 
                 .map(AdministratorDto::toDomain)
                 .toList();
     }
-
-    @Override
-    public Optional<Administrator> findByEmail(String email) {
-        return jpaAdministratorRepository.findByEmail(email)
-                .map(this::toDomain);
-    }
-
 }

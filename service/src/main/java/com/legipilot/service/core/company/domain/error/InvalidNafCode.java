@@ -8,4 +8,7 @@ public class InvalidNafCode extends ValidationError {
         super("Désolé, le code NAF que vous avez fourni est invalide.");
     }
 
+    public InvalidNafCode(String message) {
+        super(message);
+    }
 }

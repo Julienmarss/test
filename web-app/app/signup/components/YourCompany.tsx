@@ -1,19 +1,32 @@
 import {Select} from "@/components/ui/Select";
-import {SignUpRequest} from "@/app/signup/signup.service";
+import {FormErrors, SignUpRequest, validateCompanyInfo} from "@/app/signup/signup.service";
 import {CONVENTIONS_COLLECTIVES} from "@/data/conventions-collectives";
 import CompanySearch from "@/app/signup/components/CompanySearch";
 import {CompanyDto} from "@/app/api/pappers/route";
 import {Button} from "@/components/ui/buttons/Button";
 import {Input} from "@/components/ui/Input";
+import {useState} from "react";
 
 type Props = {
     formData: SignUpRequest,
+    formErrors: FormErrors,
     handleCompanySelect: (company: CompanyDto) => void,
     handleInputChange: (key: string, value: string | boolean | number | string[]) => void
     handleContinue: () => void
     handleBack: () => void
+    setFormErrors: (errors: FormErrors) => void
 };
-export const YourCompany = ({formData, handleInputChange, handleCompanySelect, handleContinue, handleBack}: Props) => {
+
+export const YourCompany = ({
+                                formData,
+                                formErrors,
+                                handleInputChange,
+                                handleCompanySelect,
+                                handleContinue,
+                                handleBack,
+                                setFormErrors
+                            }: Props) => {
+    const [isValidatingCompany, setIsValidatingCompany] = useState(false);
 
     const isStepValid = () => (
         formData.companyName && formData.companyName.length >= 2 &&
@@ -23,8 +36,63 @@ export const YourCompany = ({formData, handleInputChange, handleCompanySelect, h
         formData.nafCode && formData.nafCode.length >= 2 &&
         formData.principalActivity && formData.principalActivity.length >= 2 &&
         formData.activityDomain && formData.activityDomain.length >= 2 &&
-        formData.idcc && formData.idcc.length >= 2
+        formData.idcc && formData.idcc.length >= 2 &&
+        formErrors.siren === '' && formErrors.siret === '' && formErrors.nafCode === ''
     );
+
+    const handleInputChangeWithErrorClear = (field: string, value: string) => {
+        handleInputChange(field, value);
+
+        if (field === 'siren' && formErrors.siren) {
+            setFormErrors({...formErrors, siren: ''});
+        } else if (field === 'siret' && formErrors.siret) {
+            setFormErrors({...formErrors, siret: ''});
+        } else if (field === 'nafCode' && formErrors.nafCode) {
+            setFormErrors({...formErrors, nafCode: ''});
+        }
+    };
+
+    const handleContinueWithValidation = async () => {
+        if (!isStepValid()) return;
+
+        setIsValidatingCompany(true);
+        try {
+            const companyValidation = await validateCompanyInfo({
+                siren: formData.siren,
+                siret: formData.siret,
+                nafCode: formData.nafCode
+            });
+
+            if (!companyValidation.isValid && companyValidation.errors) {
+                setFormErrors(prevErrors => ({
+                    ...prevErrors,
+                    siren: companyValidation.errors.siren || '',
+                    siret: companyValidation.errors.siret || '',
+                    nafCode: companyValidation.errors.nafCode || ''
+                }));
+                return;
+            }
+
+            setFormErrors(prevErrors => ({
+                ...prevErrors,
+                siren: '',
+                siret: '',
+                nafCode: ''
+            }));
+
+            handleContinue();
+        } catch (error) {
+            console.error('Erreur de validation:', error);
+            setFormErrors((prevErrors: any) => ({
+                ...prevErrors,
+                siren: '',
+                siret: '',
+                nafCode: 'Erreur lors de la validation des informations entreprise'
+            }));
+        } finally {
+            setIsValidatingCompany(false);
+        }
+    };
 
     const handleManualCompanyNameInput = (value: string) => {
         handleInputChange("companyName", value);
@@ -50,13 +118,15 @@ export const YourCompany = ({formData, handleInputChange, handleCompanySelect, h
                         label="SIREN"
                         placeholder="Saisissez votre numéro de SIREN"
                         value={formData.siren}
-                        onChange={(e) => handleInputChange("siren", e.target.value)}
+                        onChange={(e) => handleInputChangeWithErrorClear("siren", e.target.value)}
+                        error={formErrors.siren}
                     />
                     <Input
                         label="SIRET (siège)"
                         placeholder="Saisissez votre numéro de SIRET"
                         value={formData.siret}
-                        onChange={(e) => handleInputChange("siret", e.target.value)}
+                        onChange={(e) => handleInputChangeWithErrorClear("siret", e.target.value)}
+                        error={formErrors.siret}
                     />
                 </div>
 
@@ -83,7 +153,8 @@ export const YourCompany = ({formData, handleInputChange, handleCompanySelect, h
                         label="Code NAF ou APE"
                         placeholder="Saisissez votre code NAF ou APE"
                         value={formData.nafCode}
-                        onChange={(e) => handleInputChange("nafCode", e.target.value)}
+                        onChange={(e) => handleInputChangeWithErrorClear("nafCode", e.target.value)}
+                        error={formErrors.nafCode}
                     />
                     <Input
                         label="Activité principale"
@@ -105,7 +176,6 @@ export const YourCompany = ({formData, handleInputChange, handleCompanySelect, h
                     classNameLabel="mt-4"
                     isSearchable={true}
                 />
-
             </div>
 
             <div className="flex self-normal w-full justify-between mt-8">
@@ -118,11 +188,11 @@ export const YourCompany = ({formData, handleInputChange, handleCompanySelect, h
                 </Button>
                 <div className="self-end">
                     <Button
-                        onClick={handleContinue}
-                        disabled={!isStepValid()}
+                        onClick={handleContinueWithValidation}
+                        disabled={!isStepValid() || isValidatingCompany}
                         className="px-4 h-10 bg-sky-500 hover:bg-blue-600 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Continuer
+                        {isValidatingCompany ? "Validation..." : "Continuer"}
                     </Button>
                 </div>
             </div>

@@ -22,7 +22,13 @@ export default function SignUpPage() {
     const firstname = searchParams.get('firstname');
     const lastname = searchParams.get('lastname');
     const [currentStep, setCurrentStep] = useState(1)
-    const [formErrors, setFormErrors] = useState<FormErrors>({email: '', phone: ''});
+    const [formErrors, setFormErrors] = useState<FormErrors>({
+        email: '',
+        phone: '',
+        siren: '',
+        siret: '',
+        nafCode: ''
+    });
     const [formData, setFormData] = useState<SignUpRequest>({
         authentication: {
             tenant: tenant ?? "LEGIPILOT",
@@ -66,11 +72,20 @@ export default function SignUpPage() {
 
         if (field === 'phone') {
             const isValid = isValidPhoneNumber(value as string);
-
             setFormErrors({
                 ...formErrors,
                 phone: isValid ? '' : 'Numéro de téléphone invalide',
             });
+        }
+
+        if (field === 'siren') {
+            setFormErrors({...formErrors, siren: ''});
+        }
+        if (field === 'siret') {
+            setFormErrors({...formErrors, siret: ''});
+        }
+        if (field === 'nafCode') {
+            setFormErrors({...formErrors, nafCode: ''});
         }
     }
 
@@ -93,6 +108,13 @@ export default function SignUpPage() {
             idcc: `${idcc}`,
             collectiveAgreement: conventionCollective,
         }))
+
+        setFormErrors(prev => ({
+            ...prev,
+            siren: '',
+            siret: '',
+            nafCode: ''
+        }));
     }
 
     const handleContinue = () => {
@@ -109,23 +131,33 @@ export default function SignUpPage() {
         switch (currentStep) {
             case 1:
                 return (
-                    <AboutYou formData={formData} formErrors={formErrors}
-                              handleInputChange={handleInputChange} handleContinue={handleContinue}/>
+                    <AboutYou
+                        formData={formData}
+                        formErrors={formErrors}
+                        handleInputChange={handleInputChange}
+                        handleContinue={handleContinue}
+                        setFormErrors={setFormErrors}
+                    />
                 )
             case 2:
                 return (
-                    <YourCompany formData={formData}
-                                 handleCompanySelect={handleCompanySelect}
-                                 handleInputChange={handleInputChange}
-                                 handleContinue={handleContinue}
-                                 handleBack={handleBack}/>
+                    <YourCompany
+                        formData={formData}
+                        formErrors={formErrors}
+                        handleCompanySelect={handleCompanySelect}
+                        handleInputChange={handleInputChange}
+                        handleContinue={handleContinue}
+                        handleBack={handleBack}
+                        setFormErrors={setFormErrors}
+                    />
                 )
             case 3:
                 return (
                     <CreatePassword
                         formData={formData}
                         handleInputChange={handleInputChange}
-                        handleBack={handleBack}/>
+                        handleBack={handleBack}
+                    />
                 )
             default:
                 return null

@@ -80,11 +80,11 @@ public record SignUpRequest(
         return SignUp.builder()
                 .authentication(new Authentication(
                         authentication.tenant(),
-                        authentication.sub().isEmpty() ? null : authentication.sub()
+                        (authentication.sub() == null || authentication.sub().trim().isEmpty()) ? null : authentication.sub()
                 ))
                 .firstName(firstName)
                 .lastName(lastName)
-                .picture(picture.isEmpty() ? Optional.empty() : Optional.of(picture))
+                .picture(picture == null || picture.isEmpty() ? Optional.empty() : Optional.of(picture))
                 .email(email)
                 .fonction(fonction)
                 .phone(phone)

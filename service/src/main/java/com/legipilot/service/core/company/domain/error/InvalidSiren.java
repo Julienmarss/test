@@ -8,4 +8,7 @@ public class InvalidSiren extends ValidationError {
         super("Désolé, le SIREN que vous avez fourni est invalide, il doit contenir exactement 9 chiffres.");
     }
 
+    public InvalidSiren(String message) {
+        super(message);
+    }
 }

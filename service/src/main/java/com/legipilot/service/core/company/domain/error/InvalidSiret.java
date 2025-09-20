@@ -8,4 +8,7 @@ public class InvalidSiret extends ValidationError {
         super("Désolé, le SIRET que vous avez fourni est invalide, il doit contenir exactement 14 chiffres.");
     }
 
+    public InvalidSiret(String message) {
+        super(message);
+    }
 }

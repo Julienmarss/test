@@ -10,10 +10,10 @@ public record Siren(String value) {
 
     public Siren {
         if (Objects.isNull(value)) {
-            throw new InvalidSiren();
+            throw new InvalidSiren("Le SIREN ne peut pas être vide.");
         }
         if (!value.matches(SIREN_PATTERN)) {
-            throw new InvalidSiren();
+            throw new InvalidSiren("Le SIREN doit contenir exactement 9 chiffres.");
         }
     }
 
