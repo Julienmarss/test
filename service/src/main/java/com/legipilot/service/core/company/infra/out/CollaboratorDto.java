@@ -81,7 +81,7 @@ public class CollaboratorDto {
                 .birthDate(collaborator.birthDate())
                 .birthPlace(collaborator.birthPlace())
                 .nationality(collaborator.nationality())
-                .status(collaborator.status().name())
+                .status(Objects.isNull(collaborator.status()) ? Status.ACTIVE.name() : collaborator.status().name())
                 .socialSecurityNumber(Objects.isNull(collaborator.socialSecurityNumber()) ? null : collaborator.socialSecurityNumber().value())
                 .personalInfo(Objects.isNull(collaborator.personalSituation()) ? null : PersonalSituationDto.from(collaborator.personalSituation()))
                 .professionalSituation(Objects.isNull(collaborator.professionalSituation()) ? null : ProfessionalSituationDto.from(collaborator.professionalSituation()))

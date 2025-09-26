@@ -58,6 +58,7 @@ public class AdministratorDto {
             joinColumns = @JoinColumn(name = "administrator_id"),
             inverseJoinColumns = @JoinColumn(name = "company_id")
     )
+    
     private List<CompanyDto> companies;
 
     public static AdministratorDto from(Administrator administrator) {

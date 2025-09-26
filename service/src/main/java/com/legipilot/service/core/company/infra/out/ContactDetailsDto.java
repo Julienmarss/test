@@ -20,6 +20,7 @@ public class ContactDetailsDto {
     private String professionalPhone;
     private String professionalEmail;
     private String iban;
+    private String bic;
     private String socialName;
     private String siret;
     private String tva;
@@ -37,6 +38,7 @@ public class ContactDetailsDto {
                 .professionalPhone(domain.professionalPhone())
                 .professionalEmail(domain.professionalEmail())
                 .iban(domain.iban())
+                .bic(domain.bic())
                 .socialName(domain.socialName())
                 .siret(domain.siret())
                 .tva(domain.tva())
@@ -53,6 +55,7 @@ public class ContactDetailsDto {
                 .professionalPhone(professionalPhone)
                 .professionalEmail(professionalEmail)
                 .iban(iban)
+                .bic(bic)
                 .socialName(socialName)
                 .siret(siret)
                 .tva(tva)

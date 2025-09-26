@@ -14,7 +14,8 @@ public record ContractInformations(
     BigDecimal totalCompensation,
     BigDecimal benefitsInKind,
     String trialPeriod, // duration
-    Boolean nonCompeteClause
+    Boolean nonCompeteClause,
+    String residencePermit
 ){
     public static ContractInformations of(UpdateCollaborator command) {
         return ContractInformations.builder()
@@ -26,6 +27,7 @@ public record ContractInformations(
             .benefitsInKind(command.benefitsInKind().orElse(null))
             .trialPeriod(command.trialPeriod().orElse(null))
             .nonCompeteClause(command.nonCompeteClause().orElse(null))
+            .residencePermit(command.residencePermit().orElse(null))
             .build();
     }
 }

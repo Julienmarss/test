@@ -15,7 +15,8 @@ public record ContractInformationsResponse(
         BigDecimal totalCompensation,
         BigDecimal benefitsInKind,
         String trialPeriod,
-        Boolean nonCompeteClause
+        Boolean nonCompeteClause,
+        String residencePermit
 ) {
     public static ContractInformationsResponse from(ContractInformations domain) {
         if(domain == null) {
@@ -30,6 +31,7 @@ public record ContractInformationsResponse(
                 .benefitsInKind(domain.benefitsInKind())
                 .trialPeriod(domain.trialPeriod())
                 .nonCompeteClause(domain.nonCompeteClause())
+                .residencePermit(domain.residencePermit())
                 .build();
     }
 }

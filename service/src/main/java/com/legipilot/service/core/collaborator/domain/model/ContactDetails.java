@@ -12,6 +12,7 @@ public record ContactDetails(
         String professionalPhone,
         String professionalEmail,
         String iban,
+        String bic,
         String socialName,
         String siret,
         String tva,
@@ -27,6 +28,7 @@ public record ContactDetails(
                 .professionalPhone(command.professionalPhone().orElse(null))
                 .professionalEmail(command.professionalEmail().orElse(null))
                 .iban(command.iban().orElse(null))
+                .bic(command.bic().orElse(null))
                 .socialName(command.socialName().orElse(null))
                 .siret(command.siret().orElse(null))
                 .tva(command.tva().orElse(null))

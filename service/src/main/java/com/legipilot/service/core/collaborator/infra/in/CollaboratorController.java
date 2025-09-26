@@ -170,7 +170,8 @@ public class CollaboratorController {
                         c.contractInformations() == null ? "" : c.contractInformations().benefitsInKind(),
                         c.contractInformations() == null ? "" : c.contractInformations().totalCompensation(),
                         c.contractInformations() == null ? "" : c.contractInformations().trialPeriod(),
-                        c.contractInformations() == null ? "" : c.contractInformations().nonCompeteClause() == null ? "" : c.contractInformations().nonCompeteClause() ? "Oui" : "Non"
+                        c.contractInformations() == null ? "" : c.contractInformations().nonCompeteClause() == null ? "" : c.contractInformations().nonCompeteClause() ? "Oui" : "Non",
+                        c.contractInformations() == null ? "" : c.contractInformations().residencePermit()
                 );
             }
 

@@ -59,10 +59,15 @@ public class DatabaseCollaboratorRepository implements CollaboratorRepository {
     @Transactional
     public List<Collaborator> saveAll(List<Collaborator> collaborators) {
         try {
-            return repository.saveAll(collaborators.stream().map(CollaboratorDto::from).toList())
-                    .stream()
+            final List<CollaboratorDto> dtos = collaborators.stream()
+                .map(CollaboratorDto::from)
+                .collect(java.util.stream.Collectors.toList());
+
+            final List<CollaboratorDto> savedDtos = repository.saveAll(dtos);
+
+            return savedDtos.stream()
                     .map(CollaboratorDto::toDomainWithoutCompany)
-                    .toList();
+                    .collect(java.util.stream.Collectors.toList());
         } catch (Exception ignored) {
             throw new TechnicalError("Désolé, nous n'avons pas réussi à sauvegarder les collaborateurs.");
         }

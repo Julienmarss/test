@@ -14,6 +14,7 @@ public record ContactDetailsResponse(
         String professionalPhone,
         String professionalEmail,
         String iban,
+        String bic,
         String socialName,
         String siret,
         String tva,
@@ -31,6 +32,7 @@ public record ContactDetailsResponse(
                 .professionalPhone(domain.professionalPhone())
                 .professionalEmail(domain.professionalEmail())
                 .iban(domain.iban())
+                .bic(domain.bic())
                 .socialName(domain.socialName())
                 .siret(domain.siret())
                 .tva(domain.tva())

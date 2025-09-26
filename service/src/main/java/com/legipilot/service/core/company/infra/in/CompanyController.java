@@ -11,19 +11,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/companies")
 @RequiredArgsConstructor
+@Tag(name = "Company", description = "Company management API")
 public class CompanyController {
 
     private final CompanyService service;
     private final ModifyCompanyUseCase modifyCompanyUseCase;
 
     @GetMapping
-    public ResponseEntity<CompanyResponse> getCompanyByUserId(@RequestParam("administratorId") UUID administratorId) {
+    @Operation(
+            summary = "Get company by administrator ID",
+            description = "Returns company information based on administrator ID"
+    )
+    public ResponseEntity<CompanyResponse> getCompanyByUserId(
+            @RequestParam("administratorId") UUID administratorId
+    ) {
         Company company = service.getFor(administratorId);
         return ResponseEntity.ok(
                 CompanyResponse.from(company)
@@ -31,7 +39,14 @@ public class CompanyController {
     }
 
     @PostMapping("/{id}/picture")
-    public ResponseEntity<CompanyResponse> addPicture(@PathVariable UUID id, @RequestParam("file") MultipartFile picture) {
+    @Operation(
+            summary = "Add company picture",
+            description = "Upload and associate a picture to a specific company"
+    )
+    public ResponseEntity<CompanyResponse> addPicture(
+            @PathVariable UUID id,
+            @RequestParam("file") MultipartFile picture
+    ) {
         // TODO: add checks c'est bien moi
         Company company = modifyCompanyUseCase.execute(
                 ModifyCompanyPicture.builder()
