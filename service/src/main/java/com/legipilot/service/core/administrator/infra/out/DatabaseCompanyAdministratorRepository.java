@@ -74,11 +74,11 @@ public class DatabaseCompanyAdministratorRepository implements CompanyAdministra
 
         return associations.stream()
                 .map(dto -> {
-                    AdministratorDto admin = administratorRepository.findById(dto.getAdministratorId())
+                    AdministratorDto admin = administratorRepository.findById(dto.administratorId())
                             .orElseThrow(() -> new RuntimeException("Admin not found"));
 
                     return CompanyAdministratorInfo.builder()
-                            .administratorId(dto.getAdministratorId())
+                            .administratorId(dto.administratorId())
                             .rights(dto.getRightsEnum())
                             .firstname(admin.firstname())
                             .lastname(admin.lastname())
@@ -100,11 +100,11 @@ public class DatabaseCompanyAdministratorRepository implements CompanyAdministra
 
         return associations.stream()
                 .map(dto -> {
-                    var company = companyRepository.findById(dto.getCompanyId())
+                    var company = companyRepository.findById(dto.companyId())
                             .orElseThrow(() -> new RuntimeException("Company not found"));
 
                     return CompanyInfo.builder()
-                            .companyId(dto.getCompanyId())
+                            .companyId(dto.companyId())
                             .rights(dto.getRightsEnum())
                             .companyName(company.name())
                             .build();

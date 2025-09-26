@@ -2,6 +2,7 @@ package com.legipilot.service.core.administrator.infra.in;
 
 import com.legipilot.service.core.administrator.AdministratorService;
 import com.legipilot.service.core.administrator.CompanyRightsService;
+import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.shared.infra.security.RequiresCompanyRight;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -31,10 +31,10 @@ public class CompanyRightsController {
             description = "Récupère tous les administrateurs et leurs droits pour une entreprise"
     )
     @RequiresCompanyRight(value = CompanyRight.READONLY, companyIdParam = "companyId")
-    public ResponseEntity<List<CompanyRightsService.CompanyAdministratorInfo>> getCompanyAdministrators(
+    public ResponseEntity<List<CompanyAdministratorRepository.CompanyAdministratorInfo>> getCompanyAdministrators(
             @PathVariable UUID companyId
     ) {
-        List<CompanyRightsService.CompanyAdministratorInfo> administrators =
+        List<CompanyAdministratorRepository.CompanyAdministratorInfo> administrators =
                 companyRightsService.getCompanyAdministrators(companyId);
         return ResponseEntity.ok(administrators);
     }
@@ -150,30 +150,5 @@ public class CompanyRightsController {
     public static class AddAdministratorRequest {
         private UUID administratorId;
         private CompanyRight rights;
-    }
-}
-
-// Contrôleur pour obtenir les entreprises d'un administrateur
-@RestController
-@RequestMapping("/administrators/companies")
-@RequiredArgsConstructor
-@Tag(name = "Administrator Companies", description = "Gestion des entreprises d'un administrateur")
-class AdministratorCompaniesController {
-
-    private final CompanyRightsService companyRightsService;
-    private final AdministratorService administratorService;
-
-    @GetMapping("/my-companies")
-    @Operation(
-            summary = "Obtenir mes entreprises",
-            description = "Récupère toutes les entreprises auxquelles l'utilisateur a accès"
-    )
-    public ResponseEntity<List<CompanyRightsService.CompanyInfo>> getMyCompanies() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Administrator admin = administratorService.get(email);
-
-        List<CompanyRightsService.CompanyInfo> companies =
-                companyRightsService.getAdministratorCompanies(admin.id());
-        return ResponseEntity.ok(companies);
     }
 }
