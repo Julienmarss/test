@@ -1,4 +1,3 @@
-// src/main/java/com/legipilot/service/core/administrator/infra/in/CompanyRightsController.java
 package com.legipilot.service.core.administrator.infra.in;
 
 import com.legipilot.service.core.administrator.AdministratorService;
