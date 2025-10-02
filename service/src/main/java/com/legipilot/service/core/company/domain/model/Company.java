@@ -89,7 +89,6 @@ public class Company {
                                 .totalCompensation(BigDecimal.valueOf(34200))
                                 .trialPeriod("2 mois")
                                 .nonCompeteClause(false)
-                                .residencePermit("Test")
                                 .build())
                         .documents(List.of())
                         .notes(List.of())

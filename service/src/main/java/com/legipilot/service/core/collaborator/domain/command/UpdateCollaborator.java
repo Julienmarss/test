@@ -36,7 +36,6 @@ public record UpdateCollaborator(
         Optional<BigDecimal> benefitsInKind,
         Optional<String> trialPeriod,
         Optional<Boolean> nonCompeteClause,
-        Optional<String> residencePermit,
         Optional<String> personalPhone,
         Optional<String> personalEmail,
         Optional<String> personalAddress,

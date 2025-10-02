@@ -63,13 +63,6 @@ public class Collaborator {
     }
 
     public static Collaborator create(CreateCollaborator command, Company company) {
-        ContactDetails contactDetails = null;
-        if (command.personalEmail() != null && !command.personalEmail().trim().isEmpty()) {
-            contactDetails = ContactDetails.builder()
-                    .personalEmail(command.personalEmail())
-                    .build();
-        }
-
         return Collaborator.builder()
                 .firstname(command.firstname())
                 .lastname(command.lastname())
@@ -79,7 +72,6 @@ public class Collaborator {
                 .civility(command.civility())
                 .socialSecurityNumber(command.socialSecurityNumber())
                 .status(Status.ACTIVE)
-                .contactDetails(contactDetails)
                 .notes(List.of())
                 .documents(List.of())
                 .company(company)

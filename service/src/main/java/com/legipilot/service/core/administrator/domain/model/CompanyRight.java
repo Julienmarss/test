@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum CompanyRight {
     OWNER("Owner", "Propriétaire", 3),
     MANAGER("Manager", "Responsable", 2),
-    READONLY("ReadOnly", "Lecteur", 1);
+    READONLY("ReadOnly", "Observateur", 1);
 
     private final String dbValue;
     private final String displayName;

@@ -1,5 +1,3 @@
-// src/main/java/com/legipilot/service/core/administrator/CompanyRightsService.java
-// REMPLACE ton fichier existant qui contient du SQL
 package com.legipilot.service.core.administrator;
 
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;

@@ -38,7 +38,6 @@ public record UpdateCollaboratorRequest(
         BigDecimal benefitsInKind,
         String trialPeriod,
         Boolean nonCompeteClause,
-        String residencePermit,
         String personalPhone,
         String personalEmail,
         String personalAddress,
@@ -89,7 +88,6 @@ public record UpdateCollaboratorRequest(
                 .benefitsInKind(Optional.ofNullable(benefitsInKind))
                 .trialPeriod(Optional.ofNullable(trialPeriod))
                 .nonCompeteClause(Optional.ofNullable(nonCompeteClause))
-                .residencePermit(Optional.ofNullable(residencePermit))
                 .personalPhone(Optional.ofNullable(personalPhone))
                 .personalEmail(Optional.ofNullable(personalEmail))
                 .personalAddress(Optional.ofNullable(personalAddress))

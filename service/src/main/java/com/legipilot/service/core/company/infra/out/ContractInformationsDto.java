@@ -23,7 +23,6 @@ public class ContractInformationsDto {
     private BigDecimal benefitsInKind;
     private String trialPeriod;
     private Boolean nonCompeteClause;
-    private String residencePermit;
 
     public static ContractInformationsDto from(ContractInformations domain) {
         return ContractInformationsDto.builder()
@@ -35,7 +34,6 @@ public class ContractInformationsDto {
                 .benefitsInKind(domain.benefitsInKind())
                 .trialPeriod(domain.trialPeriod())
                 .nonCompeteClause(domain.nonCompeteClause())
-                .residencePermit(domain.residencePermit())
                 .build();
     }
 
@@ -49,7 +47,6 @@ public class ContractInformationsDto {
                 .benefitsInKind(benefitsInKind)
                 .trialPeriod(trialPeriod)
                 .nonCompeteClause(nonCompeteClause)
-                .residencePermit(residencePermit)
                 .build();
     }
 }

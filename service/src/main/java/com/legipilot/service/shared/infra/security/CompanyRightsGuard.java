@@ -1,4 +1,3 @@
-// src/main/java/com/legipilot/service/shared/infra/security/CompanyRightsGuard.java
 package com.legipilot.service.shared.infra.security;
 
 import com.legipilot.service.core.administrator.AdministratorService;

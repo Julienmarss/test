@@ -32,7 +32,7 @@ public class CompanyRightsController {
     )
     @RequiresCompanyRight(value = CompanyRight.READONLY, companyIdParam = "companyId")
     public ResponseEntity<List<CompanyAdministratorRepository.CompanyAdministratorInfo>> getCompanyAdministrators(
-            @PathVariable UUID companyId
+            @PathVariable("companyId") UUID companyId
     ) {
         List<CompanyAdministratorRepository.CompanyAdministratorInfo> administrators =
                 companyRightsService.getCompanyAdministrators(companyId);
@@ -46,7 +46,7 @@ public class CompanyRightsController {
     )
     @RequiresCompanyRight(value = CompanyRight.MANAGER, companyIdParam = "companyId")
     public ResponseEntity<Void> addAdministratorToCompany(
-            @PathVariable UUID companyId,
+            @PathVariable("companyId") UUID companyId,
             @RequestBody AddAdministratorRequest request
     ) {
         UUID currentUserId = getCurrentUserId();
@@ -68,8 +68,8 @@ public class CompanyRightsController {
     )
     @RequiresCompanyRight(value = CompanyRight.OWNER, companyIdParam = "companyId")
     public ResponseEntity<Void> updateAdministratorRights(
-            @PathVariable UUID companyId,
-            @PathVariable UUID administratorId,
+            @PathVariable("companyId") UUID companyId,
+            @PathVariable("administratorId") UUID administratorId,
             @RequestBody UpdateRightsRequest request
     ) {
         UUID currentUserId = getCurrentUserId();
@@ -91,8 +91,8 @@ public class CompanyRightsController {
     )
     @RequiresCompanyRight(value = CompanyRight.OWNER, companyIdParam = "companyId")
     public ResponseEntity<Void> removeAdministratorFromCompany(
-            @PathVariable UUID companyId,
-            @PathVariable UUID administratorId
+            @PathVariable("companyId") UUID companyId,
+            @PathVariable("administratorId") UUID administratorId
     ) {
         UUID currentUserId = getCurrentUserId();
 
@@ -124,7 +124,7 @@ public class CompanyRightsController {
             description = "Récupère les droits de l'utilisateur actuel pour cette entreprise"
     )
     @RequiresCompanyRight(value = CompanyRight.READONLY, companyIdParam = "companyId")
-    public ResponseEntity<CompanyRightInfo> getMyRights(@PathVariable UUID companyId) {
+    public ResponseEntity<CompanyRightInfo> getMyRights(@PathVariable("companyId") UUID companyId) {
         UUID currentUserId = getCurrentUserId();
 
         return companyRightsService.getAdministratorRightForCompany(currentUserId, companyId)

@@ -16,7 +16,6 @@ public record CreateCollaborator(
         LocalDate birthDate,
         String birthPlace,
         String nationality,
-        SocialSecurityNumber socialSecurityNumber,
-        String personalEmail
+        SocialSecurityNumber socialSecurityNumber
 ) {
 }

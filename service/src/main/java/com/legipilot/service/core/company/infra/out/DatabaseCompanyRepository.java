@@ -1,14 +1,12 @@
 package com.legipilot.service.core.company.infra.out;
 
-import com.legipilot.service.core.administrator.infra.out.AdministratorDto;
 import com.legipilot.service.core.company.domain.CompanyRepository;
 import com.legipilot.service.core.company.domain.model.Company;
+import com.legipilot.service.shared.domain.error.RessourceNotFound;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -27,19 +25,18 @@ public class DatabaseCompanyRepository implements CompanyRepository {
     @Override
     @Transactional
     public Company getOfAdministrator(UUID administratorId) {
-        return repository.getAllByAdministratorsId(administratorId)
-                .stream().map(CompanyDto::toDomain)
+        return repository.findByAdministratorAssociations_AdministratorId(administratorId)
+                .stream()
+                .map(CompanyDto::toDomain)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Désolé, nous n'avons pas trouvé d'entreprise pour cet administrateur."));
+                .orElseThrow(() -> new RessourceNotFound("Désolé, nous n'avons pas trouvé d'entreprise pour cet administrateur."));
     }
 
     @Override
     @Transactional
     public Company get(UUID id) {
         return repository.findById(id)
-                .stream().map(CompanyDto::toDomain)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Désolé, nous n'avons pas trouvé l'entreprise concernée."));
+                .map(CompanyDto::toDomain)
+                .orElseThrow(() -> new RessourceNotFound("Désolé, nous n'avons pas trouvé l'entreprise concernée."));
     }
-
 }

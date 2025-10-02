@@ -18,8 +18,7 @@ public record CreateCollaboratorRequest(
         LocalDate birthDate,
         String birthPlace,
         String nationality,
-        String socialSecurityNumber,
-        String personalEmail
+        String socialSecurityNumber
 ) {
     public CreateCollaborator toDomain(UUID companyId) {
         return CreateCollaborator.builder()
@@ -31,7 +30,6 @@ public record CreateCollaboratorRequest(
                 .birthPlace(birthPlace)
                 .nationality(nationality)
                 .socialSecurityNumber(Objects.isNull(socialSecurityNumber) ? null : new SocialSecurityNumber(socialSecurityNumber))
-                .personalEmail(personalEmail)
                 .build();
     }
 }

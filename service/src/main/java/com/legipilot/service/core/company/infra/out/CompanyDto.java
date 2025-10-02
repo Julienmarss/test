@@ -1,6 +1,5 @@
 package com.legipilot.service.core.company.infra.out;
 
-import com.legipilot.service.core.administrator.infra.out.AdministratorDto;
 import com.legipilot.service.core.administrator.infra.out.CompanyAdministratorDto;
 import com.legipilot.service.core.company.domain.model.*;
 import jakarta.persistence.*;
@@ -104,19 +103,6 @@ public class CompanyDto {
                 .collaborators(new ArrayList<>(collaborators.stream()
                         .map(CollaboratorDto::toDomainWithoutCompany).toList()))
                 .build();
-    }
-
-    public List<CompanyAdministratorDto> getAdministratorAssociations() {
-        return administratorAssociations != null ? administratorAssociations : new ArrayList<>();
-    }
-
-    public List<AdministratorDto> getAdministrators() {
-        return administratorAssociations != null ?
-                administratorAssociations.stream()
-                        .map(CompanyAdministratorDto::administrator)
-                        .filter(admin -> admin != null)
-                        .toList() :
-                new ArrayList<>();
     }
 
     private void setCollaborators(List<CollaboratorDto> collaborators) {
