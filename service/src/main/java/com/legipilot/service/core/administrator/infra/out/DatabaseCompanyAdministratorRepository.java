@@ -39,11 +39,11 @@ public class DatabaseCompanyAdministratorRepository implements CompanyAdministra
 
     @Override
     @Transactional
-    public void addAdministratorToCompany(UUID companyId, UUID administratorId, CompanyRight rights) {
+    public void addAdministratorToCompany(UUID companyId, UUID administratorId, CompanyRight right) {
         CompanyAdministratorDto dto = CompanyAdministratorDto.builder()
                 .companyId(companyId)
                 .administratorId(administratorId)
-                .rights(rights.getDbValue())
+                .rights(right.getDbValue())
                 .build();
 
         jpaRepository.save(dto);

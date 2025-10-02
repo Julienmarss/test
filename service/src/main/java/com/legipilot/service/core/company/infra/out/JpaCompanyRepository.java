@@ -9,8 +9,6 @@ import java.util.UUID;
 @Repository
 public interface JpaCompanyRepository extends JpaRepository<CompanyDto, UUID> {
 
-    List<CompanyDto> getAllByAdministratorsId(UUID administratorId);
-
     List<CompanyDto> findByAdministratorAssociations_AdministratorId(UUID administratorId);
 
 }

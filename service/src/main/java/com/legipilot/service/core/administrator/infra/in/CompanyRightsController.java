@@ -44,7 +44,7 @@ public class CompanyRightsController {
             summary = "Ajouter un administrateur à l'entreprise",
             description = "Ajoute un administrateur avec des droits spécifiques à l'entreprise"
     )
-    @RequiresCompanyRight(value = CompanyRight.MANAGER, companyIdParam = "companyId")
+    @RequiresCompanyRight(value = CompanyRight.OWNER, companyIdParam = "companyId")
     public ResponseEntity<Void> addAdministratorToCompany(
             @PathVariable("companyId") UUID companyId,
             @RequestBody AddAdministratorRequest request
