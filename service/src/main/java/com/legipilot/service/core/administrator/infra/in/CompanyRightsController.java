@@ -3,6 +3,7 @@ package com.legipilot.service.core.administrator.infra.in;
 import com.legipilot.service.core.administrator.AcceptInvitationUseCase;
 import com.legipilot.service.core.administrator.AdministratorService;
 import com.legipilot.service.core.administrator.CompanyRightsService;
+import com.legipilot.service.core.administrator.DeleteInvitationUseCase;
 import com.legipilot.service.core.administrator.InviteAdministratorUseCase;
 import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.InvitationRepository;
@@ -31,6 +32,7 @@ public class CompanyRightsController {
     private final CompanyRightsService companyRightsService;
     private final AdministratorService administratorService;
     private final InviteAdministratorUseCase inviteAdministratorUseCase;
+    private final DeleteInvitationUseCase deleteInvitationUseCase;
     private final AcceptInvitationUseCase acceptInvitationUseCase;
     private final InvitationRepository invitationRepository;
 
@@ -86,6 +88,21 @@ public class CompanyRightsController {
                         .map(InvitationResponse::from)
                         .toList()
         );
+    }
+
+    @DeleteMapping("/invitations/{invitationId}")
+    @Operation(
+            summary = "Supprimer une invitation",
+            description = "Supprime une invitation en attente"
+    )
+    @RequiresCompanyRight(value = CompanyRight.MANAGER, companyIdParam = "companyId")
+    public ResponseEntity<Void> deleteInvitation(
+            @PathVariable("companyId") UUID companyId,
+            @PathVariable("invitationId") UUID invitationId
+    ) {
+        UUID currentUserId = getCurrentUserId();
+        deleteInvitationUseCase.execute(invitationId, companyId, currentUserId);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{administratorId}/rights")
@@ -165,6 +182,7 @@ public class CompanyRightsController {
         return admin.id();
     }
 
+    // DTOs
     public record CompanyRightInfo(CompanyRight right, String displayName) {}
 
     public record InviteAdministratorRequest(String email, CompanyRight rights) {}

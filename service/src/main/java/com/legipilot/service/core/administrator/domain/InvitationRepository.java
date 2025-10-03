@@ -10,6 +10,8 @@ public interface InvitationRepository {
 
     Invitation save(Invitation invitation);
 
+    Optional<Invitation> findById(UUID id);
+
     Optional<Invitation> findByToken(UUID token);
 
     Optional<Invitation> findByEmailAndCompanyId(String email, UUID companyId);
