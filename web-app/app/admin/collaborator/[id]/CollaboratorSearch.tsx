@@ -33,7 +33,13 @@ export const CollaboratorSearch = ({companyId}: { companyId: string }) => {
                 className="pl-10 border-slate-200 border-none w-full"
             />
             <button type="submit"
-                    className="text-white absolute right-2 top-0 bg-sky-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-3">
+                    className="
+                        text-white absolute right-2 top-0
+                        bg-sky-600 focus:ring-4 focus:outline-none
+                        focus:ring-blue-300 font-medium rounded-lg
+                        text-sm p-3
+                        search-collaborator
+                    ">
                 <Search className="w-3 h-3 justify-self-center text-white"/>
             </button>
 

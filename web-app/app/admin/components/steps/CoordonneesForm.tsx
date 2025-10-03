@@ -79,9 +79,14 @@ export const CoordonneesForm = ({ collaborator, handleInputChange, isFreelance }
 
                             <span className="text-xs text-sky-600 mt-2">Coordonnées bancaires</span>
 
-                            <Input type="text" label="Numéro IBAN" placeholder={"Saisissez l'IBAN"}
-                                   value={collaborator.iban}
-                                   onChange={(e) => handleInputChange("iban", e.target.value)} />
+                            <div className="flex flex-col md:flex-row gap-x-2">
+                                   <Input type="text" label="Numéro IBAN" placeholder={"Saisissez l'IBAN"}
+                                          value={collaborator.iban}
+                                          onChange={(e) => handleInputChange("iban", e.target.value)} />
+                                   <Input type="text" label="BIC" placeholder={"Saisissez le BIC"}
+                                          value={collaborator.bic}
+                                          onChange={(e) => handleInputChange("bic", e.target.value)} />
+                            </div>
                      </>}
               </div>
        );

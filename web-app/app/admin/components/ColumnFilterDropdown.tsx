@@ -26,7 +26,6 @@ export function ColumnFilterDropdown({
     totalResults
 }: ColumnFilterDropdownProps) {
 
-    console.log(options)
     return (
         <>
             <Select

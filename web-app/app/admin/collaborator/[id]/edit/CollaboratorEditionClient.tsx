@@ -20,10 +20,11 @@ import {DocumentsCard} from "@/app/admin/collaborator/[id]/containers/DocumentsC
 import {PageSpinner} from "@/components/ui/icons/Spinner";
 import {ModifyCollaborator} from "@/app/admin/collaborator/[id]/containers/ModifyCollaborator";
 import {ActionButton} from "@/components/ui/buttons/ActionButton";
-import {getStatusBorderColor} from "@/app/admin/components/table.service";
+import {getStatusBorderColor, getStatusColorCollaborator} from "@/app/admin/components/table.service";
 import {OutlineButton} from "@/components/ui/buttons/OutlineButton";
 import {useRouter} from "next/navigation";
 import {ModifyCollaboratorExtern} from "../containers/ModifyCollaboratorExtern";
+import { StatusResponseCollaborator } from "@/api/collaborator/collaborators.dto";
 
 type Props = {
     company: CompanyResponse;
@@ -105,15 +106,26 @@ export const CollaboratorEditionClient = ({company, collaboratorId}: Props) => {
                                              alt={collaborator.firstname + " " + collaborator.lastname}
                                              className={`w-[80px] h-[80px] rounded-full ${getStatusBorderColor(collaborator?.status)}`}/>
                                     ) : (<div
-                                            className={`w-[80px] h-[80px] bg-slate-200 rounded-full flex items-center justify-center text-xl font-bold text-slate-700 ${getStatusBorderColor(collaborator?.status)}`}>
-                                            {collaborator.firstname.charAt(0).toUpperCase()} {collaborator.lastname.charAt(0).toUpperCase()}
+                                            className={`w-[80px] h-[80px] bg-blue-100 border border-green-300 text-blue-700 rounded-full flex items-center tracking-normal justify-center text-3xl font-bold ${getStatusBorderColor(collaborator?.status)}`}>
+                                            {collaborator.firstname.charAt(0).toUpperCase()}{collaborator.lastname.charAt(0).toUpperCase()}
                                         </div>
                                     )}
                                     <div>
                                         <div className="flex flex-col space-x-1 space-y-1">
                                             <h1 className="text-2xl font-bold text-slate-900">{collaborator.firstname} {collaborator.lastname}</h1>
                                             <div className="flex items-center space-x-2">
-                                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                <div className={`flex items-center justify-center h-4 w-4 rounded-full border-4
+                                                        ${getStatusColorCollaborator(collaborator.status as StatusResponseCollaborator).border}
+                                                    `}
+                                                >
+                                                    <div
+                                                    className={`
+                                                        h-2
+                                                        w-2
+                                                        rounded-full
+                                                        ${getStatusColorCollaborator(collaborator.status as StatusResponseCollaborator).bg}
+                                                    `}
+                                                /></div>
                                                 <span
                                                     className="text-sm text-slate-600">{displayStatus(collaborator?.status)}</span>
                                             </div>

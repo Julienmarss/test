@@ -312,12 +312,21 @@ export const ModifyCollaborator = ({ collaborator, handleInputChange }: Props) =
 
                             <div>
                                 <h4 className=" text-xs font-medium text-sky-600 mb-4">Coordonnées Bancaires</h4>
+                                <div>
                                 <InfoField label="IBAN">
                                     <Input type="text"
                                         placeholder={"Saisissez l'IBAN"}
                                         value={collaborator.iban}
                                         onChange={(e) => handleInputChange("iban", e.target.value)} />
                                 </InfoField>
+                                <InfoField label="BIC">
+                                    <Input type="text"
+                                        placeholder={"Saisissez le BIC"}
+                                        value={collaborator.bic}
+                                        onChange={(e) => handleInputChange("bic", e.target.value)} />
+                                </InfoField>
+
+                                </div>
                             </div>
                         </CardContent>
                     )}

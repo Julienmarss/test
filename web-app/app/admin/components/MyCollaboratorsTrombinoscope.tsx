@@ -90,10 +90,10 @@ export const MyCollaboratorsTrombinoscope = ({
                                 (
                                     <img src={collaborator.picture}
                                         alt={`Photo de ${collaborator.firstname} ${collaborator.lastname}`}
-                                        className={`w-28 h-28 rounded-full bg-white ${getStatusBorderColor(collaborator.status)}`} />
+                                        className={`w-24 h-24 rounded-full bg-white ${getStatusBorderColor(collaborator.status)}`} />
                                 ) : (
                                     <div
-                                        className={`w-28 h-28 bg-blue-100 border border-blue-300 rounded-full flex items-center justify-center text-3xl text-blue-700 font-medium`}>
+                                        className={`w-24 h-24 bg-blue-100 border border-green-300 rounded-full flex items-center justify-center text-3xl text-blue-700 font-medium`}>
                                         {(collaborator.firstname?.[0] ?? '') + (collaborator.lastname?.[0] ?? '')}
                                     </div>
                                 )

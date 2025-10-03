@@ -16,7 +16,7 @@ COPY package.json package-lock.json ./
 ENV NODE_ENV=production
 
 # Install dependencies using npm ci (ensures a clean, reproducible install)
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force
 
 # ============================================
 # Stage 2: Build the Next.js Application

@@ -38,6 +38,10 @@ export const InformationProfessionnelleForm = ({ collaborator, handleInputChange
             <Input type="text" label="Numéro IBAN" placeholder={"Saisissez l'IBAN"}
                 value={collaborator.iban}
                 onChange={(e) => handleInputChange("iban", e.target.value)} />
+
+            <Input type="text" label="BIC" placeholder={"Saisissez le BIC"}
+                value={collaborator.bic}
+                onChange={(e) => handleInputChange("bic", e.target.value)} />
         </div>
     );
 };

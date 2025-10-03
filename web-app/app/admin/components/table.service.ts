@@ -80,21 +80,22 @@ export const getStatusColor = (status?: StatusResponse) => {
 };
 
 export const getStatusColorCollaborator = (status?: StatusResponseCollaborator) => {
-    switch (status) {
-        case 'ACTIVE':
-            return 'bg-green-500';
-        case 'IN_PROGRESS':
-            return 'bg-[#F54A00]';
-        case 'RELEASE_IN_PROGRESS':
-            return 'bg-[#E7000B]';
-        case 'EXTERNAL':
-            return 'bg-[#155DFC]';
-        case 'INACTIVE':
-            return 'bg-[#99A1AF]';
-        default:
-            return 'bg-[#99A1AF]';
-    }
+  switch (status) {
+    case 'ACTIVE':
+      return { bg: 'bg-green-500', border: 'border-green-500/20' };
+    case 'IN_PROGRESS':
+      return { bg: 'bg-[#F54A00]', border: 'border-[#F54A00]/20' };
+    case 'RELEASE_IN_PROGRESS':
+      return { bg: 'bg-[#E7000B]', border: 'border-[#E7000B]/20' };
+    case 'EXTERNAL':
+      return { bg: 'bg-[#155DFC]', border: 'border-[#155DFC]/20' };
+    case 'INACTIVE':
+      return { bg: 'bg-[#99A1AF]', border: 'border-[#99A1AF]/20' };
+    default:
+      return { bg: 'bg-[#99A1AF]', border: 'border-[#99A1AF]/20' };
+  }
 };
+
 
 export const getStatusBorderColor = (status?: StatusResponse) => {
     switch (status) {

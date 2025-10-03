@@ -4,7 +4,7 @@ type Props = {
 }
 export const SelectView = ({view, setView}: Props) => {
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2 ml-3">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                  stroke="currentColor" className="size-6 cursor-pointer" onClick={() => setView("list")}>
                 <path strokeLinecap="round" strokeLinejoin="round"

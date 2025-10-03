@@ -31,7 +31,7 @@ type Props = {
     token: string;
 };
 
-const InfoCollaborator = ({token}: Props) => {
+const FormCompletedByCollaborator = ({token}: Props) => {
     const {mutate: collaboratorByToken, data: dataCollaborator, error} = useCollaboratorByToken();
     const [currentStep, setCurrentStep] = useState(0);
     const [collaborator, setCollaborator] = useState<UpdateCollaboratorRequest>(INITIAL_CREATION_STATE);
@@ -184,4 +184,4 @@ const InfoCollaborator = ({token}: Props) => {
     );
 };
 
-export default InfoCollaborator;
+export default FormCompletedByCollaborator;

@@ -76,7 +76,19 @@ export function ColumnFilterListCheckbox({
                                         />
                                         <span className="text-sm text-gray-700 ml-2">{option.label}</span>
                                     </div>
-                                    <div className={`h-2 w-2 ml-2 rounded-full ${getStatusColorCollaborator(option.value as StatusResponseCollaborator)}`}></div>
+                                     <div className={`flex items-center ml-4 justify-center h-4 w-4 rounded-full border-4
+                                            ${getStatusColorCollaborator(option.value as StatusResponseCollaborator).border}
+                                        `}
+                                    >
+                                        <div
+                                            className={`
+                                                h-2
+                                                w-2
+                                                rounded-full
+                                                ${getStatusColorCollaborator(option.value as StatusResponseCollaborator).bg}
+                                            `}
+                                        />  
+                                    </div>
                                 </div>
                             )
                         }

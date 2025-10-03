@@ -63,6 +63,7 @@ export type UpdateCollaboratorRequest = {
     professionalEmail?: string;
     professionalPhone?: string;
     iban?: string;
+    bic?: string;
 
     maritalStatus?: MaritalStatusResponse;
     numberOfChildren?: number;

@@ -163,6 +163,9 @@ const ViewCollaboratorExtern = ({ collaborator }: { collaborator: CollaboratorRe
                         <InfoField label="IBAN"
                             value={collaborator.contactDetails?.iban}
                         />
+                        <InfoField label="BIC"
+                            value={collaborator.contactDetails?.bic}
+                        />
                     </CardContent>
                 )}
             </Card>

@@ -1,4 +1,4 @@
-import InfoCollaborator from "./InfoCollaborator";
+import FormCompletedByCollaborator from "./FormCompletedByCollaborator";
 import { notFound } from 'next/navigation';
 
 interface PageProps {
@@ -14,5 +14,5 @@ export default async function CollaboratorPage({ searchParams }: PageProps) {
         return notFound();
     }
 
-    return <InfoCollaborator token={token} />
+    return <FormCompletedByCollaborator token={token} />
 }

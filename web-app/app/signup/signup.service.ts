@@ -74,7 +74,6 @@ export async function validateEmail(email: string): Promise<{ isValid: boolean; 
     } catch (error: any) {
 
         if (error.message) {
-            console.log('Found error message:', error.message);
             return { isValid: false, message: error.message };
         }
 
@@ -85,7 +84,6 @@ export async function validateEmail(email: string): Promise<{ isValid: boolean; 
             return { isValid: false, message: "Format d'email invalide." };
         }
 
-        console.log('Returning generic error for email validation');
         return { isValid: false, message: "Cette adresse email est déjà utilisée." };
     }
 }
@@ -94,21 +92,13 @@ export async function validateCompanyInfo(data: CompanyValidationRequest): Promi
     isValid: boolean;
     errors?: { siren?: string; siret?: string; nafCode?: string }
 }> {
-    console.log('=== validateCompanyInfo called ===');
-    console.log('Data sent:', data);
 
     try {
         const response = await serviceClientNonAuthentifie.post("/public/validate-company", data);
-        console.log('Validation success response:', response);
         return { isValid: true };
     } catch (error: any) {
-        console.log('=== Validation Error ===');
-        console.log('Error status:', error.status);
-        console.log('Error data:', error.data);
-        console.log('Full error:', error);
 
         if (error.validationErrors) {
-            console.log('Found validationErrors directly:', error.validationErrors);
             return {
                 isValid: false,
                 errors: error.validationErrors
@@ -116,14 +106,12 @@ export async function validateCompanyInfo(data: CompanyValidationRequest): Promi
         }
 
         if (error.status === 400 && error.data?.validationErrors) {
-            console.log('Returning validation errors from data:', error.data.validationErrors);
             return {
                 isValid: false,
                 errors: error.data.validationErrors
             };
         }
 
-        console.log('Returning generic error');
         return {
             isValid: false,
             errors: {}

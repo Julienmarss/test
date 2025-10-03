@@ -40,7 +40,6 @@ public class CompanyRightsService {
             throw new NotAllowed("Seuls les propriétaires peuvent modifier les droits");
         }
 
-        // Protection contre la suppression du dernier owner
         if (currentUserId.equals(administratorId)) {
             long ownerCount = companyAdminRepository.countOwnersByCompany(companyId);
             if (ownerCount <= 1 && newRights != CompanyRight.OWNER) {
@@ -58,7 +57,6 @@ public class CompanyRightsService {
         log.info("Ajout de l'admin {} à l'entreprise {} avec droits {} par user {}",
                 administratorId, companyId, rights, currentUserId);
 
-        // Vérifier que l'administrateur existe
         Administrator admin = administratorRepository.get(administratorId);
 
         if (!hasRight(currentUserId, companyId, CompanyRight.MANAGER)) {
@@ -83,7 +81,6 @@ public class CompanyRightsService {
             throw new NotAllowed("Seuls les propriétaires peuvent supprimer des administrateurs");
         }
 
-        // Vérifier qu'on ne supprime pas le dernier owner
         Optional<CompanyRight> adminRight = getAdministratorRightForCompany(administratorId, companyId);
         if (adminRight.isPresent() && adminRight.get() == CompanyRight.OWNER) {
             long ownerCount = companyAdminRepository.countOwnersByCompany(companyId);

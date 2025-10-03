@@ -147,8 +147,12 @@ const ViewCollaboratorIntern = ({ collaborator }: { collaborator: CollaboratorRe
 
                         <div>
                             <h4 className=" text-xs font-medium text-sky-600 mb-4">Coordonnées Bancaires</h4>
+                            <div>
                             <InfoField label="IBAN"
                                 value={collaborator.contactDetails?.iban} />
+                            <InfoField label="BIC"
+                                value={collaborator.contactDetails?.bic} />
+                            </div>
                         </div>
                     </CardContent>
                 )}

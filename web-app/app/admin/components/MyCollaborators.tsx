@@ -113,15 +113,19 @@ export default function MyCollaborators() {
             {openModal && <AjouterCollaborateursModal open={openModal} onClose={() => setOpenModal(false)} />}
 
             {/* Actions */}
-            <div className="flex justify-between space-x-3 p-4 bg-white">
-                <ActiveFilters filters={filters} setPartialFilter={setPartialFilter} resetFilters={resetFilters} />
-
-                <section className="flex items-center flex-col w-full gap-4 md:flex-row md:w-auto md:gap-0 space-x-4">
-                    <span className="text-sm text-gray-500 content-center mr-4">
+            <div className="flex justify-between p-3 bg-white">
+                <section className="flex gap-3 items-center">
+                    <SelectView view={view} setView={setView} />
+                    <div className="w-px h-6 bg-gray-200" />
+                    <span className="text-sm text-gray-500 content-center">
                         {totalItems} Collaborateur{totalItems > 1 ? 's' : ''}
                         {totalItems !== collaborators.length && ` (${collaborators.length} au total)`}
                     </span>
-                    <Button variant="outline" className="flex items-center space-x-2 bg-transparent"
+                    <ActiveFilters filters={filters} setPartialFilter={setPartialFilter} resetFilters={resetFilters} />
+                </section>
+
+                <section className="flex gap-3 items-center">
+                    <Button variant="outline" className="flex items-center space-x-2 bg-transparent border-2"
                         onClick={() => company && exportCollaborators(company.id)}
                     >
                         <Download className="w-4 h-4" />
@@ -133,10 +137,6 @@ export default function MyCollaborators() {
                         <Plus className="w-4 h-4" />
                         <span>Ajouter un collaborateur</span>
                     </Button>
-
-                    <div className="w-px h-6 bg-gray-200" />
-
-                    <SelectView view={view} setView={setView} />
                 </section>
             </div>
 

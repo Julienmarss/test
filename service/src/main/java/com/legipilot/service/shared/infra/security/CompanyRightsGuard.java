@@ -62,13 +62,11 @@ public class CompanyRightsGuard {
         for (int i = 0; i < parameters.length; i++) {
             Parameter param = parameters[i];
 
-            // Si un nom de paramètre spécifique est donné
             if (!companyIdParam.isEmpty()) {
                 if (isParameterNamed(param, companyIdParam)) {
                     return parseUUID(args[i]);
                 }
             } else {
-                // Recherche automatique par nom ou annotation
                 if (isCompanyIdParameter(param)) {
                     return parseUUID(args[i]);
                 }
@@ -79,7 +77,6 @@ public class CompanyRightsGuard {
     }
 
     private boolean isParameterNamed(Parameter param, String expectedName) {
-        // Vérifier les annotations @PathVariable et @RequestParam
         PathVariable pathVariable = param.getAnnotation(PathVariable.class);
         if (pathVariable != null) {
             String name = pathVariable.value().isEmpty() ? pathVariable.name() : pathVariable.value();
@@ -98,12 +95,10 @@ public class CompanyRightsGuard {
     private boolean isCompanyIdParameter(Parameter param) {
         String paramName = param.getName().toLowerCase();
 
-        // Recherche par nom du paramètre
         if (paramName.contains("company") && paramName.contains("id")) {
             return true;
         }
 
-        // Recherche par annotation PathVariable/RequestParam
         PathVariable pathVariable = param.getAnnotation(PathVariable.class);
         if (pathVariable != null) {
             String name = pathVariable.value().isEmpty() ? pathVariable.name() : pathVariable.value();

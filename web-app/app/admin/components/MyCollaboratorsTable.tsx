@@ -86,45 +86,59 @@ export const MyCollaboratorsTable = ({
 
     return (
         <>
-            <div className="overflow-x-auto bg-white">
-                <table className="w-full">
-                    <thead className="border border-gray-100">
-                        <tr>
-                            <th className="px-6 py-3 text-left">
+            <div className="overflow-x-auto bg-white w-full p-3 pt-0">
+                <table className="w-full border-separate border-spacing-0">
+                    <thead>
+                        <tr className="
+                            [&>th]:bg-gray-100
+                            [&>th]:px-4
+                            [&>th]:py-3
+                            first:[&>th]:rounded-l-lg
+                            last:[&>th]:rounded-r-lg
+                            text-left
+                            text-sm
+                            text-gray-600
+                            [&>th]:font-medium
+                            tracking-wider
+                        ">
+                            <th className="!w-4">
+                                <div className="flex items-center"> 
                                 <Checkbox
+                                    className="border-gray-400"
                                     checked={selectedCollaborators.length === collaborators.length}
                                     onCheckedChange={toggleAll}
                                 />
+                                </div>
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 tracking-wider">
+                            <th className="!pl-3">
                                 <NameColumn filter={filters?.name} setFilter={(value) => setPartialFilter("name", value)} />
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 tracking-wider">
+                            <th>
                                 <FonctionColumn
                                     collaborators={allCollaborators} filteredCollaborators={collaborators}
                                     filter={filters.function} setFilter={(value) => setPartialFilter("function", value)} />
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 tracking-wider">
+                            <th>
                                 <ResponsibleColumn
                                     collaborators={allCollaborators} filteredCollaborators={collaborators}
                                     filter={filters.manager} setFilter={(value) => setPartialFilter("manager", value)} />
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 tracking-wider">
+                            <th>
                                 <ContractColumn
                                     filteredCollaborators={collaborators}
                                     filter={filters.contract} setFilter={(value) => setPartialFilter("contract", value)} />
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 tracking-wider">
+                            <th>
                                 <BeginDateColumn
                                     filteredCollaborators={collaborators}
                                     filter={filters.date} setFilter={(val) => setPartialFilter("date", val)} />
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 tracking-wider">
+                            <th>
                                 <RemunerationColumn
                                     filteredCollaborators={collaborators}
                                     filter={filters.compensation} setFilter={(val) => setPartialFilter("compensation", val)} />
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 tracking-wider">
+                            <th>
                                 <StatusColumn
                                     collaborators={collaborators} filteredCollaborators={collaborators}
                                     filter={filters.status} setFilter={(value) => setPartialFilter("status", value)} />

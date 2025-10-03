@@ -7,6 +7,7 @@ import { copyToClipboard } from "@/components/utils/user-actions";
 import { CollaboratorResponse } from "@/api/collaborator/collaborators.dto";
 import ViewCollaboratorIntern from "./ViewCollaboratorIntern";
 import ViewCollaboratorExtern from "./ViewCollaboratorExtern";
+import './ViewCollaborator.scss';
 
 type Props = {
     collaborator: CollaboratorResponse
@@ -24,43 +25,56 @@ export const InfoField = ({
     copyable?: boolean;
     isAmount?: boolean;
     className?: string;
-}) => (
-    <div
-        className={cn(
-            "grid grid-cols-2 items-center gap-x-1 px-2 py-4 border-b border-slate-100 last:border-b-0 odd:bg-gray-50",
-            className
-        )}
-    >
-        <span className="text-slate-600 text-sm">{label}</span>
-        <div className="flex justify-between items-center min-w-0 space-x-2">
-            <div className="flex flex-row gap-x-2 truncate">
-                {label === "Nationalité" && value && typeof value === "string" && (
-                    <div className="flex items-center gap-2">
-                        <img
-                            src={`https://flagcdn.com/w40/${getCode(value)?.toLowerCase()}.png`}
-                            alt={`${value}`}
-                            className="h-4 w-6 object-cover rounded-sm border"
-                        />
-                    </div>
-                )}
-                <span className="text-slate-900 text-sm font-medium truncate text-wrap">
-                    {value !== undefined && value !== null ? value + `${isAmount ? " €" : ""}` : "--"}
-                </span>
-            </div>
-            {copyable && value !== undefined && value !== null && value !== "--" && (
-                <button
-                    onClick={() => copyToClipboard(`${value}`)}
-                    className="text-slate-400 hover:text-slate-600 shrink-0"
-                >
-                    <Copy className="w-4 h-4" />
-                </button>
+}) => {
+    const [isSpinning, setIsSpinning] = useState(false);
+
+    const handleCopy = () => {
+        copyToClipboard(String(value));
+        setIsSpinning(true);
+
+        // retirer la classe après la durée de l'animation
+        setTimeout(() => setIsSpinning(false), 600);
+    };
+
+    return (
+        <div
+            className={cn(
+                "grid grid-cols-2 items-center gap-x-1 px-2 py-4 border-b border-slate-100 last:border-b-0 odd:bg-gray-50",
+                className
             )}
+        >
+            <span className="text-slate-600 text-sm">{label}</span>
+            <div className="flex justify-between items-center min-w-0 space-x-2">
+                <div className="flex flex-row gap-x-2 truncate">
+                    {label === "Nationalité" && value && typeof value === "string" && (
+                        <div className="flex items-center gap-2">
+                            <img
+                                src={`https://flagcdn.com/w40/${getCode(value)?.toLowerCase()}.png`}
+                                alt={`${value}`}
+                                className="h-4 w-6 object-cover rounded-sm border"
+                            />
+                        </div>
+                    )}
+                    <span className="text-slate-900 text-sm font-medium truncate text-wrap">
+                        {value !== undefined && value !== null ? value + `${isAmount ? " €" : ""}` : "--"}
+                    </span>
+                </div>
+                {copyable && value !== undefined && value !== null && value !== "--" && (
+                    <button
+                        onClick={handleCopy}
+                        className="text-slate-400 hover:text-slate-600 shrink-0"
+                    >
+                        <span className={cn("inline-block", isSpinning && "spin-once")}>
+                            <Copy className="w-4 h-4" />
+                        </span>
+                    </button>
+                )}
+            </div>
         </div>
-    </div>
-);
+    );
+}
 
 export const ViewCollaborator = ({ collaborator }: Props) => {
-    console.log(collaborator);
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

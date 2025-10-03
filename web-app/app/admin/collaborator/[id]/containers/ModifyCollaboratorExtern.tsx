@@ -300,6 +300,12 @@ export const ModifyCollaboratorExtern = ({ collaborator, handleInputChange }: Pr
                                         value={collaborator.iban}
                                         onChange={(e) => handleInputChange("iban", e.target.value)} />
                                 </InfoField>
+                                <InfoField label="BIC">
+                                    <Input type="text"
+                                        placeholder={"Saisissez le BIC"}
+                                        value={collaborator.bic}
+                                        onChange={(e) => handleInputChange("bic", e.target.value)} />
+                                </InfoField>
                             </div>
                         </CardContent>
                     )}

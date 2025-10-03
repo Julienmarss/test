@@ -9,11 +9,11 @@ type Props = {
 
 export const MyCollaboratorsHeader = ({searchQuery, setSearchQuery}: Props) => {
     return (
-        <div className="flex flex-col items-center justify-between bg-sky-50">
-            <h1 className="text-sky-950 mt-4 text-center text-2xl md:text-4xl md:text-start">Rechercher un collaborateur</h1>
+        <div className="flex flex-col items-center justify-start bg-sky-50 min-h-72">
+            <h1 className="text-sky-950 mt-8 text-center text-2xl md:text-4xl md:text-start">Rechercher un collaborateur</h1>
 
             <form className="flex flex-row items-center justify-center w-full mb-16 mt-8">
-                <div className="relative">
+                <div className="relative search-shadow rounded-lg">
                     <div className="absolute left-4 top-6 z-10">
                         <SparklesSvg/>
                     </div>
@@ -30,8 +30,14 @@ export const MyCollaboratorsHeader = ({searchQuery, setSearchQuery}: Props) => {
                     </div>
 
                     <button type="submit"
-                            className="text-white absolute right-2 top-4 bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 w-10">
-                        <Search className="w-5 h-5 justify-self-center text-gray-400"/>
+                            className="
+                                text-white absolute right-2
+                                top-4 bg-gray-100 focus:ring-4
+                                focus:outline-none focus:ring-blue-300
+                                font-medium rounded-lg text-sm px-4 py-2
+                                w-10 search-collaborator
+                            ">
+                        <Search className="w-5 h-5 justify-self-center text-sky-600"/>
                     </button>
                 </div>
             </form>

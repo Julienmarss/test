@@ -44,6 +44,7 @@ type ContactDetailsResponse = {
     professionalPhone: string;
     professionalEmail: string;
     iban: string;
+    bic: string;
 }
 type PersonalSituationResponse = {
     maritalStatus: MaritalStatusResponse;

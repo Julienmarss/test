@@ -1,10 +1,15 @@
 package com.legipilot.service.core.administrator.infra.in;
 
+import com.legipilot.service.core.administrator.AcceptInvitationUseCase;
 import com.legipilot.service.core.administrator.AdministratorService;
 import com.legipilot.service.core.administrator.CompanyRightsService;
+import com.legipilot.service.core.administrator.InviteAdministratorUseCase;
 import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
+import com.legipilot.service.core.administrator.domain.InvitationRepository;
+import com.legipilot.service.core.administrator.domain.command.InviteAdministrator;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
+import com.legipilot.service.core.administrator.domain.model.Invitation;
 import com.legipilot.service.shared.infra.security.RequiresCompanyRight;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +30,9 @@ public class CompanyRightsController {
 
     private final CompanyRightsService companyRightsService;
     private final AdministratorService administratorService;
+    private final InviteAdministratorUseCase inviteAdministratorUseCase;
+    private final AcceptInvitationUseCase acceptInvitationUseCase;
+    private final InvitationRepository invitationRepository;
 
     @GetMapping
     @Operation(
@@ -39,26 +48,44 @@ public class CompanyRightsController {
         return ResponseEntity.ok(administrators);
     }
 
-    @PostMapping
+    @PostMapping("/invite")
     @Operation(
-            summary = "Ajouter un administrateur à l'entreprise",
-            description = "Ajoute un administrateur avec des droits spécifiques à l'entreprise"
+            summary = "Inviter un administrateur à l'entreprise",
+            description = "Invite un administrateur (existant ou nouveau) à rejoindre l'entreprise"
     )
-    @RequiresCompanyRight(value = CompanyRight.OWNER, companyIdParam = "companyId")
-    public ResponseEntity<Void> addAdministratorToCompany(
+    @RequiresCompanyRight(value = CompanyRight.MANAGER, companyIdParam = "companyId")
+    public ResponseEntity<InvitationResponse> inviteAdministrator(
             @PathVariable("companyId") UUID companyId,
-            @RequestBody AddAdministratorRequest request
+            @RequestBody InviteAdministratorRequest request
     ) {
         UUID currentUserId = getCurrentUserId();
 
-        companyRightsService.addAdministratorToCompany(
-                companyId,
-                request.getAdministratorId(),
-                request.getRights(),
-                currentUserId
-        );
+        InviteAdministrator command = InviteAdministrator.builder()
+                .email(request.email())
+                .rights(request.rights())
+                .companyId(companyId)
+                .build();
 
-        return ResponseEntity.ok().build();
+        Invitation invitation = inviteAdministratorUseCase.execute(command, currentUserId);
+
+        return ResponseEntity.ok(InvitationResponse.from(invitation));
+    }
+
+    @GetMapping("/invitations")
+    @Operation(
+            summary = "Obtenir les invitations en cours",
+            description = "Récupère toutes les invitations pending pour l'entreprise"
+    )
+    @RequiresCompanyRight(value = CompanyRight.MANAGER, companyIdParam = "companyId")
+    public ResponseEntity<List<InvitationResponse>> getPendingInvitations(
+            @PathVariable("companyId") UUID companyId
+    ) {
+        List<Invitation> invitations = invitationRepository.findPendingByCompanyId(companyId);
+        return ResponseEntity.ok(
+                invitations.stream()
+                        .map(InvitationResponse::from)
+                        .toList()
+        );
     }
 
     @PutMapping("/{administratorId}/rights")
@@ -77,7 +104,7 @@ public class CompanyRightsController {
         companyRightsService.updateAdministratorRights(
                 companyId,
                 administratorId,
-                request.getRights(),
+                request.rights(),
                 currentUserId
         );
 
@@ -138,17 +165,31 @@ public class CompanyRightsController {
         return admin.id();
     }
 
-    // DTOs
     public record CompanyRightInfo(CompanyRight right, String displayName) {}
 
-    @lombok.Data
-    public static class UpdateRightsRequest {
-        private CompanyRight rights;
-    }
+    public record InviteAdministratorRequest(String email, CompanyRight rights) {}
 
-    @lombok.Data
-    public static class AddAdministratorRequest {
-        private UUID administratorId;
-        private CompanyRight rights;
+    public record UpdateRightsRequest(CompanyRight rights) {}
+
+    public record InvitationResponse(
+            UUID id,
+            UUID token,
+            String email,
+            String status,
+            String rights,
+            String createdAt,
+            String expiresAt
+    ) {
+        public static InvitationResponse from(Invitation invitation) {
+            return new InvitationResponse(
+                    invitation.id(),
+                    invitation.token(),
+                    invitation.email(),
+                    invitation.status().name(),
+                    invitation.rights().getDisplayName(),
+                    invitation.createdAt().toString(),
+                    invitation.expiresAt().toString()
+            );
+        }
     }
 }

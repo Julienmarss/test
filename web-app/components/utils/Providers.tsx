@@ -5,6 +5,7 @@ import {ReactNode, useEffect, useState} from 'react';
 import {SessionProvider} from "next-auth/react";
 import {useRouter} from "next/navigation";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
+import {HeroUIProvider} from "@heroui/react";
 
 export default function Providers({children}: { children: ReactNode }) {
     const router = useRouter();
@@ -34,8 +35,10 @@ export default function Providers({children}: { children: ReactNode }) {
     return (
         <SessionProvider>
             <QueryClientProvider client={queryClient}>
-                {children}
-                {/*<ReactQueryDevtools initialIsOpen={false} />*/}
+                <HeroUIProvider>
+                    {children}
+                    {/*<ReactQueryDevtools initialIsOpen={false} />*/}
+                </HeroUIProvider>
             </QueryClientProvider>
         </SessionProvider>
     );

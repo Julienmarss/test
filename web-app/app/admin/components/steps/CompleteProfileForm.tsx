@@ -9,7 +9,6 @@ type Props = {
 const CompleteProfileForm = ({ collaborator }: Props) => {
     const { company } = useCompany();
     const { mutate: sendEmail, isPending: isSendPending } = useSendMailCollaboratorToComplete();
-    console.log("here", company && collaborator?.id);
     return (
         <div id="complete-profile" className="flex flex-col gap-y-4 bg-white rounded-lg border border-slate-200 p-6 overflow-visible z-0">
             <div className="flex items-center gap-2">
