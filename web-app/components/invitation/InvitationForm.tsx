@@ -1,7 +1,8 @@
 "use client";
 
 import { ROLE_OPTIONS } from "@/api/administrator/administrators.api";
-import { useInvitationByToken } from "@/api/company/invitation.api";
+import { serviceClientNonAuthentifie } from "@/api/client.api";
+import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UUID } from "node:crypto";
@@ -12,7 +13,6 @@ import { Form } from "../ui/hero-ui/Form";
 import { Input } from "../ui/hero-ui/Input";
 import { Select, SelectItem } from "../ui/hero-ui/Select";
 import { Check } from "../ui/icons/Check";
-import { toast } from "@/hooks/use-toast";
 
 export default function InvitationForm({
                                            handleFirstnameChange,
@@ -25,9 +25,8 @@ export default function InvitationForm({
 }) {
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
-
-    const { data: invitationDetails } = useInvitationByToken(token);
 
     const passwordErrors = useMemo(() => {
         const errs: string[] = [];
@@ -49,42 +48,40 @@ export default function InvitationForm({
         const role = (fd.get("role") as string | null) ?? "";
         const phone = (fd.get("phone") as string | null)?.trim() ?? "";
 
-        if (passwordErrors.length > 0 || mismatch) return;
+        if (passwordErrors.length > 0 || mismatch) {
+            toast({
+                title: "Erreur de validation",
+                description: "Veuillez corriger les erreurs dans le formulaire",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        setIsSubmitting(true);
 
         try {
-            const response = await fetch("/api/auth/signup-with-invitation", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    authentication: {
-                        tenant: "LEGIPILOT",
-                        sub: null,
-                    },
-                    firstName: firstname,
-                    lastName: lastname,
-                    fonction: role,
-                    email: email,
-                    phone: phone,
-                    password: password,
-                    confirmPassword: confirm,
-                    // Ces champs ne sont pas requis pour une invitation
-                    // mais sont nécessaires pour le SignUp
-                    companyName: "",
-                    siren: "",
-                    siret: "",
-                    legalForm: "",
-                    nafCode: "",
-                    activityDomain: "",
-                    idcc: "",
-                    collectiveAgreement: "",
-                    invitationToken: token,
-                }),
+            await serviceClientNonAuthentifie.post("/public/signup-with-invitation", {
+                authentication: {
+                    tenant: "LEGIPILOT",
+                    sub: null,
+                },
+                firstName: firstname,
+                lastName: lastname,
+                fonction: role,
+                email: email,
+                phone: phone,
+                password: password,
+                confirmPassword: confirm,
+                companyName: "",
+                siren: "",
+                siret: "",
+                legalForm: "",
+                nafCode: "",
+                activityDomain: "",
+                idcc: "",
+                collectiveAgreement: "",
+                invitationToken: token,
             });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || "Erreur lors de l'inscription");
-            }
 
             toast({
                 title: "Compte créé !",
@@ -94,11 +91,14 @@ export default function InvitationForm({
 
             router.push(`/email-sent?email=${encodeURIComponent(email)}`);
         } catch (error: any) {
+            console.error("Signup error:", error);
             toast({
                 title: "Échec de l'inscription",
-                description: error.message || "Une erreur est survenue",
+                description: error?.response?.data?.message || "Une erreur est survenue",
                 variant: "destructive",
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -126,14 +126,7 @@ export default function InvitationForm({
                     isRequired
                 />
 
-                <Select
-                    name="role"
-                    label="Rôle"
-                    className="col-span-2"
-                    labelPlacement="outside"
-                    isRequired
-                    placeholder="Sélectionnez un rôle"
-                >
+                <Select name="role" label="Rôle" className="col-span-2" labelPlacement="outside" isRequired placeholder="Sélectionnez un rôle">
                     {ROLE_OPTIONS.map((opt) => (
                         <SelectItem key={opt.value}>{opt.label}</SelectItem>
                     ))}
@@ -149,8 +142,7 @@ export default function InvitationForm({
                     placeholder="Ex : +33 6 12 34 56 78"
                     validate={(value) => {
                         if (!/^[0-9()+\s]*$/.test(value)) return "Caractères autorisés : chiffres, +, (, ) et espace";
-                        if (value.replace(/[^\d]/g, "").length < 10)
-                            return "Le numéro de téléphone doit contenir au moins 10 chiffres";
+                        if (value.replace(/[^\d]/g, "").length < 10) return "Le numéro de téléphone doit contenir au moins 10 chiffres";
                     }}
                     onBeforeInput={(e: any) => {
                         const data = (e as InputEvent).data;
@@ -226,6 +218,8 @@ export default function InvitationForm({
                 type="submit"
                 endContent={<Check className="size-5" />}
                 className="mt-8"
+                isLoading={isSubmitting}
+                isDisabled={passwordErrors.length > 0 || mismatch}
             >
                 Accepter l'invitation et créer mon compte
             </Button>

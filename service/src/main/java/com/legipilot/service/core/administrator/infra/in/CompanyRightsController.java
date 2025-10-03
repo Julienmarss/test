@@ -42,12 +42,17 @@ public class CompanyRightsController {
             description = "Récupère tous les administrateurs et leurs droits pour une entreprise"
     )
     @RequiresCompanyRight(value = CompanyRight.READONLY, companyIdParam = "companyId")
-    public ResponseEntity<List<CompanyAdministratorRepository.CompanyAdministratorInfo>> getCompanyAdministrators(
+    public ResponseEntity<List<CompanyAdministratorResponse>> getCompanyAdministrators(
             @PathVariable("companyId") UUID companyId
     ) {
         List<CompanyAdministratorRepository.CompanyAdministratorInfo> administrators =
                 companyRightsService.getCompanyAdministrators(companyId);
-        return ResponseEntity.ok(administrators);
+
+        return ResponseEntity.ok(
+                administrators.stream()
+                        .map(CompanyAdministratorResponse::from)
+                        .toList()
+        );
     }
 
     @PostMapping("/invite")
@@ -156,7 +161,7 @@ public class CompanyRightsController {
     )
     public ResponseEntity<List<CompanyRightInfo>> getAvailableRights() {
         List<CompanyRightInfo> rights = Arrays.stream(CompanyRight.values())
-                .map(right -> new CompanyRightInfo(right, right.getDisplayName()))
+                .map(right -> new CompanyRightInfo(right.name(), right.getDisplayName()))
                 .toList();
 
         return ResponseEntity.ok(rights);
@@ -172,7 +177,7 @@ public class CompanyRightsController {
         UUID currentUserId = getCurrentUserId();
 
         return companyRightsService.getAdministratorRightForCompany(currentUserId, companyId)
-                .map(right -> ResponseEntity.ok(new CompanyRightInfo(right, right.getDisplayName())))
+                .map(right -> ResponseEntity.ok(new CompanyRightInfo(right.name(), right.getDisplayName())))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -182,12 +187,29 @@ public class CompanyRightsController {
         return admin.id();
     }
 
-    // DTOs
-    public record CompanyRightInfo(CompanyRight right, String displayName) {}
+    public record CompanyRightInfo(String right, String displayName) {}
 
     public record InviteAdministratorRequest(String email, CompanyRight rights) {}
 
     public record UpdateRightsRequest(CompanyRight rights) {}
+
+    public record CompanyAdministratorResponse(
+            UUID administratorId,
+            String rights,
+            String firstname,
+            String lastname,
+            String email
+    ) {
+        public static CompanyAdministratorResponse from(CompanyAdministratorRepository.CompanyAdministratorInfo info) {
+            return new CompanyAdministratorResponse(
+                    info.getAdministratorId(),
+                    info.getRights().name(),
+                    info.getFirstname(),
+                    info.getLastname(),
+                    info.getEmail()
+            );
+        }
+    }
 
     public record InvitationResponse(
             UUID id,
@@ -204,7 +226,7 @@ public class CompanyRightsController {
                     invitation.token(),
                     invitation.email(),
                     invitation.status().name(),
-                    invitation.rights().getDisplayName(),
+                    invitation.rights().name(),
                     invitation.createdAt().toString(),
                     invitation.expiresAt().toString()
             );

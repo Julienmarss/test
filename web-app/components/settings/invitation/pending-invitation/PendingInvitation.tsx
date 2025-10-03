@@ -22,6 +22,12 @@ const statusLabels: Record<string, string> = {
     CANCELLED: "Annulée",
 };
 
+const rightsLabels: Record<string, string> = {
+    OWNER: "Propriétaire",
+    MANAGER: "Responsable",
+    READONLY: "Observateur",
+};
+
 export default function PendingInvitation({
                                               isLoading = false,
                                               isError = false,
@@ -36,7 +42,7 @@ export default function PendingInvitation({
             case "email":
                 return item.email;
             case "right":
-                return item.rights;
+                return rightsLabels[item.rights] || item.rights;
             case "status":
                 return (
                     <span
@@ -48,7 +54,8 @@ export default function PendingInvitation({
                                     : "bg-gray-100 text-gray-800"
                         }`}
                     >
-						{statusLabels[item.status] || item.status}
+						{/* Affichage du label traduit */}
+                        {statusLabels[item.status] || item.status}
 					</span>
                 );
             case "expiresAt":

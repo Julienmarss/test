@@ -25,6 +25,12 @@ public class DatabaseInvitationRepository implements InvitationRepository {
 
     @Override
     @Transactional
+    public Optional<Invitation> findById(UUID id) {
+        return jpaRepository.findById(id).map(InvitationDto::toDomain);
+    }
+
+    @Override
+    @Transactional
     public Optional<Invitation> findByToken(UUID token) {
         return jpaRepository.findByToken(token).map(InvitationDto::toDomain);
     }
