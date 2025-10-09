@@ -24,7 +24,12 @@ export default function RightToAdminRemove({ item }: { item: CompanyAdministrato
 
     return (
         <>
-            <button type="button" className="justify-self-end" onClick={() => setOpen(true)}>
+            <button
+                type="button"
+                className="justify-self-end disabled:opacity-50"
+                onClick={() => setOpen(true)}
+                disabled={removeAdmin.isPending}
+            >
                 <Trash className="size-5 text-red-500 transition-opacity hover:opacity-50" />
             </button>
 

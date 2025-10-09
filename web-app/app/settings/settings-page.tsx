@@ -48,6 +48,9 @@ export default function SettingsPage() {
     const { data: myRights, isLoading: rightsLoading } = useMyRights(company?.id || "");
     const isReadOnly = myRights?.right === "READONLY";
     const isOwner = myRights?.right === "OWNER";
+    const isManager = myRights?.right === "MANAGER";
+    const canEditCompany = isOwner;
+    const canManageRights = isOwner || isManager;
 
     const roleOptions: RoleOption[] = useMemo(
         () => ROLE_OPTIONS.map(({ value, label }) => ({ value, label })),
@@ -139,6 +142,15 @@ export default function SettingsPage() {
                         <p className="text-sm text-blue-800">
                             <strong>Mode Observateur :</strong> Vous disposez de droits en lecture seule. Vous ne pouvez pas
                             modifier les informations.
+                        </p>
+                    </div>
+                )}
+
+                {isManager && (
+                    <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                        <p className="text-sm text-amber-800">
+                            <strong>Mode Responsable :</strong> Vous pouvez gérer les utilisateurs mais pas modifier les informations de
+                            l'entreprise.
                         </p>
                     </div>
                 )}
@@ -237,8 +249,8 @@ export default function SettingsPage() {
                     </div>
                 </section>
 
-                {/* Section entreprise - Version MODIFIABLE pour OWNER/MANAGER */}
-                {!isReadOnly && (
+                {/* Section entreprise - Version MODIFIABLE uniquement pour OWNER */}
+                {canEditCompany && (
                     <section className="mt-5 flex w-full flex-col gap-5 border-t border-gray-200 pt-5">
                         <div className="flex flex-col md:flex-row">
                             <div className="mb-4 flex w-full flex-col text-center md:mb-0 md:w-1/2 md:text-start">
@@ -372,18 +384,18 @@ export default function SettingsPage() {
                             </div>
                         </div>
 
-                        {/* Gestion des droits */}
-                        <ManageRight />
                     </section>
                 )}
 
-                {/* Section entreprise - Version LECTURE SEULE pour READONLY */}
-                {isReadOnly && (
+                {/* Section entreprise - Version LECTURE SEULE pour MANAGER & READONLY */}
+                {!canEditCompany && (
                     <section className="mt-5 flex w-full flex-col gap-5 border-t border-gray-200 pt-5">
                         <div className="flex flex-col md:flex-row">
                             <div className="mb-4 flex w-full flex-col text-center md:mb-0 md:w-1/2 md:text-start">
                                 <h2 className="text-gray-900">Informations sur l'entreprise</h2>
-                                <p className="text-sm text-gray-500 mt-1">Lecture seule</p>
+                                <p className="mt-1 text-sm text-gray-500">
+                                    {isReadOnly ? "Lecture seule" : "Consultation uniquement"}
+                                </p>
                             </div>
 
                             <div className="flex w-full flex-col md:w-1/2">
@@ -425,6 +437,12 @@ export default function SettingsPage() {
                             </div>
                         </div>
                     </section>
+                )}
+
+                {canManageRights && (
+                    <div className="mt-5 border-t border-gray-200 pt-5">
+                        <ManageRight />
+                    </div>
                 )}
 
                 {/* Section mot de passe - Cachée pour ReadOnly */}

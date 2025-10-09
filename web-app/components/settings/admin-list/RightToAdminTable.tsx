@@ -1,5 +1,5 @@
 "use client";
-import { CompanyAdministratorInfo, useCompanyAdministrators, useUpdateAdministratorRights } from "@/api/company/right.api";
+import { CompanyAdministratorInfo, useCompanyAdministrators, useMyRights, useUpdateAdministratorRights } from "@/api/company/right.api";
 import { Select, SelectItem } from "@/components/ui/hero-ui/Select";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@/components/ui/hero-ui/Table";
 import { useCompany } from "@/components/utils/CompanyProvider";
@@ -24,7 +24,10 @@ export default function RightToAdminTable() {
     const currentUserId = session?.user?.id;
 
     const { data: items = [], isLoading, isError } = useCompanyAdministrators(company.id);
+    const { data: myRights } = useMyRights(company.id);
     const updateRights = useUpdateAdministratorRights();
+
+    const isOwner = myRights?.right === "OWNER";
 
     const rightOptions = [
         { key: "MANAGER", label: "Responsable" },
@@ -49,6 +52,16 @@ export default function RightToAdminTable() {
                     );
                 case "right":
                     if (isItemOwner) {
+                        if (isOwner && !isCurrentUser) {
+                            return (
+                                <div className="flex items-center gap-2">
+                                    <span className="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800">
+                                        Propriétaire
+                                    </span>
+                                    <span className="text-xs text-gray-500">(géré par les propriétaires)</span>
+                                </div>
+                            );
+                        }
                         return (
                             <div className="flex items-center gap-2">
                                 <span className="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800">
@@ -74,29 +87,33 @@ export default function RightToAdminTable() {
                         );
                     }
 
-                    return (
-                        <Select
-                            selectedKeys={[item.rights]}
-                            onSelectionChange={(keys) => {
-                                const newRight = Array.from(keys)[0] as "MANAGER" | "READONLY";
-                                if (newRight && newRight !== item.rights) {
-                                    updateRights.mutate({
-                                        companyId: company.id,
-                                        administratorId: item.administratorId,
-                                        rights: newRight,
-                                    });
-                                }
-                            }}
-                            isDisabled={updateRights.isPending}
-                            aria-label="Modifier les droits"
-                        >
-                            {rightOptions.map((option) => (
-                                <SelectItem key={option.key}>{option.label}</SelectItem>
-                            ))}
-                        </Select>
-                    );
+                            return (
+                                <Select
+                                    selectedKeys={[item.rights]}
+                                    onSelectionChange={(keys) => {
+                                        const newRight = Array.from(keys)[0] as "OWNER" | "MANAGER" | "READONLY";
+                                        if (newRight && newRight !== item.rights) {
+                                            updateRights.mutate({
+                                                companyId: company.id,
+                                                administratorId: item.administratorId,
+                                                rights: newRight,
+                                            });
+                                        }
+                                    }}
+                                    isDisabled={!isOwner || updateRights.isPending}
+                                    aria-label="Modifier les droits"
+                                >
+                                    {rightOptions.map((option) => (
+                                        <SelectItem key={option.key}>{option.label}</SelectItem>
+                                    ))}
+                                </Select>
+                            );
                 case "remove":
-                    if (isItemOwner || isCurrentUser) {
+                    if (!isOwner || isCurrentUser) {
+                        return null;
+                    }
+
+                    if (isItemOwner && !isOwner) {
                         return null;
                     }
                     return <RightToAdminRemove item={item} />;
@@ -104,7 +121,7 @@ export default function RightToAdminTable() {
                     return <p>--</p>;
             }
         },
-        [company.id, updateRights, currentUserId]
+        [company.id, updateRights, currentUserId, isOwner]
     );
 
     return (

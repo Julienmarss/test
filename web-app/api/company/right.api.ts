@@ -17,7 +17,7 @@ export type CompanyRightInfo = {
 };
 
 export type UpdateRightsRequest = {
-    rights: "MANAGER" | "READONLY";
+    rights: "OWNER" | "MANAGER" | "READONLY";
 };
 
 export function useCompanyAdministrators(companyId: string) {
@@ -42,7 +42,7 @@ export function useUpdateAdministratorRights() {
                            }: {
             companyId: UUID;
             administratorId: UUID;
-            rights: "MANAGER" | "READONLY"; // OWNER retiré
+            rights: "OWNER" | "MANAGER" | "READONLY";
         }) => {
             await serviceClient.put(`/companies/${companyId}/administrators/${administratorId}/rights`, { rights });
         },

@@ -2,7 +2,6 @@ package com.legipilot.service.core.administrator;
 
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
-import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.shared.domain.error.NotAllowed;
 import lombok.RequiredArgsConstructor;
@@ -50,16 +49,17 @@ public class CompanyRightsService {
             throw new NotAllowed("Administrateur non trouvé dans cette entreprise");
         }
 
-        if (currentRights.get().isOwner()) {
-            throw new NotAllowed("Impossible de modifier les droits du propriétaire");
+        CompanyRight targetCurrentRights = currentRights.get();
+
+        if (targetCurrentRights.isOwner() && !newRights.isOwner()) {
+            long ownerCount = companyAdminRepository.countOwnersByCompany(companyId);
+            if (ownerCount <= 1) {
+                throw new NotAllowed("Impossible de retirer le dernier propriétaire de l'entreprise");
+            }
         }
 
-        if (newRights.isOwner()) {
-            throw new NotAllowed("Impossible de promouvoir un utilisateur en propriétaire. Il ne peut y avoir qu'un seul propriétaire par entreprise");
-        }
-
-        if (!newRights.isManager() && !newRights.isReadOnly()) {
-            throw new NotAllowed("Les droits autorisés sont uniquement Responsable ou Observateur");
+        if (!newRights.isOwner() && !newRights.isManager() && !newRights.isReadOnly()) {
+            throw new NotAllowed("Les droits autorisés sont uniquement Propriétaire, Responsable ou Observateur");
         }
 
         companyAdminRepository.updateRights(companyId, administratorId, newRights);
@@ -72,18 +72,21 @@ public class CompanyRightsService {
         log.info("Ajout de l'admin {} à l'entreprise {} avec droits {} par user {}",
                 administratorId, companyId, rights, currentUserId);
 
-        Administrator admin = administratorRepository.get(administratorId);
+        administratorRepository.get(administratorId);
 
-        if (!hasRight(currentUserId, companyId, CompanyRight.MANAGER)) {
+        Optional<CompanyRight> currentUserRights = companyAdminRepository
+                .findRightByAdministratorAndCompany(currentUserId, companyId);
+
+        if (currentUserRights.isEmpty() || !currentUserRights.get().hasPermission(CompanyRight.MANAGER)) {
             throw new NotAllowed("Droits insuffisants pour ajouter des administrateurs");
         }
 
-        if (rights.isOwner()) {
-            throw new NotAllowed("Impossible d'ajouter un propriétaire. Il ne peut y avoir qu'un seul propriétaire par entreprise");
+        if (rights.isOwner() && !currentUserRights.get().isOwner()) {
+            throw new NotAllowed("Seuls les propriétaires peuvent attribuer le droit Propriétaire");
         }
 
-        if (!rights.isManager() && !rights.isReadOnly()) {
-            throw new NotAllowed("Les droits autorisés sont uniquement Responsable ou Observateur");
+        if (!rights.isOwner() && !rights.isManager() && !rights.isReadOnly()) {
+            throw new NotAllowed("Les droits autorisés sont uniquement Propriétaire, Responsable ou Observateur");
         }
 
         companyAdminRepository.addAdministratorToCompany(companyId, administratorId, rights);
@@ -111,7 +114,10 @@ public class CompanyRightsService {
         }
 
         if (adminRight.get().isOwner()) {
-            throw new NotAllowed("Impossible de supprimer le propriétaire de l'entreprise");
+            long ownerCount = companyAdminRepository.countOwnersByCompany(companyId);
+            if (ownerCount <= 1) {
+                throw new NotAllowed("Impossible de supprimer le dernier propriétaire de l'entreprise");
+            }
         }
 
         companyAdminRepository.removeAdministratorFromCompany(companyId, administratorId);
