@@ -56,11 +56,6 @@ public class SignUpWithInvitationUseCase {
                 throw new NotAllowed("L'email ne correspond pas à celui de l'invitation");
             }
 
-            if (inv.rights().isOwner()) {
-                log.error("Tentative d'acceptation d'une invitation OWNER pour {}", command.email());
-                throw new NotAllowed("Les invitations ne peuvent pas créer de propriétaire");
-            }
-
             log.info("Acceptation de l'invitation {} pour rejoindre l'entreprise {}",
                     inv.token(), inv.companyId());
 

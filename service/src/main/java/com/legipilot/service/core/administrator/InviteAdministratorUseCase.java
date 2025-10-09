@@ -35,22 +35,25 @@ public class InviteAdministratorUseCase {
         log.info("Invitation d'un administrateur {} pour la company {} par user {}",
                 command.email(), command.companyId(), currentUserId);
 
-        if (!companyAdminRepository.findRightByAdministratorAndCompany(currentUserId, command.companyId())
-                .map(right -> right.hasPermission(CompanyRight.MANAGER))
-                .orElse(false)) {
+        Optional<CompanyRight> currentUserRight = companyAdminRepository
+                .findRightByAdministratorAndCompany(currentUserId, command.companyId());
+
+        if (currentUserRight.isEmpty() || !currentUserRight.get().hasPermission(CompanyRight.MANAGER)) {
             throw new NotAllowed("inviter des administrateurs");
         }
 
-        if (command.rights().isOwner()) {
-            log.error("Tentative d'invitation avec le rôle OWNER pour {} par {}",
+        if (command.rights().isOwner() && !currentUserRight.get().isOwner()) {
+            log.error("Tentative d'invitation OWNER non autorisée pour {} par {}",
                     command.email(), currentUserId);
-            throw new NotAllowed("Les invitations ne peuvent être envoyées qu'avec les droits Responsable ou Observateur");
+            throw new NotAllowed("Seuls les propriétaires peuvent inviter un autre propriétaire");
         }
 
-        if (!command.rights().isManager() && !command.rights().isReadOnly()) {
+        if (!command.rights().isOwner()
+                && !command.rights().isManager()
+                && !command.rights().isReadOnly()) {
             log.error("Tentative d'invitation avec un rôle invalide {} pour {}",
                     command.rights(), command.email());
-            throw new NotAllowed("Les droits autorisés sont uniquement Responsable ou Observateur");
+            throw new NotAllowed("Les droits autorisés sont uniquement Propriétaire, Responsable ou Observateur");
         }
 
         Optional<Invitation> existingInvitation = invitationRepository

@@ -26,7 +26,7 @@ export type InvitationResponse = {
 
 export type CreateInvitationRequest = {
     email: string;
-    rights: "MANAGER" | "READONLY";
+    rights: "OWNER" | "MANAGER" | "READONLY";
 };
 
 export function useInvitationByToken(token: UUID) {

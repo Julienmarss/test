@@ -12,9 +12,10 @@ import { useState } from "react";
 export default function CreateInvitation() {
     const { company } = useCompany();
     const addInvitation = useAddInvitation();
-    const [selectedRight, setSelectedRight] = useState<"MANAGER" | "READONLY">("MANAGER");
+    const [selectedRight, setSelectedRight] = useState<"OWNER" | "MANAGER" | "READONLY">("MANAGER");
 
     const rightOptions = [
+        { key: "OWNER", label: "Propriétaire" },
         { key: "MANAGER", label: "Responsable" },
         { key: "READONLY", label: "Observateur" },
     ];
@@ -45,10 +46,10 @@ export default function CreateInvitation() {
             return;
         }
 
-        if (right !== "MANAGER" && right !== "READONLY") {
+        if (right !== "OWNER" && right !== "MANAGER" && right !== "READONLY") {
             toast({
                 title: "Erreur",
-                description: "Seuls les droits Responsable et Observateur sont autorisés",
+                description: "Seuls les droits Propriétaire, Responsable ou Observateur sont autorisés",
                 variant: "destructive",
             });
             return;
@@ -56,7 +57,7 @@ export default function CreateInvitation() {
 
         const payload: CreateInvitationRequest = {
             email,
-            rights: right as "MANAGER" | "READONLY"
+            rights: right as "OWNER" | "MANAGER" | "READONLY"
         };
 
         try {
@@ -67,7 +68,9 @@ export default function CreateInvitation() {
 
             toast({
                 title: "Invitation envoyée",
-                description: `Une invitation a été envoyée à ${email} avec les droits ${right === "MANAGER" ? "Responsable" : "Observateur"}`,
+                description: `Une invitation a été envoyée à ${email} avec les droits ${
+                    right === "OWNER" ? "Propriétaire" : right === "MANAGER" ? "Responsable" : "Observateur"
+                }`,
                 variant: "default",
             });
         } catch (err: any) {
@@ -109,14 +112,16 @@ export default function CreateInvitation() {
                             isRequired
                             selectedKeys={[selectedRight]}
                             onSelectionChange={(keys) => {
-                                const selected = Array.from(keys)[0] as "MANAGER" | "READONLY";
+                                const selected = Array.from(keys)[0] as "OWNER" | "MANAGER" | "READONLY";
                                 setSelectedRight(selected);
                             }}
                             placeholder="Sélectionnez un droit"
                             description={
-                                selectedRight === "MANAGER"
-                                    ? "Peut inviter et gérer les observateurs"
-                                    : "Accès en lecture seule uniquement"
+                                selectedRight === "OWNER"
+                                    ? "Accès complet : gestion de l'entreprise et des administrateurs"
+                                    : selectedRight === "MANAGER"
+                                        ? "Peut gérer les collaborateurs et inviter de nouveaux membres"
+                                        : "Accès en lecture seule uniquement"
                             }
                         >
                             {rightOptions.map((option) => (
@@ -130,9 +135,13 @@ export default function CreateInvitation() {
                 <div className="w-full rounded-lg bg-blue-50 border border-blue-200 p-3 text-sm text-blue-800">
                     <p className="font-medium mb-1">ℹ️ À propos des invitations :</p>
                     <ul className="list-disc list-inside space-y-1 text-xs">
-                        <li><strong>Responsable</strong> : Peut inviter d'autres utilisateurs et modifier les informations de l'entreprise</li>
+                        <li>
+                            <strong>Propriétaire</strong> : Accès complet à l'entreprise et aux droits des administrateurs
+                            {" "}
+                            <span className="font-normal text-xs text-purple-800">(réservé aux invitations envoyées par un propriétaire)</span>
+                        </li>
+                        <li><strong>Responsable</strong> : Peut inviter d'autres utilisateurs et gérer les collaborateurs</li>
                         <li><strong>Observateur</strong> : Accès en lecture seule, ne peut rien modifier</li>
-                        <li className="text-purple-800 font-medium">⛔ Le rôle de Propriétaire ne peut pas être attribué par invitation</li>
                     </ul>
                 </div>
 
