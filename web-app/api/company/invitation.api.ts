@@ -26,10 +26,9 @@ export type InvitationResponse = {
 
 export type CreateInvitationRequest = {
     email: string;
-    rights: "OWNER" | "MANAGER" | "READONLY";
+    rights: "MANAGER" | "READONLY";
 };
 
-// ✅ CORRECTION - Endpoint corrigé
 export function useInvitationByToken(token: UUID) {
     return useQuery({
         queryKey: ["invitation-by-token", { token }],

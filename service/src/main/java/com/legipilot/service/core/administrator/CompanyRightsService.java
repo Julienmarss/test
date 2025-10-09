@@ -41,10 +41,25 @@ public class CompanyRightsService {
         }
 
         if (currentUserId.equals(administratorId)) {
-            long ownerCount = companyAdminRepository.countOwnersByCompany(companyId);
-            if (ownerCount <= 1 && newRights != CompanyRight.OWNER) {
-                throw new NotAllowed("Impossible de supprimer le dernier propriétaire de l'entreprise");
-            }
+            throw new NotAllowed("Vous ne pouvez pas modifier vos propres droits");
+        }
+
+        Optional<CompanyRight> currentRights = getAdministratorRightForCompany(administratorId, companyId);
+
+        if (currentRights.isEmpty()) {
+            throw new NotAllowed("Administrateur non trouvé dans cette entreprise");
+        }
+
+        if (currentRights.get().isOwner()) {
+            throw new NotAllowed("Impossible de modifier les droits du propriétaire");
+        }
+
+        if (newRights.isOwner()) {
+            throw new NotAllowed("Impossible de promouvoir un utilisateur en propriétaire. Il ne peut y avoir qu'un seul propriétaire par entreprise");
+        }
+
+        if (!newRights.isManager() && !newRights.isReadOnly()) {
+            throw new NotAllowed("Les droits autorisés sont uniquement Responsable ou Observateur");
         }
 
         companyAdminRepository.updateRights(companyId, administratorId, newRights);
@@ -63,8 +78,12 @@ public class CompanyRightsService {
             throw new NotAllowed("Droits insuffisants pour ajouter des administrateurs");
         }
 
-        if (rights == CompanyRight.OWNER && !hasRight(currentUserId, companyId, CompanyRight.OWNER)) {
-            throw new NotAllowed("Seuls les propriétaires peuvent créer d'autres propriétaires");
+        if (rights.isOwner()) {
+            throw new NotAllowed("Impossible d'ajouter un propriétaire. Il ne peut y avoir qu'un seul propriétaire par entreprise");
+        }
+
+        if (!rights.isManager() && !rights.isReadOnly()) {
+            throw new NotAllowed("Les droits autorisés sont uniquement Responsable ou Observateur");
         }
 
         companyAdminRepository.addAdministratorToCompany(companyId, administratorId, rights);
@@ -77,16 +96,22 @@ public class CompanyRightsService {
         log.info("Suppression de l'admin {} de l'entreprise {} par user {}",
                 administratorId, companyId, currentUserId);
 
+        if (currentUserId.equals(administratorId)) {
+            throw new NotAllowed("Vous ne pouvez pas vous retirer vous-même de l'entreprise");
+        }
+
         if (!hasRight(currentUserId, companyId, CompanyRight.OWNER)) {
             throw new NotAllowed("Seuls les propriétaires peuvent supprimer des administrateurs");
         }
 
         Optional<CompanyRight> adminRight = getAdministratorRightForCompany(administratorId, companyId);
-        if (adminRight.isPresent() && adminRight.get() == CompanyRight.OWNER) {
-            long ownerCount = companyAdminRepository.countOwnersByCompany(companyId);
-            if (ownerCount <= 1) {
-                throw new NotAllowed("Impossible de supprimer le dernier propriétaire de l'entreprise");
-            }
+
+        if (adminRight.isEmpty()) {
+            throw new NotAllowed("Administrateur non trouvé dans cette entreprise");
+        }
+
+        if (adminRight.get().isOwner()) {
+            throw new NotAllowed("Impossible de supprimer le propriétaire de l'entreprise");
         }
 
         companyAdminRepository.removeAdministratorFromCompany(companyId, administratorId);

@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from 
 import { useCompany } from "@/components/utils/CompanyProvider";
 import { Spinner } from "@heroui/react";
 import { Key } from "@react-types/shared";
+import { useSession } from "next-auth/react";
 import type { UUID } from "node:crypto";
 import { useCallback } from "react";
 import RightToAdminRemove from "./RightToAdminRemove";
@@ -19,34 +20,65 @@ export default function RightToAdminTable() {
     ];
 
     const { company } = useCompany();
+    const { data: session } = useSession();
+    const currentUserId = session?.user?.id;
 
     const { data: items = [], isLoading, isError } = useCompanyAdministrators(company.id);
     const updateRights = useUpdateAdministratorRights();
 
     const rightOptions = [
-        { key: "OWNER", label: "Propriétaire" },
         { key: "MANAGER", label: "Responsable" },
         { key: "READONLY", label: "Observateur" },
     ];
 
     const renderCell = useCallback(
         (item: CompanyAdministratorInfo, columnKey: Key) => {
+            const isCurrentUser = item.administratorId === currentUserId;
+            const isItemOwner = item.rights === "OWNER";
+
             switch (columnKey) {
                 case "user":
                     return (
                         <div>
                             <p>
                                 {item.firstname} {item.lastname.toUpperCase()}
+                                {isCurrentUser && <span className="ml-2 text-xs text-gray-500">(Vous)</span>}
                             </p>
                             <p className="text-xs text-gray-500">{item.email}</p>
                         </div>
                     );
                 case "right":
+                    if (isItemOwner) {
+                        return (
+                            <div className="flex items-center gap-2">
+                                <span className="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800">
+                                    Propriétaire
+                                </span>
+                                <span className="text-xs text-gray-500">(permanent)</span>
+                            </div>
+                        );
+                    }
+
+                    if (isCurrentUser) {
+                        return (
+                            <div className="flex items-center gap-2">
+                                <span className={`rounded-full px-3 py-1 text-sm font-medium ${
+                                    item.rights === "MANAGER"
+                                        ? "bg-blue-100 text-blue-800"
+                                        : "bg-gray-100 text-gray-800"
+                                }`}>
+                                    {item.rights === "MANAGER" ? "Responsable" : "Observateur"}
+                                </span>
+                                <span className="text-xs text-gray-500">(vos droits)</span>
+                            </div>
+                        );
+                    }
+
                     return (
                         <Select
                             selectedKeys={[item.rights]}
                             onSelectionChange={(keys) => {
-                                const newRight = Array.from(keys)[0] as "OWNER" | "MANAGER" | "READONLY";
+                                const newRight = Array.from(keys)[0] as "MANAGER" | "READONLY";
                                 if (newRight && newRight !== item.rights) {
                                     updateRights.mutate({
                                         companyId: company.id,
@@ -56,6 +88,7 @@ export default function RightToAdminTable() {
                                 }
                             }}
                             isDisabled={updateRights.isPending}
+                            aria-label="Modifier les droits"
                         >
                             {rightOptions.map((option) => (
                                 <SelectItem key={option.key}>{option.label}</SelectItem>
@@ -63,12 +96,15 @@ export default function RightToAdminTable() {
                         </Select>
                     );
                 case "remove":
+                    if (isItemOwner || isCurrentUser) {
+                        return null;
+                    }
                     return <RightToAdminRemove item={item} />;
                 default:
                     return <p>--</p>;
             }
         },
-        [company.id, updateRights]
+        [company.id, updateRights, currentUserId]
     );
 
     return (

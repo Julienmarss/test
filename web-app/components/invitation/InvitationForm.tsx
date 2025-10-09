@@ -105,6 +105,7 @@ export default function InvitationForm({
     return (
         <Form className="items-end" onSubmit={onSubmit}>
             <div className="grid w-full grid-cols-2 gap-6 [&_label]:font-medium">
+                {/* INFORMATIONS PERSONNELLES UNIQUEMENT */}
                 <Input
                     name="firstname"
                     label="Prénom"
@@ -126,7 +127,14 @@ export default function InvitationForm({
                     isRequired
                 />
 
-                <Select name="role" label="Rôle" className="col-span-2" labelPlacement="outside" isRequired placeholder="Sélectionnez un rôle">
+                <Select
+                    name="role"
+                    label="Rôle"
+                    className="col-span-2"
+                    labelPlacement="outside"
+                    isRequired
+                    placeholder="Sélectionnez un rôle"
+                >
                     {ROLE_OPTIONS.map((opt) => (
                         <SelectItem key={opt.value}>{opt.label}</SelectItem>
                     ))}
@@ -154,6 +162,7 @@ export default function InvitationForm({
                     }}
                 />
 
+                {/* MOT DE PASSE */}
                 <Input
                     name="password"
                     type="password"
@@ -197,6 +206,7 @@ export default function InvitationForm({
                     errorMessage={mismatch ? "Les mots de passe ne correspondent pas." : undefined}
                 />
 
+                {/* CONDITIONS D'UTILISATION */}
                 <div className="col-span-2 flex items-start gap-2">
                     <Checkbox id="tos" aria-label="Accepter les CGU" isRequired />
                     <label htmlFor="tos" className="text-sm !font-normal">
@@ -214,6 +224,7 @@ export default function InvitationForm({
                 </div>
             </div>
 
+            {/* BOUTON DE SOUMISSION */}
             <Button
                 type="submit"
                 endContent={<Check className="size-5" />}

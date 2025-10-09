@@ -157,10 +157,11 @@ public class CompanyRightsController {
     @GetMapping("/available-rights")
     @Operation(
             summary = "Obtenir les droits disponibles",
-            description = "Récupère tous les droits qui peuvent être assignés"
+            description = "Récupère tous les droits qui peuvent être assignés (MANAGER et READONLY uniquement)"
     )
     public ResponseEntity<List<CompanyRightInfo>> getAvailableRights() {
         List<CompanyRightInfo> rights = Arrays.stream(CompanyRight.values())
+                .filter(right -> !right.isOwner())
                 .map(right -> new CompanyRightInfo(right.name(), right.getDisplayName()))
                 .toList();
 

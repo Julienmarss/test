@@ -22,6 +22,18 @@ public enum CompanyRight {
         return this.level >= requiredRight.level;
     }
 
+    public boolean isOwner() {
+        return this == OWNER;
+    }
+
+    public boolean isManager() {
+        return this == MANAGER;
+    }
+
+    public boolean isReadOnly() {
+        return this == READONLY;
+    }
+
     public static CompanyRight fromDbValue(String dbValue) {
         return switch (dbValue) {
             case "Owner" -> OWNER;
