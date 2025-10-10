@@ -7,7 +7,7 @@ export type StatusResponseCollaborator = 'ACTIVE' | 'EXTERNAL' | 'IN_PROGRESS' |
 export type ContractTypeResponse = 'CDI' | 'CDD' | 'APP' | 'PRO' | 'STA' | 'CTT' | 'CTI' | 'CUI' | "EXT";
 export type CategoryResponse = "Ouvrier" | "Employé" | "Technicien" | "Agent de maîtrise" | "Cadre";
 export type DocumentTypeResponse = 'Contrats et avenants' | 'Administratif' | 'Autres';
-export type WorkHoursTypeResponse = "H" | "FH" | "FJ"
+export type WorkHoursTypeResponse = "HEURES" | "FORFAIT_HEURES" | "FORFAIT_JOURS"
 
 type EmergencyContactResponse = {
     civility: CivilityResponse;
@@ -35,6 +35,9 @@ type ContractInformationsResponse = {
     benefitsInKind: number;
     trialPeriod: string;
     nonCompeteClause: boolean;
+    stayType: string;
+    stayNumber: string;
+    stayValidityDate: string;
 }
 type ContactDetailsResponse = {
     personalPhone: string;

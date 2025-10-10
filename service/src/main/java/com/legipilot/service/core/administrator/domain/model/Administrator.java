@@ -1,8 +1,8 @@
 package com.legipilot.service.core.administrator.domain.model;
 
+import com.legipilot.service.core.administrator.authentication.domain.Authentication;
 import com.legipilot.service.core.administrator.domain.command.ModifyAdministratorWithCompanyDetails;
 import com.legipilot.service.core.administrator.domain.command.SignUp;
-import com.legipilot.service.core.administrator.authentication.domain.Authentication;
 import com.legipilot.service.core.company.domain.model.Company;
 import lombok.*;
 import lombok.experimental.Accessors;

@@ -195,6 +195,12 @@ const ViewCollaboratorIntern = ({ collaborator }: { collaborator: CollaboratorRe
                             value={collaborator.contractInformations?.trialPeriod} />
                         <InfoField label="Clause de non-concurrence"
                             value={collaborator.contractInformations?.nonCompeteClause ? "Oui" : "Non"} />
+                        <InfoField label="Type de titre"
+                                   value={collaborator.contractInformations?.stayType} />
+                        <InfoField label="Numéro de séjour"
+                                   value={collaborator.contractInformations?.stayNumber} />
+                        <InfoField label="Date de validité"
+                                   value={collaborator.contractInformations?.stayValidityDate} />
                     </CardContent>
                 )}
             </Card>

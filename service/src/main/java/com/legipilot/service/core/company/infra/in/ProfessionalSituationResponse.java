@@ -30,7 +30,7 @@ public record ProfessionalSituationResponse(
                 .endDate(Objects.isNull(domain.endDate()) ? null : domain.endDate().format(formatter))
                 .location(domain.location())
                 .workHoursPerWeek(domain.workHoursPerWeek())
-                .workHoursType(domain.workHoursType())
+                .workHoursType(Objects.isNull(domain.workHoursType()) ? null : domain.workHoursType().name())
                 .responsible(domain.responsible())
                 .build();
     }

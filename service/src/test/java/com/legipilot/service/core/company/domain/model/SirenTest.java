@@ -14,7 +14,7 @@ class SirenTest {
         assertThatThrownBy(() -> new Siren("ABC123"))
                 .isInstanceOf(ValidationError.class)
                 .isInstanceOf(InvalidSiren.class)
-                .hasMessage("Désolé, le SIREN que vous avez fourni est invalide, il doit contenir exactement 9 chiffres.");
+                .hasMessage("Le SIREN doit contenir exactement 9 chiffres.");
     }
 
     @Test
@@ -22,7 +22,7 @@ class SirenTest {
         assertThatThrownBy(() -> new Siren(null))
                 .isInstanceOf(ValidationError.class)
                 .isInstanceOf(InvalidSiren.class)
-                .hasMessage("Désolé, le SIREN que vous avez fourni est invalide, il doit contenir exactement 9 chiffres.");
+                .hasMessage("Le SIREN ne peut pas être vide.");
     }
 
     @Test

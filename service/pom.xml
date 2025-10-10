@@ -11,7 +11,7 @@
 
     <groupId>com.legipilot</groupId>
     <artifactId>service</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
     <name>service</name>
     <description>Règle business du SaaS Legipilot, qui permet de piloter vos ressources humaines de l’embauche à la fin
         du contrat de travail et garantissez votre conformité juridique.
@@ -25,6 +25,7 @@
         <testcontainers.version>1.21.3</testcontainers.version>
         <tika.version>3.0.0</tika.version>
         <minio.version>8.5.17</minio.version>
+        <hypersistence-utils.version>3.7.1</hypersistence-utils.version>
     </properties>
 
     <dependencies>
@@ -58,15 +59,6 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-mistral-ai</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.github.victools</groupId>
-            <artifactId>jsonschema-generator</artifactId>
-            <version>4.38.0</version>
-        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-starter-model-openai</artifactId>-->
-<!--        </dependency>-->
 
         <!-- Developer experience -->
         <dependency>
@@ -101,11 +93,6 @@
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.8.13</version>
-        </dependency>
 
         <!-- Database -->
         <dependency>
@@ -120,6 +107,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
+            <version>${hypersistence-utils.version}</version>
         </dependency>
 
         <!-- DOCUMENT STORAGE -->

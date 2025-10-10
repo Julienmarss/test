@@ -4,6 +4,7 @@ import com.legipilot.service.core.collaborator.domain.model.ContractInformations
 import lombok.Builder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Builder
@@ -15,7 +16,10 @@ public record ContractInformationsResponse(
         BigDecimal totalCompensation,
         BigDecimal benefitsInKind,
         String trialPeriod,
-        Boolean nonCompeteClause
+        Boolean nonCompeteClause,
+        String stayType,
+        String stayNumber,
+        LocalDate stayValidityDate
 ) {
     public static ContractInformationsResponse from(ContractInformations domain) {
         if(domain == null) {
@@ -30,6 +34,9 @@ public record ContractInformationsResponse(
                 .benefitsInKind(domain.benefitsInKind())
                 .trialPeriod(domain.trialPeriod())
                 .nonCompeteClause(domain.nonCompeteClause())
+                .stayType(domain.stayType())
+                .stayNumber(domain.stayNumber())
+                .stayValidityDate(domain.stayValidityDate())
                 .build();
     }
 }

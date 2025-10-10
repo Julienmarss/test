@@ -174,7 +174,7 @@ const FormCompletedByCollaborator = ({token}: Props) => {
 
                 <section
                     className="flex flex-col gap-y-4 w-full h-full md:w-[75%] md:max-h-[70vh] md:overflow-y-hidden">
-                    <EtatCivilForm collaborator={collaborator} handleInputChange={handleInputChange}/>
+                    <EtatCivilForm collaborator={collaborator} handleInputChange={handleInputChange} showInvitationButton={false}/>
                     <CoordonneesForm collaborator={collaborator} handleInputChange={handleInputChange}/>
                     <SituationPersonnelleForm collaborator={collaborator} handleInputChange={handleInputChange}/>
                     <AddPictureProfile token={token.replace(/ /g, "+")} handleInputChange={handleInputChange}/>

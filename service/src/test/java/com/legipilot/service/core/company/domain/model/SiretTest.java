@@ -13,7 +13,7 @@ class SiretTest {
         assertThatThrownBy(() -> new Siret("9510736420001"))
                 .isInstanceOf(ValidationError.class)
                 .isInstanceOf(InvalidSiret.class)
-                .hasMessage("Désolé, le SIRET que vous avez fourni est invalide, il doit contenir exactement 14 chiffres.");
+                .hasMessage("Le SIRET doit contenir exactement 14 chiffres.");
     }
 
     @Test
@@ -21,6 +21,6 @@ class SiretTest {
         assertThatThrownBy(() -> new Siret(null))
                 .isInstanceOf(ValidationError.class)
                 .isInstanceOf(InvalidSiret.class)
-                .hasMessage("Désolé, le SIRET que vous avez fourni est invalide, il doit contenir exactement 14 chiffres.");
+                .hasMessage("Le SIRET ne peut pas être vide.");
     }
 }

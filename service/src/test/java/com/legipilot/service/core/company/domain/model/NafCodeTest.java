@@ -3,18 +3,28 @@ package com.legipilot.service.core.company.domain.model;
 import com.legipilot.service.core.company.domain.error.InvalidNafCode;
 import com.legipilot.service.shared.domain.error.ValidationError;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 class NafCodeTest {
+
+    @ParameterizedTest
+    @ValueSource(strings = {"6201Z", "62.01Z"})
+    void valide_naf_code(String value) {
+        NafCode nafCode = new NafCode(value);
+        assertThat(nafCode.value()).isEqualTo(value);
+    }
 
     @Test
     void ne_doit_pas_etre_null() {
         assertThatThrownBy(() -> new NafCode(null))
                 .isInstanceOf(ValidationError.class)
                 .isInstanceOf(InvalidNafCode.class)
-                .hasMessage("Désolé, le code NAF que vous avez fourni est invalide.");
+                .hasMessage("Le code NAF ne peut pas être vide.");
     }
 
     @Test
@@ -22,7 +32,7 @@ class NafCodeTest {
         assertThatThrownBy(() -> new NafCode("A2.123"))
                 .isInstanceOf(ValidationError.class)
                 .isInstanceOf(InvalidNafCode.class)
-                .hasMessage("Désolé, le code NAF que vous avez fourni est invalide.");
+                .hasMessage("Le code NAF doit être au format XX.XXX ou XXXXX (ex: 62.01Z ou 6201Z).");
     }
 
     @Test
@@ -30,6 +40,6 @@ class NafCodeTest {
         assertThatThrownBy(() -> new NafCode("22.A2B"))
                 .isInstanceOf(ValidationError.class)
                 .isInstanceOf(InvalidNafCode.class)
-                .hasMessage("Désolé, le code NAF que vous avez fourni est invalide.");
+                .hasMessage("Le code NAF doit être au format XX.XXX ou XXXXX (ex: 62.01Z ou 6201Z).");
     }
 }

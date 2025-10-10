@@ -76,11 +76,11 @@ export function displayStatus(status?: StatusResponse) {
 
 export function displayWorkHoursType(status?: WorkHoursTypeResponse) {
     switch (status) {
-        case 'H':
+        case 'HEURES':
             return 'Heures';
-        case 'FH':
+        case 'FORFAIT_HEURES':
             return 'Forfait heures';
-        case 'FJ':
+        case 'FORFAIT_JOURS':
             return 'Forfait jours';
         default:
             return '--';
@@ -340,6 +340,9 @@ export const toUpdateCollaboratorRequest = (collaborator: CollaboratorResponse):
     benefitsInKind: collaborator.contractInformations?.benefitsInKind,
     trialPeriod: collaborator.contractInformations?.trialPeriod,
     nonCompeteClause: collaborator.contractInformations?.nonCompeteClause,
+    stayType: collaborator.contractInformations?.stayType,
+    stayNumber: collaborator.contractInformations?.stayNumber,
+    stayValidityDate: collaborator.contractInformations?.stayValidityDate,
 
     personalPhone: collaborator.contactDetails?.personalPhone,
     personalEmail: collaborator.contactDetails?.personalEmail,

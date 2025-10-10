@@ -2,6 +2,7 @@ package com.legipilot.service.core.company.infra.out;
 
 import com.legipilot.service.core.collaborator.domain.model.ContractType;
 import com.legipilot.service.core.collaborator.domain.model.ProfessionalSituation;
+import com.legipilot.service.core.collaborator.domain.model.WorkHoursType;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +33,7 @@ public class ProfessionalSituationDto {
                 .endDate(professionalSituation.endDate())
                 .location(professionalSituation.location())
                 .workHoursPerWeek(professionalSituation.workHoursPerWeek())
-                .workHoursType(professionalSituation.workHoursType())
+                .workHoursType(Objects.isNull(professionalSituation.workHoursType()) ? null : professionalSituation.workHoursType().name())
                 .responsible(professionalSituation.responsible())
                 .build();
     }
@@ -45,7 +46,7 @@ public class ProfessionalSituationDto {
                 .endDate(endDate)
                 .location(location)
                 .workHoursPerWeek(workHoursPerWeek)
-                .workHoursType(workHoursType)
+                .workHoursType(Objects.isNull(workHoursType) ? null : WorkHoursType.valueOf(workHoursType))
                 .responsible(responsible)
                 .build();
     }

@@ -15,7 +15,7 @@ public record ProfessionalSituation(
     String location,
     String responsible,
     Integer workHoursPerWeek,
-    String workHoursType
+    WorkHoursType workHoursType
 ) {
     public static ProfessionalSituation of(UpdateCollaborator command) {
         return ProfessionalSituation.builder()

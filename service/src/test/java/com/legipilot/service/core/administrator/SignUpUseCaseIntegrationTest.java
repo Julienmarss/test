@@ -3,6 +3,7 @@ package com.legipilot.service.core.administrator;
 import com.legipilot.service.config.BaseIntegrationTest;
 import com.legipilot.service.config.TestConfig;
 import com.legipilot.service.core.administrator.authentication.SignUpUseCase;
+import com.legipilot.service.core.administrator.authentication.domain.event.AdministratorCreated;
 import com.legipilot.service.core.administrator.domain.ValidationRepository;
 import com.legipilot.service.core.administrator.domain.command.SignUp;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
@@ -11,6 +12,7 @@ import com.legipilot.service.core.administrator.domain.model.Tenant;
 import com.legipilot.service.core.administrator.authentication.domain.Authentication;
 import com.legipilot.service.core.company.domain.CompanyRepository;
 import com.legipilot.service.shared.domain.EmailPort;
+import com.legipilot.service.shared.domain.EventBus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +39,8 @@ class SignUpUseCaseIntegrationTest extends BaseIntegrationTest {
     private CompanyRepository companyRepository;
     @MockitoBean
     private ValidationRepository validationRepository;
+    @MockitoBean
+    private EventBus eventBus;
 
     @Autowired
     private EmailPort emailPort;
@@ -74,5 +78,6 @@ class SignUpUseCaseIntegrationTest extends BaseIntegrationTest {
                 .usingRecursiveComparison().ignoringFieldsMatchingRegexes(".*id")
                 .isEqualTo(JUSTIANA_AVEC_INFOS);
         verify(emailPort).sendVerificationEmail(any(Administrator.class), eq(token));
+        verify(eventBus).publish(new AdministratorCreated(admin));
     }
 }

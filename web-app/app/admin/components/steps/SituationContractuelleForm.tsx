@@ -6,6 +6,12 @@ type Props = {
     collaborator: UpdateCollaboratorRequest,
     handleInputChange: (key: string, value: string | boolean | number | string[]) => void
 };
+
+const isValidDateFormat = (date: string): boolean => {
+    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    return regex.test(date);
+};
+
 export const SituationContractuelleForm = ({collaborator, handleInputChange}: Props) => {
     return (
         <div id="situation-contractuelle"
@@ -43,19 +49,18 @@ export const SituationContractuelleForm = ({collaborator, handleInputChange}: Pr
                        value={collaborator.annualSalary}
                        onChange={(e) => handleInputChange("annualSalary", e.target.value)}/>
                 <Input type="amount" label="Avantage en nature" placeholder={"Saisissez le montant des avantages en nature"}
-                   value={collaborator.benefitsInKind}
-                   onChange={(e) => handleInputChange("benefitsInKind", e.target.value)}
-                   />
+                       value={collaborator.benefitsInKind}
+                       onChange={(e) => handleInputChange("benefitsInKind", e.target.value)}
+                />
                 <Input type="amount" label="Rémunération variable" placeholder={"Saisissez la rémunération variable"}
                        value={collaborator.variableCompensation}
                        onChange={(e) => handleInputChange("variableCompensation", e.target.value)}/>
             </div>
 
-                <Input type="amount" label="Rémunération totale" placeholder={"Saisissez la rémunération totale"}
-                       value={collaborator.totalCompensation}
-                       onChange={(e) => handleInputChange("totalCompensation", e.target.value)}
-                       className="w-full"/>
-            
+            <Input type="amount" label="Rémunération totale" placeholder={"Saisissez la rémunération totale"}
+                   value={collaborator.totalCompensation}
+                   onChange={(e) => handleInputChange("totalCompensation", e.target.value)}
+                   className="w-full"/>
 
             <Input label="Période d'essai" placeholder={"Saisissez la durée de la période d'essai"}
                    value={collaborator.trialPeriod}
@@ -71,6 +76,30 @@ export const SituationContractuelleForm = ({collaborator, handleInputChange}: Pr
                     {value: "Oui", label: "Oui"},
                     {value: "Non", label: "Non"},
                 ]}
+                className="w-full"
+            />
+
+            <div className="flex flex-col md:flex-row gap-x-2">
+                <Input
+                    label="Type de titre"
+                    placeholder={"Saisissez le type de séjour"}
+                    value={collaborator.stayType}
+                    onChange={(e) => handleInputChange("stayType", e.target.value)}
+                />
+                <Input
+                    label="Numéro de séjour"
+                    placeholder={"Saisissez le numéro de séjour"}
+                    value={collaborator.stayNumber}
+                    onChange={(e) => handleInputChange("stayNumber", e.target.value)}
+                />
+            </div>
+
+            <Input
+                label="Date de validité"
+                placeholder={"JJ/MM/AAAA"}
+                value={collaborator.stayValidityDate}
+                error={!collaborator.stayValidityDate ? undefined : !isValidDateFormat(collaborator.stayValidityDate) ? "Le format de la date est incorrect (JJ/MM/AAAA)." : undefined}
+                onChange={(e) => handleInputChange("stayValidityDate", e.target.value)}
                 className="w-full"
             />
 

@@ -17,7 +17,6 @@ import {SituationPersonnelleForm} from "@/app/admin/components/steps/SituationPe
 import {DocumentsForm} from "@/app/admin/components/steps/DocumentsForm";
 import {isServiceError} from "@/api/client.api";
 import {INITIAL_CREATION_STATE} from "@/app/admin/components/modals/create-collaborator.service";
-import CompleteProfileForm from "../steps/CompleteProfileForm";
 
 type Props = {
     open: boolean;
@@ -31,13 +30,13 @@ const STEPS = [
     {id: "coordonnees", label: "Coordonnées"},
     {id: "situation-personnelle", label: "Situation Personnelle"},
     {id: "documents", label: "Ajout de documents"},
-    {id: "complete-profile", label: "Inviter le collaborateur à compléter son profil"},
 ];
 
 export const CreateCollaboratorModal = ({open, onClose}: Props) => {
     const { company } = useCompany()
     const [currentStep, setCurrentStep] = useState(0);
     const [collaborator, setCollaborator] = useState<UpdateCollaboratorRequest>(INITIAL_CREATION_STATE);
+
     const {
         mutate: addCollaborator,
         isPending: isAddPending,
@@ -46,6 +45,7 @@ export const CreateCollaboratorModal = ({open, onClose}: Props) => {
         error: addError,
         data
     } = useAddCollaborator();
+
     const {
         mutate: updateCollaborator,
         isPending: isUpdatePending,
@@ -68,11 +68,11 @@ export const CreateCollaboratorModal = ({open, onClose}: Props) => {
     };
 
     useEffect(() => {
-        if (isAddSuccess) {
+        if (isAddSuccess && data?.id) {
             handleInputChange("id", data.id);
             handleScrollTo(currentStep + 1);
         }
-    }, [isAddSuccess]);
+    }, [isAddSuccess, data]);
 
     useEffect(() => {
         if (isUpdateSuccess && currentStep < STEPS.length - 1) {
@@ -90,7 +90,7 @@ export const CreateCollaboratorModal = ({open, onClose}: Props) => {
         }
     }
 
-    const disabled = isAddPending || isUpdatePending || (collaborator.firstname === "" || collaborator.lastname === "");
+    const disabled = isAddPending || isUpdatePending || (collaborator.firstname === "" || collaborator.lastname === "" || collaborator.personalEmail === "");
 
     return (
         <Modal open={open} onClose={onClose} title={"Ajouter un collaborateur"}
@@ -108,10 +108,14 @@ export const CreateCollaboratorModal = ({open, onClose}: Props) => {
                                Revenir à {STEPS[currentStep - 1].label}
                            </OutlineButton>
                            }
-                           {isAddError && isServiceError(isAddError) &&
+
+                           {/* Messages d'erreur */}
+                           {isAddError && isServiceError(addError) &&
                                <span className="text-red-500 text-sm">{addError.message}</span>}
-                           {isUpdateError && isServiceError(isUpdateError) &&
+                           {isUpdateError && isServiceError(updateError) &&
                                <span className="text-red-500 text-sm">{updateError.message}</span>}
+
+                           {/* Bouton de navigation normal pour toutes les étapes */}
                            {currentStep < STEPS.length - 1 ?
                                <ActionButton
                                    disabled={disabled}
@@ -158,7 +162,6 @@ export const CreateCollaboratorModal = ({open, onClose}: Props) => {
                     ))}
                 </aside>
 
-
                 <section className="flex flex-col gap-y-4 w-full h-full md:w-[75%] md:max-h-[70vh] md:overflow-y-hidden">
                     <EtatCivilForm collaborator={collaborator} handleInputChange={handleInputChange}/>
                     <SituationProfessionnelleForm collaborator={collaborator} handleInputChange={handleInputChange}/>
@@ -166,10 +169,8 @@ export const CreateCollaboratorModal = ({open, onClose}: Props) => {
                     <CoordonneesForm collaborator={collaborator} handleInputChange={handleInputChange}/>
                     <SituationPersonnelleForm collaborator={collaborator} handleInputChange={handleInputChange}/>
                     {collaborator.id && <DocumentsForm collaboratorId={collaborator.id} companyId={company.id}/>}
-                    <CompleteProfileForm collaborator={collaborator} />
                 </section>
             </article>
-
         </Modal>
     );
 };

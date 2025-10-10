@@ -5,8 +5,6 @@ import brevoApi.TransactionalEmailsApi;
 import brevoModel.SendSmtpEmail;
 import brevoModel.SendSmtpEmailTo;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
-import com.legipilot.service.core.administrator.domain.model.CompanyRight;
-import com.legipilot.service.core.company.domain.model.Company;
 import com.legipilot.service.shared.domain.model.ReinitialisationToken;
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;
 import com.legipilot.service.shared.domain.EmailPort;
@@ -124,50 +122,6 @@ public class BrevoEmailAdapter implements EmailPort {
                         "firstname", collaborator.firstname(),
                         "lastname", collaborator.lastname(),
                         "url", url
-                ));
-
-        try {
-            transactionalEmailsApi.sendTransacEmail(sendSmtpEmail);
-        } catch (ApiException e) {
-            log.error("Failed to send invitation email: ", e);
-            throw new TechnicalError("Désolé, nous n'avons pas pu envoyer l'email d'invitation.");
-        }
-    }
-
-    @Override
-    public void sendAdministratorAddedToCompanyEmail(Administrator admin, Company company, CompanyRight rights) {
-        SendSmtpEmail sendSmtpEmail = new SendSmtpEmail()
-                .to(List.of(new SendSmtpEmailTo().email(admin.email())))
-                .templateId(86L)
-                .params(Map.of(
-                        "firstname", admin.firstname(),
-                        "lastname", admin.lastname(),
-                        "companyName", company.name(),
-                        "rights", rights.getDisplayName(),
-                        "url", frontUrl + "/dashboard"
-                ));
-
-        try {
-            transactionalEmailsApi.sendTransacEmail(sendSmtpEmail);
-        } catch (ApiException e) {
-            log.error("Failed to send administrator added email: ", e);
-            throw new TechnicalError("Désolé, nous n'avons pas pu envoyer l'email de confirmation.");
-        }
-    }
-
-    @Override
-    public void sendAdministratorInvitationEmail(String email, Company company, UUID token, CompanyRight rights) {
-        String invitationUrl = frontUrl + "/invitation?token=" + token;
-
-        SendSmtpEmail sendSmtpEmail = new SendSmtpEmail()
-                .to(List.of(new SendSmtpEmailTo().email(email)))
-                .templateId(87L)
-                .params(Map.of(
-                        "email", email,
-                        "companyName", company.name(),
-                        "rights", rights.getDisplayName(),
-                        "invitationUrl", invitationUrl,
-                        "signupUrl", frontUrl + "/signup?token=" + token
                 ));
 
         try {

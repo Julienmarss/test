@@ -1,12 +1,12 @@
 import { UUID } from "node:crypto";
 import { getCurrentUser, serverGet } from "@/api/server.api";
 import { redirect } from "next/navigation";
-import { CollaboratorResponse } from "@/api/company/personalInfo";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { serviceClient } from "../client.api";
 import { AdministratorsResponse } from "../administration/administration.api";
 import { useCompany } from "@/components/utils/CompanyProvider";
+import {CollaboratorResponse} from "@/api/collaborator/collaborators.dto";
 
 export type CompanyResponse = {
     id: UUID;

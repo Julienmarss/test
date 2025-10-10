@@ -1,8 +1,9 @@
 package com.legipilot.service.core.administrator.infra.out;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.legipilot.service.core.administrator.domain.model.*;
 import com.legipilot.service.core.administrator.authentication.domain.Authentication;
+import com.legipilot.service.core.administrator.domain.model.*;
+import com.legipilot.service.core.company.infra.out.CompanyDto;
 import com.legipilot.service.shared.infra.out.database.StringListConvertor;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +14,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Entity
 @Table(name = "administrators")
@@ -51,8 +55,13 @@ public class AdministratorDto {
     @JsonIgnore
     private List<String> roles;
 
-    @OneToMany(mappedBy = "administrator", fetch = FetchType.LAZY)
-    private List<CompanyAdministratorDto> companyAssociations = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "companies_administrators",
+            joinColumns = @JoinColumn(name = "administrator_id"),
+            inverseJoinColumns = @JoinColumn(name = "company_id")
+    )
+    private List<CompanyDto> companies;
 
     public static AdministratorDto from(Administrator administrator) {
         return AdministratorDto.builder()
@@ -70,7 +79,11 @@ public class AdministratorDto {
                 .phone(administrator.phone())
                 .roles(administrator.roles().stream().map(Role::name).toList())
                 .accountState(administrator.state().name())
-                .companyAssociations(new ArrayList<>())
+                .companies(administrator.companies() != null ?
+                        administrator.companies().stream()
+                                .map(company -> CompanyDto.builder().id(company.id()).build())
+                                .toList() :
+                        new ArrayList<>())
                 .build();
     }
 
@@ -87,11 +100,7 @@ public class AdministratorDto {
                 .isNotifViewed(isNotifViewed)
                 .phone(phone)
                 .roles(roles.stream().map(Role::valueOf).toList())
-                .companies(companyAssociations != null ?
-                        companyAssociations.stream()
-                                .map(assoc -> assoc.company().toDomain())
-                                .toList() :
-                        new ArrayList<>())
+                .companies(new ArrayList<>(companies.stream().map(CompanyDto::toDomain).toList()))
                 .password(new EncodedPassword(encodedPassword))
                 .state(AccountState.valueOf(accountState))
                 .build();
