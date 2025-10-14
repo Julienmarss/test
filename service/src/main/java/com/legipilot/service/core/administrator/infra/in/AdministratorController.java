@@ -5,6 +5,7 @@ import com.legipilot.service.core.administrator.DeleteAdministratorUseCase;
 import com.legipilot.service.core.administrator.ModifyAdministratorUseCase;
 import com.legipilot.service.core.administrator.domain.command.DeleteAdministrator;
 import com.legipilot.service.core.administrator.domain.command.ModifyAdministratorPicture;
+import com.legipilot.service.core.administrator.domain.error.AdministratorRightsErrors.*;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.infra.in.request.ModifyAdministratorWithCompanyDetailsRequest;
 import com.legipilot.service.core.administrator.infra.in.response.AdministratorResponse;
@@ -41,7 +42,7 @@ public class AdministratorController {
         Administrator currentAdmin = service.get(email);
 
         if (!currentAdmin.id().equals(id)) {
-            throw new com.legipilot.service.shared.domain.error.NotAllowed("modifier le profil d'un autre utilisateur");
+            throw new CannotModifyOtherProfileError();
         }
 
         Administrator administrator = modifyAdministratorUseCase.execute(
@@ -60,7 +61,7 @@ public class AdministratorController {
         Administrator currentAdmin = service.get(email);
 
         if (!currentAdmin.id().equals(id)) {
-            throw new com.legipilot.service.shared.domain.error.NotAllowed("modifier le profil d'un autre utilisateur");
+            throw new CannotModifyOtherProfileError();
         }
 
         Administrator administrator = modifyAdministratorUseCase.execute(
