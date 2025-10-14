@@ -3,7 +3,6 @@ package com.legipilot.service.core.collaborator.domain.command;
 import com.legipilot.service.core.collaborator.domain.model.*;
 import lombok.Builder;
 
-import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -37,9 +36,6 @@ public record UpdateCollaborator(
         Optional<BigDecimal> benefitsInKind,
         Optional<String> trialPeriod,
         Optional<Boolean> nonCompeteClause,
-        Optional<String> stayType,
-        Optional<String> stayNumber,
-        Optional<LocalDate> stayValidityDate,
         Optional<String> personalPhone,
         Optional<String> personalEmail,
         Optional<String> personalAddress,

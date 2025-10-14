@@ -1,5 +1,6 @@
 package com.legipilot.service.core.administrator.authentication;
 
+import com.legipilot.service.core.administrator.SignUpCompanyRightsService;
 import com.legipilot.service.core.administrator.authentication.domain.event.AdministratorCreated;
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.ValidationRepository;
@@ -22,13 +23,15 @@ public class SignUpUseCase {
     private final ValidationRepository validationRepository;
     private final CompanyRepository companyRepository;
     private final EmailPort emailPort;
+    private final SignUpCompanyRightsService signUpCompanyRightsService;
     private final EventBus eventBus;
 
     public Administrator execute(SignUp command) {
         Administrator administrator = Administrator.signup(command);
         Administrator savedAdmin = repository.save(administrator);
         Company company = Company.register(savedAdmin, command);
-        companyRepository.save(company);
+        Company savedCompany = companyRepository.save(company);
+        signUpCompanyRightsService.assignOwnerRights(savedAdmin, savedCompany);
         UUID token = validationRepository.createToken(savedAdmin);
         emailPort.sendVerificationEmail(savedAdmin, token);
         Administrator creadtedAdministrator = repository.get(savedAdmin.id());

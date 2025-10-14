@@ -3,12 +3,14 @@ package com.legipilot.service.core.administrator.authentication.infra.in;
 import com.legipilot.service.core.administrator.AdministratorService;
 import com.legipilot.service.core.administrator.authentication.domain.AuthenticatedAdministrator;
 import com.legipilot.service.core.administrator.authentication.SignUpUseCase;
+import com.legipilot.service.core.administrator.authentication.SignUpWithInvitationUseCase;
 import com.legipilot.service.core.administrator.authentication.ValidateAccountUseCase;
 import com.legipilot.service.core.administrator.domain.command.ValidateAccount;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.authentication.infra.in.request.LoginOauthRequest;
 import com.legipilot.service.core.administrator.authentication.infra.in.request.LoginRequest;
 import com.legipilot.service.core.administrator.authentication.infra.in.request.SignUpRequest;
+import com.legipilot.service.core.administrator.authentication.infra.in.request.SignUpWithInvitationRequest;
 import com.legipilot.service.core.administrator.infra.in.response.AdministratorResponse;
 import com.legipilot.service.core.administrator.authentication.infra.in.response.AuthenticatedAdministratorResponse;
 import jakarta.validation.Valid;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +29,7 @@ public class AuthenticationController {
 
     private final PasswordEncoder passwordEncoder;
     private final SignUpUseCase signUpUseCase;
+    private final SignUpWithInvitationUseCase signUpWithInvitationUseCase;
     private final ValidateAccountUseCase validateAccountUseCase;
     private final AdministratorService service;
 
@@ -45,11 +49,22 @@ public class AuthenticationController {
         );
     }
 
-    // TODO: ADD CHECKS
     @PostMapping("/signup")
     public ResponseEntity<AdministratorResponse> signup(@RequestBody SignUpRequest request) {
         String encodedPassword = passwordEncoder.encode(request.password());
         Administrator administrator = signUpUseCase.execute(request.toDomain(encodedPassword));
+        return ResponseEntity.ok(
+                AdministratorResponse.from(administrator)
+        );
+    }
+
+    @PostMapping("/signup-with-invitation")
+    public ResponseEntity<AdministratorResponse> signupWithInvitation(@RequestBody SignUpWithInvitationRequest request) {
+        String encodedPassword = passwordEncoder.encode(request.password());
+        Administrator administrator = signUpWithInvitationUseCase.execute(
+                request.toDomain(encodedPassword),
+                Optional.ofNullable(request.invitationToken())
+        );
         return ResponseEntity.ok(
                 AdministratorResponse.from(administrator)
         );

@@ -12,4 +12,6 @@ public interface CompanyRepository {
 
     Company get(UUID id);
 
+    void delete (UUID id);
+
 }

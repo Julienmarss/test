@@ -39,10 +39,6 @@ public record UpdateCollaboratorRequest(
         BigDecimal benefitsInKind,
         String trialPeriod,
         Boolean nonCompeteClause,
-        String stayType,
-        String stayNumber,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-        LocalDate stayValidityDate,
         String personalPhone,
         String personalEmail,
         String personalAddress,
@@ -93,9 +89,6 @@ public record UpdateCollaboratorRequest(
                 .benefitsInKind(Optional.ofNullable(benefitsInKind))
                 .trialPeriod(Optional.ofNullable(trialPeriod))
                 .nonCompeteClause(Optional.ofNullable(nonCompeteClause))
-                .stayType(Optional.ofNullable(stayType))
-                .stayNumber(Optional.ofNullable(stayNumber))
-                .stayValidityDate(Optional.ofNullable(stayValidityDate))
                 .personalPhone(Optional.ofNullable(personalPhone))
                 .personalEmail(Optional.ofNullable(personalEmail))
                 .personalAddress(Optional.ofNullable(personalAddress))

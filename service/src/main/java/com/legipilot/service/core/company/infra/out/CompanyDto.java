@@ -1,6 +1,6 @@
 package com.legipilot.service.core.company.infra.out;
 
-import com.legipilot.service.core.administrator.infra.out.AdministratorDto;
+import com.legipilot.service.core.administrator.infra.out.CompanyAdministratorDto;
 import com.legipilot.service.core.company.domain.model.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -52,13 +52,8 @@ public class CompanyDto {
 
     private String picture;
 
-    @ManyToMany
-    @JoinTable(
-            name = "companies_administrators",
-            joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns = @JoinColumn(name = "administrator_id")
-    )
-    private List<AdministratorDto> administrators = new ArrayList<>();
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<CompanyAdministratorDto> administratorAssociations = new ArrayList<>();
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CollaboratorDto> collaborators = new ArrayList<>();
@@ -75,9 +70,7 @@ public class CompanyDto {
                 .idcc(company.collectiveAgreement().idcc())
                 .picture(company.picture().orElse(null))
                 .collectiveAgreement(company.collectiveAgreement().titre())
-                .administrators(new ArrayList<>(company.administrators().stream()
-                        .map(AdministratorDto::from)
-                        .toList()))
+                .administratorAssociations(new ArrayList<>())
                 .build();
 
         List<CollaboratorDto> collaborators = company.collaborators().stream()
@@ -101,12 +94,22 @@ public class CompanyDto {
                 .activityDomain(activityDomain)
                 .collectiveAgreement(new CollectiveAgreement(idcc, collectiveAgreement))
                 .picture(Optional.ofNullable(picture))
-                .administrators(new ArrayList<>(administrators.stream().map(AdministratorDto::toDomainWithoutCompany).toList()))
-                .collaborators(new ArrayList<>(collaborators.stream().map(CollaboratorDto::toDomainWithoutCompany).toList()))
+                .administrators(new ArrayList<>(administratorAssociations != null ?
+                        administratorAssociations.stream()
+                                .filter(assoc -> assoc.administrator() != null)
+                                .map(assoc -> assoc.administrator().toDomainWithoutCompany())
+                                .toList() :
+                        new ArrayList<>()))
+                .collaborators(new ArrayList<>(collaborators.stream()
+                        .map(CollaboratorDto::toDomainWithoutCompany).toList()))
                 .build();
     }
 
-    private void setCollaborators(ArrayList<CollaboratorDto> collaboratorDtos) {
-        this.collaborators = collaboratorDtos;
+    private void setCollaborators(List<CollaboratorDto> collaborators) {
+        this.collaborators = collaborators;
+    }
+
+    public void setAdministratorAssociations(List<CompanyAdministratorDto> associations) {
+        this.administratorAssociations = associations;
     }
 }

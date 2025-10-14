@@ -4,7 +4,6 @@ import com.legipilot.service.core.collaborator.domain.command.UpdateCollaborator
 import lombok.Builder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Builder
 public record ContractInformations(
@@ -15,10 +14,7 @@ public record ContractInformations(
     BigDecimal totalCompensation,
     BigDecimal benefitsInKind,
     String trialPeriod, // duration
-    Boolean nonCompeteClause,
-    String stayType,
-    String stayNumber,
-    LocalDate stayValidityDate
+    Boolean nonCompeteClause
 ){
     public static ContractInformations of(UpdateCollaborator command) {
         return ContractInformations.builder()
@@ -30,9 +26,6 @@ public record ContractInformations(
             .benefitsInKind(command.benefitsInKind().orElse(null))
             .trialPeriod(command.trialPeriod().orElse(null))
             .nonCompeteClause(command.nonCompeteClause().orElse(null))
-            .stayType(command.stayType().orElse(null))
-            .stayNumber(command.stayNumber().orElse(null))
-            .stayValidityDate(command.stayValidityDate().orElse(null))
             .build();
     }
 }

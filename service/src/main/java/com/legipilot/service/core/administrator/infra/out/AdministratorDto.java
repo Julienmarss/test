@@ -1,8 +1,8 @@
 package com.legipilot.service.core.administrator.infra.out;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.legipilot.service.core.administrator.authentication.domain.Authentication;
 import com.legipilot.service.core.administrator.domain.model.*;
+import com.legipilot.service.core.administrator.authentication.domain.Authentication;
 import com.legipilot.service.core.company.infra.out.CompanyDto;
 import com.legipilot.service.shared.infra.out.database.StringListConvertor;
 import jakarta.persistence.*;
@@ -14,10 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "administrators")
@@ -80,10 +77,10 @@ public class AdministratorDto {
                 .roles(administrator.roles().stream().map(Role::name).toList())
                 .accountState(administrator.state().name())
                 .companies(administrator.companies() != null ?
-                        administrator.companies().stream()
-                                .map(company -> CompanyDto.builder().id(company.id()).build())
-                                .toList() :
-                        new ArrayList<>())
+                    administrator.companies().stream()
+                            .map(company -> CompanyDto.builder().id(company.id()).build())
+                            .toList() :
+                    new ArrayList<>())
                 .build();
     }
 

@@ -59,6 +59,7 @@ public class WebSecurityConfig {
                                                    CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
+                        // TODO: Comprendre pourquoi en prod ça marche sans et en local nan idk (Gabin maybe tu sais)
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/public/**", "/", "/error", "/csrf", "/swagger-ui.html", "/swagger-ui/**",
                                 "/v3/api-docs", "/v3/api-docs/**", "/actuator/**").permitAll()

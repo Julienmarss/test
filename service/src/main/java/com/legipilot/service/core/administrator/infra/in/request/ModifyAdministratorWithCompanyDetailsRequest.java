@@ -38,8 +38,7 @@ public record ModifyAdministratorWithCompanyDetailsRequest(
                 .isNewsViewed(Optional.ofNullable(isNewsViewed))
                 .isNotifViewed(Optional.ofNullable(isNotifViewed))
 
-                // Nouveaux champs optionnels
-                .idCompany(Optional.of(idCompany))
+                .idCompany(Optional.of(idCompany)) // TODO: SOUCIS ICI
                 .companyName(Optional.ofNullable(companyName))
                 .siren(Optional.ofNullable(siren))
                 .siret(Optional.ofNullable(siret))
