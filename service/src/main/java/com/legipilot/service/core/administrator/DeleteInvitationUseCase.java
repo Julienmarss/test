@@ -1,9 +1,10 @@
 package com.legipilot.service.core.administrator;
 
 import com.legipilot.service.core.administrator.domain.InvitationRepository;
+import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.administrator.domain.model.Invitation;
-import com.legipilot.service.shared.domain.error.NotAllowed;
-import com.legipilot.service.shared.domain.error.RessourceNotFound;
+import com.legipilot.service.core.administrator.domain.error.InvitationErrors.*;
+import com.legipilot.service.core.administrator.domain.error.InsufficientRightsError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,17 +22,17 @@ public class DeleteInvitationUseCase {
 
     @Transactional
     public void execute(UUID invitationId, UUID companyId, UUID currentUserId) {
-        if (!companyRightsService.hasRight(currentUserId, companyId,
-                com.legipilot.service.core.administrator.domain.model.CompanyRight.MANAGER)) {
-            throw new NotAllowed("supprimer des invitations");
+        if (!companyRightsService.hasRight(currentUserId, companyId, CompanyRight.MANAGER)) {
+            throw InsufficientRightsError.forDeletingInvitation();
         }
 
         Invitation invitation = invitationRepository.findById(invitationId)
-                .orElseThrow(() -> new RessourceNotFound("Invitation non trouvée"));
+                .orElseThrow(InvitationNotFoundError::new);
 
         if (!invitation.companyId().equals(companyId)) {
-            throw new NotAllowed("Cette invitation n'appartient pas à cette entreprise");
+            throw new InvitationCompanyMismatchError();
         }
+
         invitationRepository.delete(invitationId);
     }
 }

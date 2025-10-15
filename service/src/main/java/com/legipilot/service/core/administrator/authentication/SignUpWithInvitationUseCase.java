@@ -7,8 +7,8 @@ import com.legipilot.service.core.administrator.domain.ValidationRepository;
 import com.legipilot.service.core.administrator.domain.command.SignUp;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.Invitation;
+import com.legipilot.service.core.administrator.domain.error.InvitationErrors.*;
 import com.legipilot.service.shared.domain.EmailPort;
-import com.legipilot.service.shared.domain.error.NotAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,31 +33,28 @@ public class SignUpWithInvitationUseCase {
         Administrator administrator = Administrator.signup(command);
         Administrator savedAdmin = repository.save(administrator);
 
-        if (invitationToken.isPresent()) {
-            Optional<Invitation> invitation = invitationRepository.findByToken(invitationToken.get());
-
-            if (invitation.isEmpty()) {
-                throw new NotAllowed("Token d'invitation invalide ou expiré");
-            }
-
-            Invitation inv = invitation.get();
-
-            if (!inv.isPending()) {
-                throw new NotAllowed("Cette invitation n'est plus valide");
-            }
-
-            if (!inv.email().equalsIgnoreCase(command.email())) {
-                throw new NotAllowed("L'email ne correspond pas à celui de l'invitation");
-            }
-
-            if (inv.rights().isOwner()) {
-                throw new NotAllowed("Les invitations ne peuvent pas créer de propriétaire");
-            }
-            acceptInvitationUseCase.execute(invitationToken.get(), command.email());
-            UUID validationToken = validationRepository.createToken(savedAdmin);
-            emailPort.sendVerificationEmail(savedAdmin, validationToken);
-            return repository.get(savedAdmin.id());
+        if (invitationToken.isEmpty()) {
+            throw new InvitationRequiredError();
         }
-        throw new NotAllowed("L'inscription nécessite un token d'invitation valide");
+
+        Invitation invitation = invitationRepository.findByToken(invitationToken.get())
+                .orElseThrow(InvalidInvitationTokenError::new);
+
+        if (!invitation.isPending()) {
+            throw new ExpiredInvitationError();
+        }
+
+        if (!invitation.email().equalsIgnoreCase(command.email())) {
+            throw new InvitationEmailMismatchError();
+        }
+
+        if (invitation.rights().isOwner()) {
+            throw new CannotInviteOwnerError();
+        }
+
+        acceptInvitationUseCase.execute(invitationToken.get(), command.email());
+        UUID validationToken = validationRepository.createToken(savedAdmin);
+        emailPort.sendVerificationEmail(savedAdmin, validationToken);
+        return repository.get(savedAdmin.id());
     }
 }

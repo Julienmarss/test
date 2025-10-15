@@ -6,10 +6,10 @@ import com.legipilot.service.core.administrator.domain.command.ModifyAdministrat
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.administrator.domain.model.ExposedFile;
+import com.legipilot.service.core.administrator.domain.error.AdministratorRightsErrors.*;
 import com.legipilot.service.core.collaborator.documents.domain.DocumentStoragePort;
 import com.legipilot.service.core.company.domain.CompanyRepository;
 import com.legipilot.service.core.company.domain.model.Company;
-import com.legipilot.service.shared.domain.error.NotAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class ModifyAdministratorUseCase {
 
     public Administrator execute(ModifyAdministratorWithCompanyDetails command, UUID currentUserId) {
         if (!command.id().equals(currentUserId)) {
-            throw new NotAllowed("Vous ne pouvez modifier que votre propre profil");
+            throw new CannotModifyOtherProfileError();
         }
 
         Administrator administrator = repository.get(command.id());
@@ -38,19 +38,13 @@ public class ModifyAdministratorUseCase {
         if (command.idCompany().isPresent()) {
             UUID companyId = command.idCompany().get();
 
-            boolean isOwner = companyRightsService.hasRight(currentUserId, companyId, CompanyRight.OWNER);
-
-            if (!isOwner) {
-                throw new NotAllowed("Seuls les propriétaires peuvent modifier les informations de l'entreprise");
+            if (!companyRightsService.hasRight(currentUserId, companyId, CompanyRight.OWNER)) {
+                throw new OnlyOwnerCanModifyCompanyError();
             }
 
-            try {
-                Company company = companyRepository.get(companyId);
-                company.modify(command);
-                companyRepository.save(company);
-            } catch (Exception e) {
-                throw new RuntimeException("Erreur lors de la modification de l'entreprise: " + e.getMessage());
-            }
+            Company company = companyRepository.get(companyId);
+            company.modify(command);
+            companyRepository.save(company);
         }
 
         return administrator;

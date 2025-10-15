@@ -4,7 +4,9 @@ import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
-import com.legipilot.service.shared.domain.error.NotAllowed;
+import com.legipilot.service.core.administrator.domain.error.AdministratorRightsErrors.*;
+import com.legipilot.service.core.administrator.domain.error.InsufficientRightsError;
+import com.legipilot.service.core.administrator.domain.error.RepositoryErrors.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,17 +37,17 @@ public class CompanyRightsService {
     public void updateAdministratorRights(UUID companyId, UUID administratorId, CompanyRight newRights, UUID currentUserId) {
 
         if (!hasRight(currentUserId, companyId, CompanyRight.OWNER)) {
-            throw new NotAllowed("Seul le propriétaire peut modifier les droits");
+            throw InsufficientRightsError.forUpdatingRights();
         }
 
         if (currentUserId.equals(administratorId)) {
-            throw new NotAllowed("Vous ne pouvez pas modifier vos propres droits");
+            throw new CannotModifyOwnRightsError();
         }
 
         Optional<CompanyRight> currentRights = getAdministratorRightForCompany(administratorId, companyId);
 
         if (currentRights.isEmpty()) {
-            throw new NotAllowed("Administrateur non trouvé dans cette entreprise");
+            throw new AdministratorNotFoundInCompanyError();
         }
 
         companyAdminRepository.updateRights(companyId, administratorId, newRights);
@@ -55,7 +57,7 @@ public class CompanyRightsService {
         Administrator admin = administratorRepository.get(administratorId);
 
         if (!hasRight(currentUserId, companyId, CompanyRight.MANAGER)) {
-            throw new NotAllowed("Droits insuffisants pour ajouter des administrateurs");
+            throw InsufficientRightsError.forAddingAdministrator();
         }
 
         companyAdminRepository.addAdministratorToCompany(companyId, administratorId, rights);
@@ -64,17 +66,17 @@ public class CompanyRightsService {
     public void removeAdministratorFromCompany(UUID companyId, UUID administratorId, UUID currentUserId) {
 
         if (currentUserId.equals(administratorId)) {
-            throw new NotAllowed("Vous ne pouvez pas vous retirer vous-même de l'entreprise");
+            throw new CannotRemoveSelfFromCompanyError();
         }
 
         if (!hasRight(currentUserId, companyId, CompanyRight.OWNER)) {
-            throw new NotAllowed("Seul le propriétaire peut supprimer des administrateurs");
+            throw InsufficientRightsError.forRemovingAdministrator();
         }
 
         Optional<CompanyRight> adminRight = getAdministratorRightForCompany(administratorId, companyId);
 
         if (adminRight.isEmpty()) {
-            throw new NotAllowed("Administrateur non trouvé dans cette entreprise");
+            throw new AdministratorNotFoundInCompanyError();
         }
 
         companyAdminRepository.removeAdministratorFromCompany(companyId, administratorId);
