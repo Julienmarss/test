@@ -3,10 +3,10 @@ package com.legipilot.service.core.administrator;
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.InvitationRepository;
+import com.legipilot.service.core.administrator.domain.error.AdministratorNotFound;
+import com.legipilot.service.core.administrator.domain.error.InvitationErrors.*;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.Invitation;
-import com.legipilot.service.shared.domain.error.NotAllowed;
-import com.legipilot.service.shared.domain.error.RessourceNotFound;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,18 +26,18 @@ public class AcceptInvitationUseCase {
     @Transactional
     public void execute(UUID token, String email) {
         Invitation invitation = invitationRepository.findByToken(token)
-                .orElseThrow(() -> new RessourceNotFound("Invitation non trouvée"));
+                .orElseThrow(InvitationNotFoundError::new);
 
         if (!invitation.email().equalsIgnoreCase(email)) {
-            throw new NotAllowed("accepter cette invitation");
+            throw new CannotAcceptInvitationError();
         }
 
         if (!invitation.isPending()) {
-            throw new IllegalArgumentException("Cette invitation n'est plus valide");
+            throw new ExpiredInvitationError();
         }
 
         Administrator administrator = administratorRepository.findByEmail(email)
-                .orElseThrow(() -> new RessourceNotFound("Administrateur non trouvé"));
+                .orElseThrow(() -> new AdministratorNotFound(email));
 
         companyAdminRepository.addAdministratorToCompany(
                 invitation.companyId(),

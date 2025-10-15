@@ -5,6 +5,7 @@ import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepos
 import com.legipilot.service.core.administrator.domain.InvitationRepository;
 import com.legipilot.service.core.administrator.domain.command.InviteAdministrator;
 import com.legipilot.service.core.administrator.domain.error.InsufficientRightsError;
+import com.legipilot.service.core.administrator.domain.error.InvitationErrors;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.administrator.domain.model.Invitation;
@@ -43,7 +44,7 @@ public class InviteAdministratorUseCase {
                 .findByEmailAndCompanyId(command.email(), command.companyId());
 
         if (existingInvitation.isPresent() && existingInvitation.get().isPending()) {
-            throw new InvitationAlreadyPendingError();
+            throw new InvitationErrors.InvitationAlreadyPendingError();
         }
 
         Optional<Administrator> existingAdmin = administratorRepository.findByEmail(command.email());
@@ -65,7 +66,7 @@ public class InviteAdministratorUseCase {
                     .findRightByAdministratorAndCompany(admin.id(), command.companyId());
 
             if (existingRight.isPresent()) {
-                throw new AdministratorAlreadyInCompanyError();
+                throw new InvitationErrors.AdministratorAlreadyInCompanyError();
             }
 
             companyAdminRepository.addAdministratorToCompany(

@@ -3,11 +3,11 @@ package com.legipilot.service.core.administrator.infra.in;
 import com.legipilot.service.core.administrator.AcceptInvitationUseCase;
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.InvitationRepository;
+import com.legipilot.service.core.administrator.domain.error.InvitationErrors.*;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.Invitation;
 import com.legipilot.service.core.company.domain.CompanyRepository;
 import com.legipilot.service.core.company.domain.model.Company;
-import com.legipilot.service.shared.domain.error.RessourceNotFound;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,7 @@ public class InvitationController {
     @GetMapping("/{token}")
     public ResponseEntity<InvitationDetailsResponse> getInvitationDetails(@PathVariable UUID token) {
         Invitation invitation = invitationRepository.findByToken(token)
-                .orElseThrow(() -> new RessourceNotFound("Invitation non trouvée"));
+                .orElseThrow(InvitationNotFoundError::new);
 
         Company company = companyRepository.get(invitation.companyId());
         Administrator inviter = administratorRepository.get(invitation.administratorId());
