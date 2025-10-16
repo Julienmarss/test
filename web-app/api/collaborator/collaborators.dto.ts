@@ -35,9 +35,6 @@ type ContractInformationsResponse = {
     benefitsInKind: number;
     trialPeriod: string;
     nonCompeteClause: boolean;
-    stayType: string;
-    stayNumber: string;
-    stayValidityDate: string;
 }
 type ContactDetailsResponse = {
     personalPhone: string;

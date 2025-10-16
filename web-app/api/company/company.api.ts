@@ -1,12 +1,12 @@
 import { UUID } from "node:crypto";
 import { getCurrentUser, serverGet } from "@/api/server.api";
 import { redirect } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { serviceClient } from "../client.api";
 import { AdministratorsResponse } from "../administration/administration.api";
 import { useCompany } from "@/components/utils/CompanyProvider";
-import {CollaboratorResponse} from "@/api/collaborator/collaborators.dto";
+import { CollaboratorResponse } from "@/api/collaborator/collaborators.dto";
 
 export type CompanyResponse = {
     id: UUID;
@@ -21,6 +21,11 @@ export type CompanyResponse = {
     collaborators: CollaboratorResponse[];
 }
 
+export type CompanyRightResponse = {
+    right: "OWNER" | "MANAGER" | "READONLY";
+    displayName: string;
+}
+
 export async function getCompany() {
     const user = await getCurrentUser();
     if (!user?.id) {
@@ -30,7 +35,20 @@ export async function getCompany() {
     return serverGet<CompanyResponse>(
         `/companies?administratorId=${encodeURIComponent(user.id)}`
     );
+}
 
+export function useMyCompanyRights(companyId?: UUID) {
+    return useQuery<CompanyRightResponse>({
+        queryKey: ["my-company-rights", companyId],
+        queryFn: async () => {
+            const response = await serviceClient.get<CompanyRightResponse>(
+                `/companies/${companyId}/administrators/my-rights`
+            );
+            return response.data;
+        },
+        enabled: !!companyId,
+        staleTime: 5 * 60 * 1000,
+    });
 }
 
 export function useModifyCompanyPicture() {
@@ -50,7 +68,10 @@ export function useModifyCompanyPicture() {
         onSuccess: (result: CompanyResponse) => {
             const admin: AdministratorsResponse | undefined = queryClient.getQueryData(["administrator"]);
             if (admin) {
-                const adminToUpdate: AdministratorsResponse = { ...admin, companies: [{ ...admin.companies[0], picture: result.picture }] }
+                const adminToUpdate: AdministratorsResponse = {
+                    ...admin,
+                    companies: [{ ...admin.companies[0], picture: result.picture }]
+                }
                 queryClient.setQueryData(["administrator"], () => adminToUpdate);
             }
             setCompany({ ...company, picture: result.picture })

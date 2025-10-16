@@ -105,10 +105,14 @@ export default function MyCollaborators() {
     }
 
     return (
-        <article className="bg-sky-50">
-            <Header />
+        <article>
+            <div className="bg-gradient-to-b from-sky-100 to-white relative">
+                <div className="absolute top-0 left-0 w-full h-min">
+                    <Header />
+                </div>
 
             <MyCollaboratorsHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            </div>
 
             {openModal && <AjouterCollaborateursModal open={openModal} onClose={() => setOpenModal(false)} />}
 

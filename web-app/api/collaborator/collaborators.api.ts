@@ -51,9 +51,6 @@ export type UpdateCollaboratorRequest = {
     benefitsInKind?: number;
     trialPeriod?: string;
     nonCompeteClause?: boolean;
-    stayType?: string;
-    stayNumber?: string;
-    stayValidityDate?: string;
 
     personalPhone?: string;
     personalEmail?: string;

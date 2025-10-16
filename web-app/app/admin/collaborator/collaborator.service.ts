@@ -340,9 +340,6 @@ export const toUpdateCollaboratorRequest = (collaborator: CollaboratorResponse):
     benefitsInKind: collaborator.contractInformations?.benefitsInKind,
     trialPeriod: collaborator.contractInformations?.trialPeriod,
     nonCompeteClause: collaborator.contractInformations?.nonCompeteClause,
-    stayType: collaborator.contractInformations?.stayType,
-    stayNumber: collaborator.contractInformations?.stayNumber,
-    stayValidityDate: collaborator.contractInformations?.stayValidityDate,
 
     personalPhone: collaborator.contactDetails?.personalPhone,
     personalEmail: collaborator.contactDetails?.personalEmail,

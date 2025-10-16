@@ -25,9 +25,6 @@ export const INITIAL_CREATION_STATE = {
     benefitsInKind: undefined,
     trialPeriod: undefined,
     nonCompeteClause: false,
-    stayType: undefined,
-    stayNumber: undefined,
-    stayValidityDate: undefined,
 
     personalEmail: "",
     personalPhone: undefined,

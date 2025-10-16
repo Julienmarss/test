@@ -169,8 +169,7 @@ export const ModifyCollaborator = ({collaborator, handleInputChange}: Props) => 
                                             {label: "Convention de stage", value: "STA"},
                                             {label: "Contrat de travail temporaire", value: "CTT"},
                                             {label: "Contrat de travail intermittent", value: "CTI"},
-                                            {label: "Contrat unique d'insertion", value: "CUI"},
-                                            {label: "Contrat de service civique", value: "CSC"}]}
+                                            {label: "Contrat unique d'insertion", value: "CUI"}]}
                                         value={collaborator.contractType}
                                         onChange={(value) => handleInputChange("contractType", value)}/>
                             </InfoField>
@@ -416,33 +415,6 @@ export const ModifyCollaborator = ({collaborator, handleInputChange}: Props) => 
                                         {value: "Oui", label: "Oui"},
                                         {value: "Non", label: "Non"},
                                     ]}
-                                    className="w-full"
-                                />
-                            </InfoField>
-                            <InfoField label="Type de titre">
-                                <Input
-                                    placeholder={"Saisissez le type de séjour"}
-                                    value={collaborator.stayType}
-                                    onChange={(e) => handleInputChange("stayType", e.target.value)}
-                                    className="w-full"
-                                />
-                            </InfoField>
-
-                            <InfoField label="Numéro de séjour">
-                                <Input
-                                    placeholder={"Saisissez le numéro de séjour"}
-                                    value={collaborator.stayNumber}
-                                    onChange={(e) => handleInputChange("stayNumber", e.target.value)}
-                                    className="w-full"
-                                />
-                            </InfoField>
-
-                            <InfoField label="Date de validité">
-                                <Input
-                                    placeholder={"JJ/MM/AAAA"}
-                                    value={collaborator.stayValidityDate}
-                                    error={!collaborator.stayValidityDate ? undefined : !isValidDateFormat(collaborator.stayValidityDate) ? "Le format de la date est incorrect (JJ/MM/AAAA)." : undefined}
-                                    onChange={(e) => handleInputChange("stayValidityDate", e.target.value)}
                                     className="w-full"
                                 />
                             </InfoField>

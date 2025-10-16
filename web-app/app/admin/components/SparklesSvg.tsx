@@ -1,6 +1,6 @@
-export function SparklesSvg() {
+export function SparklesSvg({className}: {className?: string}) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        <svg xmlns="http://www.w3.org/2000/svg" className={className} width="24" height="24" viewBox="0 0 24 24"
              fill="none">
             <g clipPath="url(#paint0_angular_1022_1310_clip_path)">
                 <g transform="matrix(0.00912425 -0.0147292 0.000173184 0.00912425 12 12)">

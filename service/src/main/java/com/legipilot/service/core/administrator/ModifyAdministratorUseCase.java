@@ -31,7 +31,6 @@ public class ModifyAdministratorUseCase {
         }
 
         Administrator administrator = repository.get(command.id());
-
         administrator.modify(command);
         administrator = repository.save(administrator);
 
@@ -41,12 +40,10 @@ public class ModifyAdministratorUseCase {
             if (!companyRightsService.hasRight(currentUserId, companyId, CompanyRight.OWNER)) {
                 throw new OnlyOwnerCanModifyCompanyError();
             }
-
             Company company = companyRepository.get(companyId);
             company.modify(command);
             companyRepository.save(company);
         }
-
         return administrator;
     }
 

@@ -31,8 +31,7 @@ export const SituationProfessionnelleForm = ({collaborator, handleInputChange}: 
                             {label: "Convention de stage", value: "STA"},
                             {label: "Contrat de travail temporaire", value: "CTT"},
                             {label: "Contrat de travail intermittent", value: "CTI"},
-                            {label: "Contrat unique d'insertion", value: "CUI"},
-                            {label: "Contrat de service civique", value: "CSC"}]}
+                            {label: "Contrat unique d'insertion", value: "CUI"}]}
                         value={collaborator.contractType}
                         onChange={(value) => handleInputChange("contractType", value)}/>
             </div>
