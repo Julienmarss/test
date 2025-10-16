@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Embeddable
@@ -23,6 +24,9 @@ public class ContractInformationsDto {
     private BigDecimal benefitsInKind;
     private String trialPeriod;
     private Boolean nonCompeteClause;
+    private String stayType;
+    private String stayNumber;
+    private LocalDate stayValidityDate;
 
     public static ContractInformationsDto from(ContractInformations domain) {
         return ContractInformationsDto.builder()
@@ -34,6 +38,9 @@ public class ContractInformationsDto {
                 .benefitsInKind(domain.benefitsInKind())
                 .trialPeriod(domain.trialPeriod())
                 .nonCompeteClause(domain.nonCompeteClause())
+                .stayType(domain.stayType())
+                .stayNumber(domain.stayNumber())
+                .stayValidityDate(domain.stayValidityDate())
                 .build();
     }
 
@@ -47,6 +54,9 @@ public class ContractInformationsDto {
                 .benefitsInKind(benefitsInKind)
                 .trialPeriod(trialPeriod)
                 .nonCompeteClause(nonCompeteClause)
+                .stayType(stayType)
+                .stayNumber(stayNumber)
+                .stayValidityDate(stayValidityDate)
                 .build();
     }
 }

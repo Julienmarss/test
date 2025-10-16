@@ -4,6 +4,7 @@ import com.legipilot.service.core.collaborator.domain.model.ContractInformations
 import lombok.Builder;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Builder
@@ -15,12 +16,18 @@ public record ContractInformationsResponse(
         BigDecimal totalCompensation,
         BigDecimal benefitsInKind,
         String trialPeriod,
-        Boolean nonCompeteClause
+        Boolean nonCompeteClause,
+        String stayType,
+        String stayNumber,
+        String stayValidityDate
 ) {
     public static ContractInformationsResponse from(ContractInformations domain) {
         if(domain == null) {
             return null;
         }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
         return ContractInformationsResponse.builder()
                 .category(Objects.isNull(domain.category()) ? null : domain.category().label())
                 .classification(domain.classification())
@@ -30,6 +37,11 @@ public record ContractInformationsResponse(
                 .benefitsInKind(domain.benefitsInKind())
                 .trialPeriod(domain.trialPeriod())
                 .nonCompeteClause(domain.nonCompeteClause())
+                .stayType(domain.stayType())
+                .stayNumber(domain.stayNumber())
+                .stayValidityDate(Objects.isNull(domain.stayValidityDate())
+                        ? null
+                        : domain.stayValidityDate().format(formatter))
                 .build();
     }
 }

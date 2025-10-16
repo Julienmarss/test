@@ -38,7 +38,7 @@ public record ModifyAdministratorWithCompanyDetailsRequest(
                 .isNewsViewed(Optional.ofNullable(isNewsViewed))
                 .isNotifViewed(Optional.ofNullable(isNotifViewed))
 
-                .idCompany(Optional.of(idCompany)) // TODO: SOUCIS ICI
+                .idCompany(Optional.ofNullable(idCompany))
                 .companyName(Optional.ofNullable(companyName))
                 .siren(Optional.ofNullable(siren))
                 .siret(Optional.ofNullable(siret))

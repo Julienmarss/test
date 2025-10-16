@@ -153,7 +153,7 @@ export const EtatCivilForm = ({ collaborator, handleInputChange, isFreelance, sh
 				<span className="text-lg font-medium text-gray-900">État Civil</span>
 			</div>
 
-			<div className="grid gap-2 grid-cols-1 md:grid-cols-2">
+			<div className="grid grid-cols-1 gap-2 md:grid-cols-2">
 				<Input
 					label="Nom"
 					placeholder={"Saisissez le nom de votre collaborateur"}
@@ -170,7 +170,7 @@ export const EtatCivilForm = ({ collaborator, handleInputChange, isFreelance, sh
 				/>
 			</div>
 
-			<div className="grid gap-2 grid-cols-1">
+			<div className="grid grid-cols-1 gap-2">
 				<Input
 					type="email"
 					label="E-mail personnel"
@@ -231,10 +231,8 @@ export const EtatCivilForm = ({ collaborator, handleInputChange, isFreelance, sh
 					</ActionButton>
 				)}
 			</div>
-			
 
 			{/* Bouton d'invitation en option en dessous du champ email */}
-			
 
 			<Select
 				label={"Civilité"}
@@ -248,7 +246,7 @@ export const EtatCivilForm = ({ collaborator, handleInputChange, isFreelance, sh
 				className="w-full"
 			/>
 
-			<div className="grid gap-2 grid-cols-1 md:grid-cols-2">
+			<div className="grid grid-cols-1 gap-2 md:grid-cols-2">
 				<Input
 					label="Date de naissance"
 					placeholder={"JJ/MM/AAAA"}
@@ -270,7 +268,7 @@ export const EtatCivilForm = ({ collaborator, handleInputChange, isFreelance, sh
 				/>
 			</div>
 
-			<div className="grid gap-2 grid-cols-1 md:grid-cols-2">
+			<div className="grid grid-cols-1 gap-2 md:grid-cols-2">
 				<div className="flex flex-col gap-y-1">
 					<label className="text-sm font-medium text-gray-900">Nationalité</label>
 					<ReactFlagsSelect
@@ -278,19 +276,7 @@ export const EtatCivilForm = ({ collaborator, handleInputChange, isFreelance, sh
 						selected={collaborator.nationality ? getCode(collaborator.nationality) : ""}
 						onSelect={(code) => handleInputChange("nationality", getNationality(code))}
 						customLabels={nationalities}
-						className="
-							h-12
-							[&_button]:py-1
-							[&_button]:border-gray-300
-							[&_button_span]:text-gray-400
-							[&_button_span]:text-sm
-							[&_button]:rounded-md
-							[&_button]:hover:border-gray-400
-							[&_button]:transition
-							md:w-full
-							[&_ul]:bottom-0
-							[&_ul]:-translate-y-14
-						"
+						className="h-12 md:w-full [&_button]:rounded-md [&_button]:border-gray-300 [&_button]:py-1 [&_button]:transition [&_button]:hover:border-gray-400 [&_button_span]:text-sm [&_button_span]:text-gray-400 [&_ul]:bottom-0 [&_ul]:-translate-y-14"
 						searchable
 					/>
 				</div>
@@ -311,8 +297,6 @@ export const EtatCivilForm = ({ collaborator, handleInputChange, isFreelance, sh
 					/>
 				)}
 			</div>
-
-			
 		</div>
 	);
 };

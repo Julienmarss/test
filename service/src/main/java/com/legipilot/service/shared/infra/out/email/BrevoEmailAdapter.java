@@ -94,6 +94,19 @@ public class BrevoEmailAdapter implements EmailPort {
     }
 
     @Override
+    public void sendOnboarding(Administrator admin) {
+        SendSmtpEmail sendSmtpEmail = new SendSmtpEmail()
+                .to(List.of(new SendSmtpEmailTo().email(admin.email())))
+                .templateId(97L);
+        try {
+            transactionalEmailsApi.sendTransacEmail(sendSmtpEmail);
+        } catch (ApiException e) {
+            log.error("Failed to send onboarding email: ", e);
+            throw new TechnicalError("Désolé, nous n'avons pas pu envoyer l'email d'onboarding.");
+        }
+    }
+
+    @Override
     public void sendResetPasswordEmail(String email, ReinitialisationToken token) {
         String url = frontUrl + REINITIALISATION_PATH + "?token=" + token.value();
 

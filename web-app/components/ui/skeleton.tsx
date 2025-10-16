@@ -1,15 +1,7 @@
-import { cn } from "@/utils/lib"
+import { cn } from "@/utils/lib";
 
-function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("animate-pulse rounded-md bg-muted", className)}
-      {...props}
-    />
-  )
+function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+	return <div className={cn("animate-pulse rounded-md bg-muted", className)} {...props} />;
 }
 
-export { Skeleton }
+export { Skeleton };

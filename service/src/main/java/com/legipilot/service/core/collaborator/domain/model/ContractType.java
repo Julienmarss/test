@@ -9,6 +9,7 @@ public enum ContractType {
     CTT("Contrat de travail temporaire"),
     CTI("Contrat de travail intermittent"),
     CUI("Contrat unique d'insertion"),
+    CSC("Contrat de service civique"),
     EXT("Externe");
 
     private final String label;

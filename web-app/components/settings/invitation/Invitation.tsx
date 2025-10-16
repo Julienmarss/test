@@ -13,7 +13,6 @@ export default function Invitation() {
 	return (
 		<Accordion>
 			<AccordionItem
-				key="1"
 				aria-label="Invitations"
 				title="Invitations"
 				startContent={<Envelope className="size-6 text-gray-400" />}

@@ -12,7 +12,7 @@ export default function InvitationPage({ searchParams }: { searchParams: Promise
 			</section>
 			<section className="hidden h-full items-center bg-slate-300 p-4 lg:flex">
 				<Image
-					alt="HeroUI hero Image"
+					alt="Image donnant des informations sur la connexion"
 					src="https://legipilot-documents.s3.fr-par.scw.cloud/public/prod/visuals/Illustration-Connexion.png"
 					width="100%"
 				/>

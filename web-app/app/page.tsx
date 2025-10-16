@@ -1,10 +1,12 @@
-"use client"
+"use client";
 
 import SignInPage from "./signin/signin-page";
-import {Suspense} from "react";
+import { Suspense } from "react";
 
 export default function Page() {
-    return <Suspense>
-        <SignInPage/>
-    </Suspense>
+	return (
+		<Suspense>
+			<SignInPage />
+		</Suspense>
+	);
 }

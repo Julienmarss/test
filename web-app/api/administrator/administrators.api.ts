@@ -1,20 +1,9 @@
 import { serviceClient, serviceClientNonAuthentifie } from "@/api/client.api";
-import { AdministratorResponse } from "@/app/signup/signup.service";
+import { AdministratorResponse, FonctionRequest } from "@/app/signup/signup.service";
 import { toast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 import { UUID } from "node:crypto";
-
-export const ROLE_OPTIONS = [
-	{ value: "Dirigeant", label: "Dirigeant" },
-	{ value: "RH", label: "Responsable RH" },
-	{ value: "Juridique", label: "Juridique" },
-	{ value: "Comptabilité", label: "Comptabilité" },
-	{ value: "Expert-comptable", label: "Expert-comptable" },
-	{ value: "RH Externe", label: "RH Externe" },
-] as const;
-
-export type RoleOption = { value: string; label: string };
 
 export type ModifyAdministratorRequest = {
 	firstname?: string;
@@ -67,13 +56,72 @@ export function useModifyAdministrator() {
 			const response = await serviceClient.patch<AdministratorResponse>(`/administrators/${id}`, request);
 			return response.data;
 		},
-		onSuccess: (admin: AdministratorResponse) => {
-			queryClient.setQueryData(["administrator"], () => admin);
+		onMutate: async ({ request }) => {
+			await queryClient.cancelQueries({ queryKey: ["administrator"] });
+
+			const previousAdmin = queryClient.getQueryData<AdministratorResponse>(["administrator"]);
+
+			if (previousAdmin) {
+				queryClient.setQueryData<AdministratorResponse>(["administrator"], (old) => {
+					if (!old) return old;
+
+					return {
+						...old,
+						...(request.firstname !== undefined && { firstname: request.firstname }),
+						...(request.lastname !== undefined && { lastname: request.lastname }),
+						...(request.email !== undefined && { email: request.email }),
+						...(request.phone !== undefined && { phone: request.phone }),
+						...(request.fonction !== undefined && { fonction: request.fonction as FonctionRequest }),
+						...(request.picture !== undefined && { picture: request.picture }),
+						...(request.isNewsViewed !== undefined && { isNewsViewed: request.isNewsViewed }),
+						...(request.isNotifViewed !== undefined && { isNotifViewed: request.isNotifViewed }),
+						companies: old.companies.map((company) => {
+							if (company.id === request.idCompany) {
+								return {
+									...company,
+									...(request.companyName !== undefined && { name: request.companyName }),
+									...(request.siren !== undefined && { siren: request.siren }),
+									...(request.siret !== undefined && { siret: request.siret }),
+									...(request.legalForm !== undefined && { legalForm: request.legalForm }),
+									...(request.nafCode !== undefined && { nafCode: request.nafCode }),
+									...(request.activityDomain !== undefined && { activityDomain: request.activityDomain }),
+									...(request.companyPicture !== undefined && { picture: request.companyPicture }),
+									...(request.idcc !== undefined &&
+										request.collectiveAgreement !== undefined && {
+											collectiveAgreement: {
+												idcc: request.idcc,
+												titre: request.collectiveAgreement,
+											},
+										}),
+								};
+							}
+							return company;
+						}),
+					};
+				});
+			}
+
+			return { previousAdmin };
 		},
-		onError: () => {
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["administrator"] });
+
 			toast({
-				title: "Modification echouée",
-				description: "Désolé, une erreur est survenue lors de la mise à jour de votre compte.",
+				title: "Modifications enregistrées",
+				description: "Vos informations ont été mises à jour avec succès.",
+				variant: "default",
+			});
+		},
+		onError: (error: any, _variables, context) => {
+			if (context?.previousAdmin) {
+				queryClient.setQueryData(["administrator"], context.previousAdmin);
+			}
+
+			console.error("❌ Error:", error);
+			toast({
+				title: "Modification échouée",
+				description:
+					error?.response?.data?.message || "Désolé, une erreur est survenue lors de la mise à jour de votre compte.",
 				variant: "destructive",
 			});
 		},

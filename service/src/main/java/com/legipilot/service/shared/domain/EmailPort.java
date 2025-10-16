@@ -17,6 +17,8 @@ public interface EmailPort {
 
     void sendCollaboratorsImportFailed(Administrator admin);
 
+    void sendOnboarding(Administrator admin);
+
     void sendResetPasswordEmail(String email, ReinitialisationToken token);
 
     void sendRequestFillProfilInvitationEmail(Collaborator collaborator);

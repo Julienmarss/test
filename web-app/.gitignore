@@ -29,5 +29,12 @@ next-env.d.ts
 # MacOS
 .DS_Store
 
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
 # IDE
 .vscode

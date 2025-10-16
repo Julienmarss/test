@@ -60,6 +60,10 @@ public class AdministratorDto {
     )
     private List<CompanyDto> companies;
 
+    public void activate() {
+        this.accountState = AccountState.ACTIVE.name();
+    }
+
     public static AdministratorDto from(Administrator administrator) {
         return AdministratorDto.builder()
                 .id(administrator.id())

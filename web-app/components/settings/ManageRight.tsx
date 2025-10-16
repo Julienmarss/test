@@ -4,19 +4,19 @@ import RightToAdminList from "./admin-list/RightToAdminContainer";
 import Invitation from "./invitation/Invitation";
 
 export default function ManageRole() {
-    const { company } = useCompany();
-    const { data: myRights } = useMyRights(company.id);
+	const { company } = useCompany();
+	const { data: myRights } = useMyRights(company.id);
 
-    const isReadOnly = myRights?.right === "READONLY";
+	const isReadOnly = myRights?.right === "READONLY";
 
-    if (isReadOnly) {
-        return null;
-    }
+	if (isReadOnly) {
+		return null;
+	}
 
-    return (
-        <section className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:[&>*]:col-start-2">
-            <Invitation />
-            <RightToAdminList />
-        </section>
-    );
+	return (
+		<section className="grid grid-cols-1 gap-y-6 lg:grid-cols-2 lg:[&>*]:col-start-2">
+			<Invitation />
+			<RightToAdminList />
+		</section>
+	);
 }

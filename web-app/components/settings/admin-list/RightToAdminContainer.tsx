@@ -6,7 +6,6 @@ export default function RightToAdminContainer() {
 	return (
 		<Accordion>
 			<AccordionItem
-				key="1"
 				aria-label="Administrateurs de votre entreprise"
 				title="Administrateurs de votre entreprise"
 				startContent={<UserGroup className="size-6 text-gray-400" />}

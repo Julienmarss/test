@@ -1,8 +1,8 @@
-import { ROLE_OPTIONS, RoleOption } from "@/api/administrator/administrators.api";
 import { FormErrors, SignUpRequest, validateEmail } from "@/app/signup/signup.service";
 import { Button } from "@/components/ui/buttons/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+import { ROLE_OPTIONS, RoleOption } from "@/data/roles";
 import { useMemo, useState } from "react";
 
 type Props = {
@@ -94,8 +94,8 @@ export const AboutYou = ({ formData, formErrors, handleInputChange, handleContin
 				</div>
 
 				<Select
-					label="Rôle"
-					placeholder="Votre rôle dans l'entreprise"
+					label="Fonction"
+					placeholder="Votre fonction dans l'entreprise"
 					value={formData.fonction}
 					onChange={(value) => handleInputChange("fonction", value)}
 					options={roleOptions}
