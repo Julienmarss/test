@@ -1,4 +1,4 @@
-CREATE TABLE commercial_events
+CREATE TABLE IF NOT EXISTS commercial_events
 (
     id           UUID PRIMARY KEY         NOT NULL,
     aggregate_id UUID                     NOT NULL,

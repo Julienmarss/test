@@ -1,11 +1,10 @@
 package com.legipilot.service.core.company.infra.in;
 
 import com.legipilot.service.core.administrator.AdministratorService;
-import com.legipilot.service.core.administrator.CompanyRightsService;
+import com.legipilot.service.core.administrator.CompanyAuthorizationService;
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
-import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.company.CompanyService;
 import com.legipilot.service.core.company.ModifyCompanyUseCase;
 import com.legipilot.service.core.company.domain.CompanyRepository;
@@ -30,8 +29,7 @@ public class CompanyController {
     private final CompanyService service;
     private final ModifyCompanyUseCase modifyCompanyUseCase;
     private final AdministratorService administratorService;
-    private final CompanyRightsService companyRightsService;
-    private final CompanyAdministratorRepository companyAdminRepository;
+    private final CompanyAuthorizationService authorizationService;
     private final CompanyRepository companyRepository;
     private final AdministratorRepository administratorRepository;
 
@@ -44,8 +42,16 @@ public class CompanyController {
     }
 
     @PostMapping("/{id}/picture")
-    public ResponseEntity<CompanyResponse> addPicture(@PathVariable UUID id, @RequestParam("file") MultipartFile picture) {
-        // TODO: add checks c'est bien moi
+    public ResponseEntity<CompanyResponse> addPicture(
+            @PathVariable UUID id,
+            @RequestParam("file") MultipartFile picture,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        Administrator currentAdmin = administratorService.get(email);
+
+        authorizationService.ensureIsOwner(currentAdmin.id(), id);
+
         Company company = modifyCompanyUseCase.execute(
                 ModifyCompanyPicture.builder()
                         .id(id)
@@ -70,9 +76,7 @@ public class CompanyController {
             throw new NotAllowed("Vous ne pouvez supprimer que votre propre entreprise");
         }
 
-        if (!companyRightsService.hasRight(administratorId, companyId, CompanyRight.OWNER)) {
-            throw new NotAllowed("Seuls le propriétaire peut supprimer l'entreprise");
-        }
+        authorizationService.ensureIsOwner(administratorId, companyId);
 
         try {
             companyRepository.delete(companyId);
