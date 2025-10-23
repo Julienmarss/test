@@ -2,11 +2,11 @@
 import { CompanyAdministratorInfo, useRemoveAdministrator } from "@/api/company/right.api";
 import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
 import { Trash } from "@/components/ui/icons/Trash";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import * as React from "react";
 
 export default function RightToAdminRemove({ item }: { item: CompanyAdministratorInfo }) {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const [open, setOpen] = React.useState(false);
 
 	const removeAdmin = useRemoveAdministrator();

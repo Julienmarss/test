@@ -1,12 +1,12 @@
 import { useInvitations } from "@/api/company/invitation.api";
 import { Accordion, AccordionItem } from "@/components/ui/accordion/Accordion";
 import { Envelope } from "@/components/ui/icons/Envelope";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import CreateInvitation from "./create-invitation/CreateInvitation";
 import PendingInvitation from "./pending-invitation/PendingInvitation";
 
 export default function Invitation() {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 
 	const { data: invitations = [], isLoading, isError } = useInvitations(company.id);
 

@@ -4,14 +4,14 @@ import { OutlineButton } from "@/components/ui/buttons/OutlineButton";
 import { Modal } from "@/components/ui/Modal";
 import { DragEvent, useEffect, useRef, useState } from "react";
 import { useImportCollaborators } from "@/api/collaborator/collaborators.api";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 
 type Props = {
 	open: boolean;
 	onClose: () => void;
 };
 export const ImportCollaboratorsModal = ({ open, onClose }: Props) => {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [files, setFiles] = useState<Array<File>>([]);
 	const { mutate: importCollaborators, isPending, isError, isSuccess, error } = useImportCollaborators();

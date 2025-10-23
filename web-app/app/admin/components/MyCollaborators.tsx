@@ -9,7 +9,7 @@ import { getFilteredCollaborators } from "@/app/admin/collaborator/collaborator.
 import { Header } from "@/app/admin/components/Header";
 import { AjouterCollaborateursModal } from "@/app/admin/components/AjouterCollaborateursModal";
 import { useCollaborators, useExportCollaborators } from "@/api/collaborator/collaborators.api";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import { PageSpinner } from "@/components/ui/icons/Spinner";
 import { CollaboratorResponse } from "@/api/collaborator/collaborators.dto";
 import { ActiveFilters } from "./ActiveFilters";
@@ -22,7 +22,7 @@ import { parseDate } from "@/components/utils/date";
 import _ from "lodash";
 
 export default function MyCollaborators() {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const [view, setView] = usePersistedState<"list" | "trombinoscope">("collaborators_view", "list");
 	const { data: collaborators } = useCollaborators(company?.id);
 	const { mutate: exportCollaborators } = useExportCollaborators();

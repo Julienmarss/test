@@ -11,7 +11,7 @@ import { Filters } from "./table.service";
 import ConfirmDeleteDialog from "./ConfirmDeleteDialog";
 import { useState } from "react";
 import { useDeleteCollaborator } from "@/api/collaborator/collaborators.api";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import NameColumn from "./columns/NameColumn";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -35,7 +35,7 @@ export const MyCollaboratorsTable = ({
 	const [openConfirm, setOpenConfirm] = useState(false);
 	const [collaboratorSelected, setCollaboratorSelected] = useState<any>();
 	const { mutate: deleteCollaborator } = useDeleteCollaborator();
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 
 	const handleConfirmDelete = async () => {
 		await deleteCollaborator({

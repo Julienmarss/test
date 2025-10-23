@@ -1,15 +1,17 @@
 package com.legipilot.service.core.company.infra.in;
 
 import com.legipilot.service.core.administrator.AdministratorService;
-import com.legipilot.service.core.administrator.CompanyAuthorizationService;
+import com.legipilot.service.core.administrator.CompanyRightsService;
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
+import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.company.CompanyService;
 import com.legipilot.service.core.company.ModifyCompanyUseCase;
 import com.legipilot.service.core.company.domain.CompanyRepository;
 import com.legipilot.service.core.company.domain.command.ModifyCompanyPicture;
 import com.legipilot.service.core.company.domain.model.Company;
+import com.legipilot.service.core.company.domain.model.CompanyId;
 import com.legipilot.service.shared.domain.error.NotAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +31,8 @@ public class CompanyController {
     private final CompanyService service;
     private final ModifyCompanyUseCase modifyCompanyUseCase;
     private final AdministratorService administratorService;
-    private final CompanyAuthorizationService authorizationService;
+    private final CompanyRightsService companyRightsService;
+    private final CompanyAdministratorRepository companyAdminRepository;
     private final CompanyRepository companyRepository;
     private final AdministratorRepository administratorRepository;
 
@@ -41,17 +44,17 @@ public class CompanyController {
         );
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CompanyResponse> getCompanyById(@PathVariable("id") UUID id) {
+        Company company = service.get(new CompanyId(id));
+        return ResponseEntity.ok(
+                CompanyResponse.from(company)
+        );
+    }
+
     @PostMapping("/{id}/picture")
-    public ResponseEntity<CompanyResponse> addPicture(
-            @PathVariable UUID id,
-            @RequestParam("file") MultipartFile picture,
-            Authentication authentication) {
-
-        String email = authentication.getName();
-        Administrator currentAdmin = administratorService.get(email);
-
-        authorizationService.ensureIsOwner(currentAdmin.id(), id);
-
+    public ResponseEntity<CompanyResponse> addPicture(@PathVariable UUID id, @RequestParam("file") MultipartFile picture) {
+        // TODO: add checks c'est bien moi
         Company company = modifyCompanyUseCase.execute(
                 ModifyCompanyPicture.builder()
                         .id(id)
@@ -62,6 +65,8 @@ public class CompanyController {
                 CompanyResponse.from(company)
         );
     }
+
+    // TODO : Ajouter la modification de l'entreprise + modifier si cet utilisateur là a bien le droit
 
     @DeleteMapping("/{companyId}")
     public ResponseEntity<Void> deleteCompany(
@@ -76,7 +81,9 @@ public class CompanyController {
             throw new NotAllowed("Vous ne pouvez supprimer que votre propre entreprise");
         }
 
-        authorizationService.ensureIsOwner(administratorId, companyId);
+        if (!companyRightsService.hasRight(administratorId, companyId, CompanyRight.OWNER)) {
+            throw new NotAllowed("Seuls le propriétaire peut supprimer l'entreprise");
+        }
 
         try {
             companyRepository.delete(companyId);

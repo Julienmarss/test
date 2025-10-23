@@ -5,7 +5,7 @@ import { Separator } from "../separator";
 import Link from "next/link";
 import ConfirmDeleteDialog from "@/app/admin/components/ConfirmDeleteDialog";
 import { useDeleteCollaborator, useSendMailCollaboratorToComplete } from "@/api/collaborator/collaborators.api";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import { UUID } from "crypto";
 import { useRouter } from "next/navigation";
 
@@ -17,7 +17,7 @@ export function MagicButton({
 	const [openConfirm, setOpenConfirm] = useState(false);
 	const { mutate: deleteCollaborator } = useDeleteCollaborator();
 	const { mutate: sendEmail, isPending: isSendPending } = useSendMailCollaboratorToComplete();
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const router = useRouter();
 
 	const handleConfirmDelete = async () => {

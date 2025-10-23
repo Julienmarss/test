@@ -4,7 +4,7 @@ import { getStatusBorderColor, getStatusColor } from "./table.service";
 import React, { useState } from "react";
 import Badge, { IconType } from "@/components/ui/Badge";
 import { Trash2 } from "lucide-react";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import { useDeleteCollaborator } from "@/api/collaborator/collaborators.api";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,7 +22,7 @@ export const MyCollaboratorsTrombinoscope = ({
 	setSelectedCollaborators,
 }: Props) => {
 	const router = useRouter();
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const { mutate: deleteCollaborator } = useDeleteCollaborator();
 	const [openConfirm, setOpenConfirm] = useState(false);
 	const [collaboratorSelected, setCollaboratorSelected] = useState<any>();

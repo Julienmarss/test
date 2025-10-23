@@ -1,7 +1,7 @@
 import { ActionButton } from "@/components/ui/buttons/ActionButton";
 import { Modal } from "@/components/ui/Modal";
 import React, { useEffect, useState } from "react";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import {
 	UpdateCollaboratorRequest,
 	useAddCollaborator,
@@ -33,7 +33,7 @@ const STEPS = [
 ];
 
 export const CreateCollaboratorModal = ({ open, onClose }: Props) => {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const [currentStep, setCurrentStep] = useState(0);
 	const [collaborator, setCollaborator] = useState<UpdateCollaboratorRequest>(INITIAL_CREATION_STATE);
 

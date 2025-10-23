@@ -1,13 +1,13 @@
 import { UpdateCollaboratorRequest, useSendMailCollaboratorToComplete } from "@/api/collaborator/collaborators.api";
 import { Button } from "@/components/ui/buttons/Button";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 
 type Props = {
 	collaborator: UpdateCollaboratorRequest;
 };
 
 const CompleteProfileForm = ({ collaborator }: Props) => {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const { mutate: sendEmail, isPending: isSendPending } = useSendMailCollaboratorToComplete();
 	return (
 		<div

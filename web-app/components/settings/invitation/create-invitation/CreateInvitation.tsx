@@ -5,12 +5,12 @@ import { Form } from "@/components/ui/hero-ui/Form";
 import { Input } from "@/components/ui/hero-ui/Input";
 import { Select, SelectItem } from "@/components/ui/hero-ui/Select";
 import { PaperAirplane } from "@/components/ui/icons/PaperAirplane";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 
 export default function CreateInvitation() {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const addInvitation = useInvite();
 	const [selectedRight, setSelectedRight] = useState<"MANAGER" | "READONLY">("MANAGER");
 
@@ -40,15 +40,6 @@ export default function CreateInvitation() {
 			toast({
 				title: "Email invalide",
 				description: "Veuillez saisir une adresse email valide",
-				variant: "destructive",
-			});
-			return;
-		}
-
-		if (right !== "MANAGER" && right !== "READONLY") {
-			toast({
-				title: "Erreur",
-				description: "Seuls les droits Responsable et Observateur sont autorisés",
 				variant: "destructive",
 			});
 			return;

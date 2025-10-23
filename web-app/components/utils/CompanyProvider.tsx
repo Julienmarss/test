@@ -10,7 +10,7 @@ type CompanyContextType = {
 
 const CompanyContext = createContext<CompanyContextType | null>(null);
 
-export const useCompany = () => {
+export const useSelectedCompany = () => {
 	const ctx = useContext(CompanyContext);
 	if (!ctx) throw new Error("useCompany must be used within CompanyProvider");
 	return ctx;

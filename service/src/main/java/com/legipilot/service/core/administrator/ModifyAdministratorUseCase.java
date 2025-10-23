@@ -4,6 +4,7 @@ import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.command.ModifyAdministratorPicture;
 import com.legipilot.service.core.administrator.domain.command.ModifyAdministratorWithCompanyDetails;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
+import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.administrator.domain.model.ExposedFile;
 import com.legipilot.service.core.administrator.domain.error.AdministratorRightsErrors.*;
 import com.legipilot.service.core.collaborator.documents.domain.DocumentStoragePort;
@@ -22,7 +23,7 @@ public class ModifyAdministratorUseCase {
     private final AdministratorRepository repository;
     private final CompanyRepository companyRepository;
     private final DocumentStoragePort documentStoragePort;
-    private final CompanyAuthorizationService authorizationService;
+    private final CompanyRightsService companyRightsService;
 
     public Administrator execute(ModifyAdministratorWithCompanyDetails command, UUID currentUserId) {
         if (!command.id().equals(currentUserId)) {
@@ -35,7 +36,10 @@ public class ModifyAdministratorUseCase {
 
         if (command.idCompany().isPresent()) {
             UUID companyId = command.idCompany().get();
-            authorizationService.ensureIsOwner(currentUserId, companyId);
+
+            if (!companyRightsService.hasRight(currentUserId, companyId, CompanyRight.OWNER)) {
+                throw new OnlyOwnerCanModifyCompanyError();
+            }
             Company company = companyRepository.get(companyId);
             company.modify(command);
             companyRepository.save(company);

@@ -6,7 +6,7 @@ import {
 } from "@/api/company/right.api";
 import { Select, SelectItem } from "@/components/ui/hero-ui/Select";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@/components/ui/hero-ui/Table";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import { Spinner } from "@heroui/react";
 import { Key } from "@react-types/shared";
 import { useSession } from "next-auth/react";
@@ -22,7 +22,7 @@ export default function RightToAdminTable() {
 		{ key: "remove", value: " " },
 	];
 
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const { data: session } = useSession();
 	const currentUserId = session?.user?.id;
 

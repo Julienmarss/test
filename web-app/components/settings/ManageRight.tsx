@@ -1,10 +1,10 @@
 import { useMyRights } from "@/api/company/right.api";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import RightToAdminList from "./admin-list/RightToAdminContainer";
 import Invitation from "./invitation/Invitation";
 
 export default function ManageRole() {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const { data: myRights } = useMyRights(company.id);
 
 	const isReadOnly = myRights?.right === "READONLY";

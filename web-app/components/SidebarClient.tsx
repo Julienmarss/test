@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Session } from "next-auth";
 import { SignOut } from "@/components/SignOut";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import { useSidebar } from "@/components/utils/SidebarProvider";
 import { useAdministrator } from "@/api/administrator/administrators.api";
 import { ToggleSidebarButton } from "@/app/admin/components/ToggleSidebarButton";
@@ -13,13 +13,14 @@ import { usePathname } from "next/navigation";
 import { Bell, Sparkles } from "lucide-react";
 import NotificationPopover from "@/app/admin/components/NotificationPopover";
 import { Button } from "./ui/buttons/Button";
+import CompanySwitcher from "@/components/utils/CompanySwitcher";
 import NewPopover from "@/app/admin/components/NewPopover";
 import SoonAvailable from "@/app/admin/components/SoonAvailable";
 
 export default function SidebarClient({ session }: Readonly<{ session: Session }>) {
 	const adminId = session?.user?.id;
 	const roles = session?.user?.roles;
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const { data: administrator } = useAdministrator(adminId);
 	const { isCollapsed, setIsCollapsed } = useSidebar();
 	const pathname = usePathname();
@@ -248,75 +249,63 @@ export default function SidebarClient({ session }: Readonly<{ session: Session }
 					))}
 				</section>
 
-				<div className="align-center items-center justify-center justify-items-center space-y-3 self-center p-4">
-					{session && administrator && administrator.picture && administrator.picture.length > 0 ? (
-						<img src={administrator.picture} alt="Avatar de l'utilisateur" className="h-8 w-8 rounded-full bg-white" />
-					) : (
-						<div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-sm font-medium">
-							{(session?.user.firstname?.[0] ?? "") + (session?.user.lastname?.[0] ?? "")}
-						</div>
-					)}
+                <div className="align-center items-center justify-center justify-items-center space-y-3 self-center p-4">
+                    {session && administrator && administrator.picture && administrator.picture.length > 0 ? (
+                        <img src={administrator.picture} alt="Avatar de l'utilisateur" className="h-8 w-8 rounded-full bg-white" />
+                    ) : (
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-sm font-medium">
+                            {(session?.user.firstname?.[0] ?? "") + (session?.user.lastname?.[0] ?? "")}
+                        </div>
+                    )}
 
-					{bottomMenuItems.map((item) => {
-						if (item.path) {
-							return (
-								<Link
-									key={item.id}
-									href={item.path || ""}
-									className="flex items-center justify-center rounded-lg p-2 text-white transition-colors hover:bg-slate-700 hover:text-white"
-									target={item.external ? "_blank" : ""}
-								>
-									{item.icon as any}
-								</Link>
-							);
-						}
+                    {bottomMenuItems.map((item) => {
+                        if (item.path) {
+                            return (
+                                <Link
+                                    key={item.id}
+                                    href={item.path || ""}
+                                    className="flex items-center justify-center rounded-lg p-2 text-white transition-colors hover:bg-slate-700 hover:text-white"
+                                    target={item.external ? "_blank" : ""}
+                                >
+                                    {item.icon as any}
+                                </Link>
+                            );
+                        }
 
-						return (
-							<div key={item.id} className="w-full">
-								{item.id === "notifications" ? (
-									<NotificationPopover showTitle={false} administrator={administrator} />
-								) : (
-									<NewPopover showTitle={false} administrator={administrator} />
-								)}
-							</div>
-						);
-					})}
+                        return (
+                            <div key={item.id} className="w-full">
+                                {item.id === "notifications" ? (
+                                    <NotificationPopover showTitle={false} administrator={administrator} />
+                                ) : (
+                                    <NewPopover showTitle={false} administrator={administrator} />
+                                )}
+                            </div>
+                        );
+                    })}
 
-					{roles?.includes("SUPER_ADMIN") && (
-						<Link
-							href="/administration"
-							className="flex items-center justify-center rounded-lg p-2 text-white transition-colors hover:bg-slate-700 hover:text-white"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								fill="currentColor"
-								className="size-6 text-white"
-							>
-								<path d="M18.75 12.75h1.5a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM12 6a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 6ZM12 18a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 18ZM3.75 6.75h1.5a.75.75 0 1 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM5.25 18.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 0 1.5ZM3 12a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3 12ZM9 3.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM12.75 12a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0ZM9 15.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
-							</svg>
-						</Link>
-					)}
+                    {roles?.includes("SUPER_ADMIN") && (
+                        <Link
+                            href="/administration"
+                            className="flex items-center justify-center rounded-lg p-2 text-white transition-colors hover:bg-slate-700 hover:text-white"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                className="size-6 text-white"
+                            >
+                                <path d="M18.75 12.75h1.5a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM12 6a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 6ZM12 18a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 12 18ZM3.75 6.75h1.5a.75.75 0 1 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5ZM5.25 18.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 0 1.5ZM3 12a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 3 12ZM9 3.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5ZM12.75 12a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0ZM9 15.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+                            </svg>
+                        </Link>
+                    )}
 
-					<SignOut isCollapsed={true} />
+                    <SignOut isCollapsed={true} />
 
-					{company.picture && company.picture.length > 0 ? (
-						<div
-							className="h-8 w-8 rounded-full border-t"
-							style={{
-								backgroundImage: `url(${company.picture})`,
-								backgroundPosition: "center",
-								backgroundSize: "cover",
-								backgroundRepeat: "no-repeat",
-							}}
-						/>
-					) : (
-						<div className="flex h-8 w-8 items-center justify-center rounded-full border-t bg-slate-600">
-							<div className="text-center">{company?.name[0]}</div>
-						</div>
-					)}
-				</div>
-			</div>
+                    <div className="border-t border-slate-700 pt-3">
+                        <CompanySwitcher isCollapsed={true} />
+                    </div>
+                </div>
+            </div>
 		);
 	}
 
@@ -455,47 +444,8 @@ export default function SidebarClient({ session }: Readonly<{ session: Session }
 					<SignOut isCollapsed={false} />
 				</div>
 
-				{/* Company Info */}
-				<div className="border-t border-slate-700 px-6 py-4">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center space-x-3">
-							{company.picture && company.picture.length > 0 ? (
-								<div
-									className="h-8 w-8 rounded-full"
-									style={{
-										backgroundImage: `url(${company.picture})`,
-										backgroundPosition: "center",
-										backgroundSize: "cover",
-										backgroundRepeat: "no-repeat",
-									}}
-								/>
-							) : (
-								<div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600">
-									<div className="text-center">{company?.name[0]}</div>
-								</div>
-							)}
-							<div>
-								<div className="text-sm font-medium">{company?.name}</div>
-								<div className="text-xs text-slate-400">{company?.collaborators.length} collaborateur(s)</div>
-							</div>
-						</div>
+                <CompanySwitcher isCollapsed={false} />
 
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							strokeWidth={1.5}
-							stroke="currentColor"
-							className="size-6 h-5 w-5 stroke-sky-200"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-							/>
-						</svg>
-					</div>
-				</div>
 			</div>
 		</div>
 	);

@@ -4,6 +4,7 @@ import com.legipilot.service.core.administrator.domain.AdministratorRepository;
 import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.InvitationRepository;
 import com.legipilot.service.core.administrator.domain.command.InviteAdministrator;
+import com.legipilot.service.core.administrator.domain.error.InsufficientRightsError;
 import com.legipilot.service.core.administrator.domain.error.InvitationErrors;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
@@ -29,11 +30,15 @@ public class InviteAdministratorUseCase {
     private final CompanyAdministratorRepository companyAdminRepository;
     private final CompanyRepository companyRepository;
     private final EmailPort emailPort;
-    private final CompanyAuthorizationService authorizationService;
 
     @Transactional
     public Invitation execute(InviteAdministrator command, UUID currentUserId) {
-        authorizationService.ensureCanManage(currentUserId, command.companyId());
+
+        if (!companyAdminRepository.findRightByAdministratorAndCompany(currentUserId, command.companyId())
+                .map(right -> right.hasPermission(CompanyRight.MANAGER))
+                .orElse(false)) {
+            throw InsufficientRightsError.forInviting();
+        }
 
         Optional<Invitation> existingInvitation = invitationRepository
                 .findByEmailAndCompanyId(command.email(), command.companyId());
@@ -72,7 +77,8 @@ public class InviteAdministratorUseCase {
             invitation.accept();
             invitationRepository.save(invitation);
             emailPort.sendAdministratorAddedToCompanyEmail(admin, company, command.rights());
-        } else {
+        }
+        else {
             emailPort.sendAdministratorInvitationEmail(
                     command.email(),
                     company,

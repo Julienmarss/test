@@ -2,12 +2,12 @@
 import { InvitationResponse, useDeleteInvitation } from "@/api/company/invitation.api";
 import { ConfirmDeleteModal } from "@/components/ui/ConfirmDeleteModal";
 import { Trash } from "@/components/ui/icons/Trash";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import { toast } from "@/hooks/use-toast";
 import * as React from "react";
 
 export default function InvitationRemove({ invitation }: { invitation: InvitationResponse }) {
-	const { company } = useCompany();
+	const { company } = useSelectedCompany();
 	const [open, setOpen] = React.useState(false);
 
 	const del = useDeleteInvitation();

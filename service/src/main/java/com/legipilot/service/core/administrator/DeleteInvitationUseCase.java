@@ -1,8 +1,10 @@
 package com.legipilot.service.core.administrator;
 
 import com.legipilot.service.core.administrator.domain.InvitationRepository;
+import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.administrator.domain.model.Invitation;
 import com.legipilot.service.core.administrator.domain.error.InvitationErrors.*;
+import com.legipilot.service.core.administrator.domain.error.InsufficientRightsError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,13 @@ import java.util.UUID;
 public class DeleteInvitationUseCase {
 
     private final InvitationRepository invitationRepository;
-    private final CompanyAuthorizationService authorizationService;
+    private final CompanyRightsService companyRightsService;
 
     @Transactional
     public void execute(UUID invitationId, UUID companyId, UUID currentUserId) {
-        authorizationService.ensureCanManage(currentUserId, companyId);
+        if (!companyRightsService.hasRight(currentUserId, companyId, CompanyRight.MANAGER)) {
+            throw InsufficientRightsError.forDeletingInvitation();
+        }
 
         Invitation invitation = invitationRepository.findById(invitationId)
                 .orElseThrow(InvitationNotFoundError::new);

@@ -2,7 +2,6 @@ package com.legipilot.service.core.administrator.infra.in;
 
 import com.legipilot.service.core.administrator.AcceptInvitationUseCase;
 import com.legipilot.service.core.administrator.AdministratorService;
-import com.legipilot.service.core.administrator.CompanyAuthorizationService;
 import com.legipilot.service.core.administrator.CompanyRightsService;
 import com.legipilot.service.core.administrator.DeleteInvitationUseCase;
 import com.legipilot.service.core.administrator.InviteAdministratorUseCase;
@@ -12,6 +11,7 @@ import com.legipilot.service.core.administrator.domain.command.InviteAdministrat
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.administrator.domain.model.Invitation;
+import com.legipilot.service.shared.infra.security.RequiresCompanyRight;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -35,20 +35,16 @@ public class CompanyRightsController {
     private final DeleteInvitationUseCase deleteInvitationUseCase;
     private final AcceptInvitationUseCase acceptInvitationUseCase;
     private final InvitationRepository invitationRepository;
-    private final CompanyAuthorizationService authorizationService;
 
     @GetMapping
     @Operation(
             summary = "Obtenir les administrateurs de l'entreprise",
             description = "Récupère tous les administrateurs et leurs droits pour une entreprise"
     )
+    @RequiresCompanyRight(value = CompanyRight.READONLY, companyIdParam = "companyId")
     public ResponseEntity<List<CompanyAdministratorResponse>> getCompanyAdministrators(
             @PathVariable("companyId") UUID companyId
     ) {
-        UUID currentUserId = getCurrentUserId();
-
-        authorizationService.ensureCanRead(currentUserId, companyId);
-
         List<CompanyAdministratorRepository.CompanyAdministratorInfo> administrators =
                 companyRightsService.getCompanyAdministrators(companyId);
 
@@ -64,6 +60,7 @@ public class CompanyRightsController {
             summary = "Inviter un administrateur à l'entreprise",
             description = "Invite un administrateur (existant ou nouveau) à rejoindre l'entreprise"
     )
+    @RequiresCompanyRight(value = CompanyRight.MANAGER, companyIdParam = "companyId")
     public ResponseEntity<InvitationResponse> inviteAdministrator(
             @PathVariable("companyId") UUID companyId,
             @RequestBody InviteAdministratorRequest request
@@ -86,13 +83,10 @@ public class CompanyRightsController {
             summary = "Obtenir les invitations en cours",
             description = "Récupère toutes les invitations pending pour l'entreprise"
     )
+    @RequiresCompanyRight(value = CompanyRight.MANAGER, companyIdParam = "companyId")
     public ResponseEntity<List<InvitationResponse>> getPendingInvitations(
             @PathVariable("companyId") UUID companyId
     ) {
-        UUID currentUserId = getCurrentUserId();
-
-        authorizationService.ensureCanManage(currentUserId, companyId);
-
         List<Invitation> invitations = invitationRepository.findPendingByCompanyId(companyId);
         return ResponseEntity.ok(
                 invitations.stream()
@@ -106,6 +100,7 @@ public class CompanyRightsController {
             summary = "Supprimer une invitation",
             description = "Supprime une invitation en attente"
     )
+    @RequiresCompanyRight(value = CompanyRight.MANAGER, companyIdParam = "companyId")
     public ResponseEntity<Void> deleteInvitation(
             @PathVariable("companyId") UUID companyId,
             @PathVariable("invitationId") UUID invitationId
@@ -120,6 +115,7 @@ public class CompanyRightsController {
             summary = "Modifier les droits d'un administrateur",
             description = "Met à jour les droits d'un administrateur pour cette entreprise"
     )
+    @RequiresCompanyRight(value = CompanyRight.OWNER, companyIdParam = "companyId")
     public ResponseEntity<Void> updateAdministratorRights(
             @PathVariable("companyId") UUID companyId,
             @PathVariable("administratorId") UUID administratorId,
@@ -142,6 +138,7 @@ public class CompanyRightsController {
             summary = "Retirer un administrateur de l'entreprise",
             description = "Supprime l'accès d'un administrateur à cette entreprise"
     )
+    @RequiresCompanyRight(value = CompanyRight.OWNER, companyIdParam = "companyId")
     public ResponseEntity<Void> removeAdministratorFromCompany(
             @PathVariable("companyId") UUID companyId,
             @PathVariable("administratorId") UUID administratorId
@@ -176,6 +173,7 @@ public class CompanyRightsController {
             summary = "Obtenir mes droits",
             description = "Récupère les droits de l'utilisateur actuel pour cette entreprise"
     )
+    @RequiresCompanyRight(value = CompanyRight.READONLY, companyIdParam = "companyId")
     public ResponseEntity<CompanyRightInfo> getMyRights(@PathVariable("companyId") UUID companyId) {
         UUID currentUserId = getCurrentUserId();
 
@@ -185,15 +183,15 @@ public class CompanyRightsController {
     }
 
     private UUID getCurrentUserId() {
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Administrator admin = administratorService.get(email);
         return admin.id();
     }
 
     public record CompanyRightInfo(String right, String displayName) {}
+
     public record InviteAdministratorRequest(String email, CompanyRight rights) {}
+
     public record UpdateRightsRequest(CompanyRight rights) {}
 
     public record CompanyAdministratorResponse(

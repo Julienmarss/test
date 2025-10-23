@@ -13,7 +13,7 @@ import {
 import { ActionButton } from "@/components/ui/buttons/ActionButton";
 import { Input, isValidDateFormat } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
-import { useCompany } from "@/components/utils/CompanyProvider";
+import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import { useEffect, useState } from "react";
 import ReactFlagsSelect from "react-flags-select";
 
@@ -25,7 +25,7 @@ type Props = {
 };
 
 export const EtatCivilForm = ({ collaborator, handleInputChange, isFreelance, showInvitationButton = true }: Props) => {
-	const { company } = showInvitationButton ? useCompany() : { company: null }; // Utiliser useCompany seulement si nécessaire
+	const { company } = showInvitationButton ? useSelectedCompany() : { company: null }; // Utiliser useCompany seulement si nécessaire
 	const [invitationSent, setInvitationSent] = useState(false);
 	const [needsToSendEmail, setNeedsToSendEmail] = useState(false);
 
