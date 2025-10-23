@@ -7,6 +7,7 @@ import { serviceClient } from "@/api/client.api";
 import { CompanyResponse } from "@/api/company/company.api";
 import { toast } from "@/hooks/use-toast";
 import { Check } from "lucide-react";
+import {useQueryClient} from "@tanstack/react-query";
 
 type CompanySwitcherProps = {
     isCollapsed?: boolean;
@@ -16,6 +17,7 @@ export default function CompanySwitcher({ isCollapsed = false }: CompanySwitcher
     const [isOpen, setIsOpen] = useState(false);
     const { data: companies, isLoading } = useMyCompanies();
     const { company, setCompany } = useSelectedCompany();
+    const queryClient = useQueryClient();
 
     const handleSwitchCompany = async (selectedCompanyId: string) => {
         try {
@@ -23,6 +25,14 @@ export default function CompanySwitcher({ isCollapsed = false }: CompanySwitcher
                 `/companies/${selectedCompanyId}`
             );
 
+            queryClient.invalidateQueries({ queryKey: ["company"] });
+            queryClient.invalidateQueries({ queryKey: ["collaborators"] });
+            queryClient.invalidateQueries({ queryKey: ["company-administrators"] });
+            queryClient.invalidateQueries({ queryKey: ["invitations"] });
+            queryClient.invalidateQueries({ queryKey: ["my-company-rights"] });
+            queryClient.invalidateQueries({ queryKey: ["my-rights"] });
+
+            // Mettre à jour le context
             setCompany(response.data);
             setIsOpen(false);
 

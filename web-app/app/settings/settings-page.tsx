@@ -63,7 +63,7 @@ export default function SettingsPage() {
                 siret: data.siret,
                 legalForm: data.legalForm,
                 nafCode: data.nafCode,
-                principalActivity: data.,
+                principalActivity: "",
                 activityDomain: data.activityDomain,
                 collectiveAgreement: data.collectiveAgreement.titre,
                 idcc: data.collectiveAgreement.idcc,

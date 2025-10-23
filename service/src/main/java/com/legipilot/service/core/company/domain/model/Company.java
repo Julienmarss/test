@@ -1,11 +1,9 @@
 package com.legipilot.service.core.company.domain.model;
 
-import com.legipilot.service.core.administrator.domain.command.ModifyAdministrator;
 import com.legipilot.service.core.administrator.domain.command.ModifyAdministratorWithCompanyDetails;
 import com.legipilot.service.core.administrator.domain.command.SignUp;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.ExposedFile;
-import com.legipilot.service.core.collaborator.domain.command.CreateCollaborator;
 import com.legipilot.service.core.collaborator.domain.model.*;
 import lombok.*;
 import lombok.experimental.Accessors;

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,7 +47,10 @@ public class CompanyController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CompanyResponse> getCompanyById(@PathVariable("id") UUID id) {
-        Company company = service.get(new CompanyId(id));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Administrator currentAdmin = administratorService.get(email);
+
+        Company company = service.get(new CompanyId(id), currentAdmin.id());
         return ResponseEntity.ok(
                 CompanyResponse.from(company)
         );

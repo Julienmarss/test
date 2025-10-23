@@ -93,41 +93,79 @@ export function useMyCompanyRights(companyId?: UUID) {
 
 export function useModifyCompany() {
     const queryClient = useQueryClient();
+    const { company: currentCompany, setCompany } = useSelectedCompany();
+
     return useMutation({
-        mutationFn: async (company: ModifyCompanyRequest) => {
-            const response = await serviceClient.put<CompanyResponse>(`/companies/${company.id}`, company);
+        mutationFn: async (request: ModifyCompanyRequest & { id: UUID }) => {
+            const response = await serviceClient.patch<CompanyResponse>(
+                `/companies/${request.id}`,
+                request
+            );
             return response.data;
         },
-        onSuccess: (company: CompanyResponse) => {
-            queryClient.setQueryData(["company", company.id], company);
+        onSuccess: (updatedCompany: CompanyResponse) => {
+            queryClient.setQueryData(["company", updatedCompany.id], updatedCompany);
+
+            if (currentCompany.id === updatedCompany.id) {
+                setCompany(updatedCompany);
+            }
+
+            queryClient.invalidateQueries({ queryKey: ["administrator"] });
+            queryClient.invalidateQueries({ queryKey: ["my-companies"] });
+
+            toast({
+                title: "Entreprise modifiée",
+                description: "Les informations ont été mises à jour avec succès.",
+                variant: "default",
+            });
         },
-    })
+        onError: (error: any) => {
+            toast({
+                title: "Modification échouée",
+                description: error?.response?.data?.message || "Une erreur est survenue",
+                variant: "destructive",
+            });
+        },
+    });
 }
 
 export function useModifyCompanyPicture() {
     const queryClient = useQueryClient();
     const {company, setCompany} = useSelectedCompany();
+
     return useMutation({
         mutationFn: async ({file, id}: { file: File; id: UUID }) => {
             const formData = new FormData();
             formData.append("file", file);
-            const response = await serviceClient.post<CompanyResponse>(`/companies/${id}/picture`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            const response = await serviceClient.post<CompanyResponse>(
+                `/companies/${id}/picture`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
             return response.data;
         },
         onSuccess: (result: CompanyResponse) => {
+            queryClient.setQueryData(["company", result.id], result);
+
             const admin: AdministratorsResponse | undefined = queryClient.getQueryData(["administrator"]);
             if (admin) {
                 const adminToUpdate: AdministratorsResponse = {
                     ...admin,
-                    companies: [{...admin.companies[0], picture: result.picture}],
+                    companies: admin.companies.map(c =>
+                        c.id === result.id ? { ...c, picture: result.picture } : c
+                    ),
                 };
-                queryClient.setQueryData(["administrator"], () => adminToUpdate);
+                queryClient.setQueryData(["administrator"], adminToUpdate);
             }
-            setCompany({...company, picture: result.picture});
+
+            if (company.id === result.id) {
+                setCompany({...company, picture: result.picture});
+            }
+
             toast({
                 title: "Photo ajoutée",
                 description: "Votre photo a bien été ajoutée.",
