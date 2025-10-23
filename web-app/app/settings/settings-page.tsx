@@ -34,7 +34,6 @@ import {useSelectedCompany} from "@/components/utils/CompanyProvider";
 export default function SettingsPage() {
     const {data: session, status} = useSession();
     const {company: selectedCompany} = useSelectedCompany();
-    const {data} = useCompany(selectedCompany.id);
     const fileAdminInputRef = useRef<HTMLInputElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const adminId = session?.user?.id;
@@ -55,21 +54,21 @@ export default function SettingsPage() {
     const isManager = myRights?.right === "MANAGER";
 
     useEffect(() => {
-        if (data) {
+        if (selectedCompany) {
             setCompany({
-                id: data.id,
-                name: data.name,
-                siren: data.siren,
-                siret: data.siret,
-                legalForm: data.legalForm,
-                nafCode: data.nafCode,
+                id: selectedCompany.id,
+                name: selectedCompany.name,
+                siren: selectedCompany.siren,
+                siret: selectedCompany.siret,
+                legalForm: selectedCompany.legalForm,
+                nafCode: selectedCompany.nafCode,
                 principalActivity: "",
-                activityDomain: data.activityDomain,
-                collectiveAgreement: data.collectiveAgreement.titre,
-                idcc: data.collectiveAgreement.idcc,
+                activityDomain: selectedCompany.activityDomain,
+                collectiveAgreement: selectedCompany.collectiveAgreement.titre,
+                idcc: selectedCompany.collectiveAgreement.idcc,
             });
         }
-    }, [data]);
+    }, [selectedCompany]);
 
     useEffect(() => {
         if (existingAdministrator && myRights) {

@@ -20,20 +20,19 @@ export default function CompanySwitcher({ isCollapsed = false }: CompanySwitcher
     const queryClient = useQueryClient();
 
     const handleSwitchCompany = async (selectedCompanyId: string) => {
+        console.log("🔄 [CompanySwitcher] Switching to:", selectedCompanyId);
+
         try {
             const response = await serviceClient.get<CompanyResponse>(
                 `/companies/${selectedCompanyId}`
             );
 
-            queryClient.invalidateQueries({ queryKey: ["company"] });
-            queryClient.invalidateQueries({ queryKey: ["collaborators"] });
-            queryClient.invalidateQueries({ queryKey: ["company-administrators"] });
-            queryClient.invalidateQueries({ queryKey: ["invitations"] });
-            queryClient.invalidateQueries({ queryKey: ["my-company-rights"] });
-            queryClient.invalidateQueries({ queryKey: ["my-rights"] });
+            console.log("✅ [CompanySwitcher] Fetched:", response.data.name);
 
-            // Mettre à jour le context
             setCompany(response.data);
+
+            queryClient.clear();
+
             setIsOpen(false);
 
             toast({
@@ -42,7 +41,7 @@ export default function CompanySwitcher({ isCollapsed = false }: CompanySwitcher
                 variant: "default",
             });
         } catch (error) {
-            console.error("Erreur lors du changement d'entreprise:", error);
+            console.error("❌ [CompanySwitcher] Error:", error);
             toast({
                 title: "Erreur",
                 description: "Impossible de changer d'entreprise",
@@ -153,7 +152,10 @@ export default function CompanySwitcher({ isCollapsed = false }: CompanySwitcher
                             {companies.map((comp) => (
                                 <button
                                     key={comp.companyId}
-                                    onClick={() => handleSwitchCompany(comp.companyId)}
+                                    onClick={() => {
+                                        console.log("👆 [CompanySwitcher] Button clicked for:", comp.companyName, comp.companyId);
+                                        handleSwitchCompany(comp.companyId);
+                                    }}
                                     className={`flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-slate-700 ${
                                         company.id === comp.companyId ? "bg-slate-800" : ""
                                     }`}

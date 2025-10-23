@@ -9,24 +9,24 @@ import { Toaster } from "@/components/ui/toaster";
 import { ErrorBoundary } from "@/app/ErrorBoundary";
 
 export default async function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-	const session = await getServerSession(authOptions);
-	if (!session?.accessToken) {
-		redirect("/signin");
-	}
-	const company = await getCompany();
+    const session = await getServerSession(authOptions);
+    if (!session?.accessToken) {
+        redirect("/signin");
+    }
+    const defaultCompany = await getCompany();
 
-	return (
-		<ErrorBoundary>
-			<CompanyProvider company={company}>
-				<SidebarProvider>
-					<div className="flex h-screen bg-sky-950">
-						<Sidebar />
-						<Toaster />
+    return (
+        <ErrorBoundary>
+            <CompanyProvider initialCompany={defaultCompany}>
+                <SidebarProvider>
+                    <div className="flex h-screen bg-sky-950">
+                        <Sidebar />
+                        <Toaster />
 
-						<main className="flex-1 overflow-auto rounded-2xl border-8 border-sky-950 bg-white">{children}</main>
-					</div>
-				</SidebarProvider>
-			</CompanyProvider>
-		</ErrorBoundary>
-	);
+                        <main className="flex-1 overflow-auto rounded-2xl border-8 border-sky-950 bg-white">{children}</main>
+                    </div>
+                </SidebarProvider>
+            </CompanyProvider>
+        </ErrorBoundary>
+    );
 }

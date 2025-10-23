@@ -83,7 +83,7 @@ export type UpdateCollaboratorRequest = {
 
 export function useCollaborators(companyId: string) {
 	return useQuery({
-		queryKey: ["collaborators"],
+		queryKey: ["collaborators", companyId],
 		queryFn: async () => {
 			const response = await serviceClient.get<CollaboratorResponse[]>(`/companies/${companyId}/collaborators`);
 			return response.data;
