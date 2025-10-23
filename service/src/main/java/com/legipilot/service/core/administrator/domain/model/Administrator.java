@@ -1,6 +1,7 @@
 package com.legipilot.service.core.administrator.domain.model;
 
 import com.legipilot.service.core.administrator.authentication.domain.Authentication;
+import com.legipilot.service.core.administrator.domain.command.ModifyAdministrator;
 import com.legipilot.service.core.administrator.domain.command.ModifyAdministratorWithCompanyDetails;
 import com.legipilot.service.core.administrator.domain.command.SignUp;
 import com.legipilot.service.core.company.domain.model.Company;
@@ -58,7 +59,7 @@ public class Administrator {
         this.state = AccountState.ACTIVE;
     }
 
-    public void modify(ModifyAdministratorWithCompanyDetails command) {
+    public void modify(ModifyAdministrator command) {
         command.firstname().ifPresent(firstname -> this.firstname = firstname);
         command.lastname().ifPresent(lastname -> this.lastname = lastname);
         command.email().ifPresent(email -> this.email = email);

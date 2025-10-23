@@ -3,9 +3,9 @@ package com.legipilot.service.core.company;
 import com.legipilot.service.core.administrator.CompanyRightsService;
 import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.company.domain.CompanyRepository;
+import com.legipilot.service.core.company.domain.error.InvalidRightsError;
 import com.legipilot.service.core.company.domain.model.Company;
 import com.legipilot.service.core.company.domain.model.CompanyId;
-import com.legipilot.service.shared.domain.error.NotAllowed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ public class CompanyService {
 
     public Company get(CompanyId companyId, UUID currentUserId) {
         if (!companyRightsService.hasRight(currentUserId, companyId.value(), CompanyRight.READONLY)) {
-            throw new NotAllowed("Vous n'avez pas accès à cette entreprise");
+            throw InvalidRightsError.notEnoughRights();
         }
 
         return repository.get(companyId.value());

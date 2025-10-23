@@ -5,6 +5,7 @@ import com.legipilot.service.core.administrator.domain.command.SignUp;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.ExposedFile;
 import com.legipilot.service.core.collaborator.domain.model.*;
+import com.legipilot.service.core.company.domain.command.ModifyCompany;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -115,15 +116,21 @@ public class Company {
         this.picture = Optional.of(file.url());
     }
 
-    public void modify(ModifyAdministratorWithCompanyDetails command) {
+    /**
+     * Modifie l'entreprise avec les nouvelles données
+     *
+     * @param command Commande contenant les modifications
+     */
+    public void modify(ModifyCompany command) {
         command.companyName().ifPresent(x -> this.name = x);
         command.siren().ifPresent(x -> this.siren = new Siren(x));
         command.siret().ifPresent(x -> this.siret = new Siret(x));
         command.legalForm().ifPresent(x -> this.legalForm = x);
         command.nafCode().ifPresent(x -> this.nafCode = new NafCode(x));
         command.activityDomain().ifPresent(x -> this.activityDomain = x);
-        if (command.idcc().isPresent()) {
-            this.collectiveAgreement = new CollectiveAgreement(command.idcc().get(), "");
-        }
+        command.collectiveAgreement().ifPresent(x -> this.collectiveAgreement = x);
+        command.idcc().ifPresent(idcc ->
+                this.collectiveAgreement = new CollectiveAgreement(idcc, this.collectiveAgreement.titre())
+        );
     }
 }

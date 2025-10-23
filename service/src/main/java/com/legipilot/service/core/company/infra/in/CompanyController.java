@@ -56,6 +56,27 @@ public class CompanyController {
         );
     }
 
+    /**
+     * Endpoint dédié pour modifier l'entreprise
+     *
+     * Séparé de la modification d'administrateur
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<CompanyResponse> modifyCompany(
+            @PathVariable UUID id,
+            @RequestBody ModifyCompanyRequest request
+    ) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Administrator currentAdmin = administratorService.get(email);
+
+        Company company = modifyCompanyUseCase.execute(
+                request.toDomain(id),
+                currentAdmin.id()
+        );
+
+        return ResponseEntity.ok(CompanyResponse.from(company));
+    }
+
     @PostMapping("/{id}/picture")
     public ResponseEntity<CompanyResponse> addPicture(@PathVariable UUID id, @RequestParam("file") MultipartFile picture) {
         // TODO: add checks c'est bien moi
@@ -69,8 +90,6 @@ public class CompanyController {
                 CompanyResponse.from(company)
         );
     }
-
-    // TODO : Ajouter la modification de l'entreprise + modifier si cet utilisateur là a bien le droit
 
     @DeleteMapping("/{companyId}")
     public ResponseEntity<Void> deleteCompany(
