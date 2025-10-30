@@ -1,11 +1,12 @@
 package com.legipilot.service.core.collaborator.notes.domain;
 
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
 import lombok.Builder;
 
 import java.util.UUID;
 
 @Builder
 public record DeleteNote(
-    UUID noteId,
-    UUID collaboratorId) {
+        UUID noteId,
+        CollaboratorId collaboratorId) {
 }

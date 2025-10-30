@@ -1,0 +1,47 @@
+[
+  {
+    "id": "5e1a9f70-3b2c-4d8e-9a41-7c6b5a4d2e14",
+    "sequence": 1,
+    "icon": "user-plus",
+    "title": "Procédure d'embauche",
+    "subtitle": "Accédez aux évènements liés à l'embauche d'un collaborateur",
+    "action": "Voir les évènements",
+    "color": "green"
+  },
+  {
+    "id": "936a9f9a-db1a-42f5-89ee-dc82955f75d0",
+    "sequence": 2,
+    "icon": "paper",
+    "title": "Modification du contrat de travail",
+    "subtitle": "Accédez aux évènements liés aux changements du contrat de travail",
+    "action": "Voir les évènements",
+    "color": "blue"
+  },
+  {
+    "id": "8f5a7d9e-1c2b-4a3e-9f80-2a4c7b6d5e12",
+    "sequence": 3,
+    "icon": "question",
+    "title": "Simuler une rupture",
+    "subtitle": "Estimez le coût et la durée d'une rupture du contrat de travail",
+    "action": "Simuler",
+    "color": "teal"
+  },
+  {
+    "id": "b2d3a0e7-2f86-4c6d-9d9b-7d5b7a2f0a11",
+    "sequence": 4,
+    "icon": "calendar",
+    "title": "Gestion d'une formalité RH",
+    "subtitle": "Accédez aux évènements liés à la gestion d'une situation particulière",
+    "action": "Voir les évènements",
+    "color": "indigo"
+  },
+  {
+    "id": "24c7e8a1-7b2f-4c9d-8a33-5e6f1d0a9b13",
+    "sequence": 5,
+    "icon": "user-minus",
+    "title": "Rupture du contrat de travail",
+    "subtitle": "Accédez aux évènements liés à la fin du contrat de travail",
+    "action": "Voir les évènements",
+    "color": "red"
+  }
+]

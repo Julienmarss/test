@@ -1,9 +1,6 @@
 package com.legipilot.service.core.company.infra.out;
 
-import com.legipilot.service.core.collaborator.domain.model.Civility;
-import com.legipilot.service.core.collaborator.domain.model.Collaborator;
-import com.legipilot.service.core.collaborator.domain.model.SocialSecurityNumber;
-import com.legipilot.service.core.collaborator.domain.model.Status;
+import com.legipilot.service.core.collaborator.domain.model.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -73,7 +70,7 @@ public class CollaboratorDto {
 
     public static CollaboratorDto from(Collaborator collaborator) {
         CollaboratorDto dto = CollaboratorDto.builder()
-                .id(collaborator.id())
+                .id(Objects.isNull(collaborator.id()) ? null : collaborator.id().value())
                 .firstname(collaborator.firstname())
                 .lastname(collaborator.lastname())
                 .picture(Objects.isNull(collaborator.picture()) ? null : collaborator.picture().orElse(null))
@@ -111,7 +108,7 @@ public class CollaboratorDto {
 
 //    public static CollaboratorDto fromWithoutCompany(Collaborator collaborator) {
 //        CollaboratorDto dto = CollaboratorDto.builder()
-//                .id(UUID.randomUUID())
+//                .value(UUID.randomUUID())
 //                .firstname(collaborator.firstname())
 //                .lastname(collaborator.lastname())
 //                .picture(collaborator.picture().orElse(null))
@@ -147,7 +144,7 @@ public class CollaboratorDto {
 
     public Collaborator toDomainWithoutCompany() {
         return Collaborator.builder()
-                .id(id)
+                .id(new CollaboratorId(id))
                 .firstname(firstname)
                 .lastname(lastname)
                 .picture(Optional.ofNullable(picture))
@@ -168,7 +165,7 @@ public class CollaboratorDto {
 
     public Collaborator toDomain() {
         return Collaborator.builder()
-                .id(id)
+                .id(new CollaboratorId(id))
                 .firstname(firstname)
                 .lastname(lastname)
                 .picture(Optional.ofNullable(picture))

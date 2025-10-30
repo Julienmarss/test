@@ -65,8 +65,6 @@ public class Administrator {
         command.email().ifPresent(email -> this.email = email);
         command.phone().ifPresent(phone -> this.phone = phone);
         command.fonction().ifPresent(fonction -> this.fonction = fonction);
-        command.isNewsViewed().ifPresent(isNewsViewed -> this.isNewsViewed = isNewsViewed);
-        command.isNotifViewed().ifPresent(isNotifViewed -> this.isNotifViewed = isNotifViewed);
     }
 
     public void modifyPicture(ExposedFile file) {

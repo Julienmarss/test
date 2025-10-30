@@ -1,9 +1,8 @@
 package com.legipilot.service.core.collaborator.domain.command;
 
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
 import lombok.Builder;
 
-import java.util.UUID;
-
 @Builder
-public record DeleteCollaborator(UUID id) {
+public record DeleteCollaborator(CollaboratorId id) {
 }

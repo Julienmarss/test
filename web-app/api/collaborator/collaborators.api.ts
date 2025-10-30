@@ -358,7 +358,7 @@ export function useSendMailCollaboratorToComplete() {
 		onError: () => {
 			toast({
 				title: "Envoi impossible",
-				description: "Désolé, une erreur est survenue lors de l'emvoi de l'email.",
+				description: "Désolé, une erreur est survenue lors de l'envoi de l'email.",
 				variant: "destructive",
 			});
 		},

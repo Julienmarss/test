@@ -2,8 +2,8 @@ package com.legipilot.service.core.company;
 
 import com.legipilot.service.core.administrator.CompanyRightsService;
 import com.legipilot.service.core.administrator.domain.error.InsufficientRightsError;
-import com.legipilot.service.core.administrator.domain.model.CompanyRight;
 import com.legipilot.service.core.administrator.domain.model.ExposedFile;
+import com.legipilot.service.core.authorization.domain.model.CompanyRight;
 import com.legipilot.service.core.collaborator.documents.domain.DocumentStoragePort;
 import com.legipilot.service.core.company.domain.CompanyRepository;
 import com.legipilot.service.core.company.domain.command.ModifyCompany;
@@ -31,8 +31,7 @@ public class ModifyCompanyUseCase {
 
         Company company = companyRepository.get(command.id());
         company.modify(command);
-        Company savedCompany = companyRepository.save(company);
-        return savedCompany;
+        return companyRepository.save(company);
     }
 
 

@@ -38,7 +38,7 @@ export default function Providers({ children }: { children: ReactNode }) {
 	return (
 		<SessionProvider>
 			<QueryClientProvider client={queryClient}>
-				<HeroUIProvider>
+				<HeroUIProvider locale="fr-FR">
 					{children}
 					{/*<ReactQueryDevtools initialIsOpen={false} />*/}
 				</HeroUIProvider>

@@ -30,7 +30,7 @@ export const SignOut = ({ isCollapsed = false }: { isCollapsed: boolean }) => {
 	return (
 		<button
 			onClick={() => signOut({ callbackUrl: "/signin" })}
-			className="flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
+			className="flex w-full items-center justify-center space-x-3 rounded-lg px-3 py-2 text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"

@@ -1,6 +1,6 @@
 package com.legipilot.service.core.administrator.domain.command;
 
-import com.legipilot.service.core.administrator.domain.model.CompanyRight;
+import com.legipilot.service.core.authorization.domain.model.CompanyRight;
 import lombok.Builder;
 
 import java.util.UUID;

@@ -1,27 +1,22 @@
 package com.legipilot.service.core.collaborator.infra.in;
 
-import com.legipilot.service.core.administrator.domain.command.ModifyAdministratorPicture;
-import com.legipilot.service.core.administrator.domain.model.Administrator;
-import com.legipilot.service.core.administrator.infra.in.response.AdministratorResponse;
 import com.legipilot.service.core.collaborator.*;
 import com.legipilot.service.core.collaborator.domain.command.DeleteCollaborator;
 import com.legipilot.service.core.collaborator.domain.command.ImportCollaborators;
 import com.legipilot.service.core.collaborator.domain.command.ModifyCollaboratorPicture;
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;
-import com.legipilot.service.core.company.infra.in.CollaboratorResponse;
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
+import com.legipilot.service.core.company.infra.in.response.CollaboratorResponse;
 import com.legipilot.service.shared.domain.error.RessourceNotFound;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.coyote.BadRequestException;
-import org.hibernate.sql.Update;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -54,7 +49,7 @@ public class CollaboratorController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CollaboratorResponse> getCollaborator(@PathVariable("id") UUID id) {
-        Collaborator collaborator = service.get(id);
+        Collaborator collaborator = service.get(new CollaboratorId(id));
         return ResponseEntity.ok(
                 CollaboratorResponse.from(collaborator)
         );
@@ -91,7 +86,9 @@ public class CollaboratorController {
                                                        @PathVariable("id") UUID collaboratorId,
                                                        @RequestBody UpdateCollaboratorRequest request) {
         // TODO: verif identité du demandeur
-        Collaborator collaborator = updateCollaboratorUseCase.execute(request.toDomain(collaboratorId));
+        Collaborator collaborator = updateCollaboratorUseCase.execute(request.toDomain(
+                new CollaboratorId(collaboratorId)
+        ));
 
         return ResponseEntity.ok(CollaboratorResponse.from(collaborator));
     }
@@ -100,7 +97,7 @@ public class CollaboratorController {
     public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
         deleteCollaboratorUseCase.execute(
                 DeleteCollaborator.builder()
-                        .id(id)
+                        .id(new CollaboratorId(id))
                         .build()
         );
         return ResponseEntity.noContent()
@@ -194,26 +191,26 @@ public class CollaboratorController {
     @PostMapping("/{id}/fill-profile-request")
     public ResponseEntity<Void> sendRequestFillProfilInvitationEmail(@PathVariable("companyId") UUID companyId, @PathVariable("id") UUID id) {
         try {
-            updateCollaboratorUseCase.execute(companyId, id);
+            updateCollaboratorUseCase.execute(companyId, new CollaboratorId(id));
             return ResponseEntity.ok().build();
         } catch (RessourceNotFound ex) {
             return ResponseEntity.notFound().build();
         } catch (Exception ex) {
             return ResponseEntity.internalServerError().build();
         }
-	}
-	
+    }
+
     @PostMapping("/{id}/picture")
     public ResponseEntity<CollaboratorResponse> addPicture(@PathVariable UUID companyId,
-                                                            @PathVariable UUID id,
-                                                            @RequestParam("file") MultipartFile picture) {
+                                                           @PathVariable UUID id,
+                                                           @RequestParam("file") MultipartFile picture) {
         // TODO: add checks c'est bien moi
         Collaborator collaborator = updateCollaboratorUseCase.execute(
                 ModifyCollaboratorPicture.builder()
-                    .id(id)
-                    .companyId(companyId)
-                    .picture(picture)
-                    .build()
+                        .id(new CollaboratorId(id))
+                        .companyId(companyId)
+                        .picture(picture)
+                        .build()
         );
         return ResponseEntity.ok(
                 CollaboratorResponse.from(collaborator)

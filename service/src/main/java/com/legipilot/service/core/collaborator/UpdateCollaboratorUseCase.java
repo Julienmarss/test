@@ -2,13 +2,11 @@ package com.legipilot.service.core.collaborator;
 
 import com.legipilot.service.core.administrator.domain.model.ExposedFile;
 import com.legipilot.service.core.collaborator.documents.domain.DocumentStoragePort;
-import com.legipilot.service.core.collaborator.documents.domain.StoredDocument;
 import com.legipilot.service.core.collaborator.domain.CollaboratorRepository;
 import com.legipilot.service.core.collaborator.domain.command.ModifyCollaboratorPicture;
 import com.legipilot.service.core.collaborator.domain.command.UpdateCollaborator;
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;
-import com.legipilot.service.core.company.domain.CompanyRepository;
-import com.legipilot.service.core.company.domain.model.Company;
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
 import com.legipilot.service.shared.domain.EmailPort;
 import com.legipilot.service.shared.domain.error.RessourceNotFound;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +28,14 @@ public class UpdateCollaboratorUseCase {
         return repository.save(collaborator);
     }
 
-    public void execute(UUID comapnyId, UUID collaboratorId) {
+    public void execute(UUID comapnyId, CollaboratorId collaboratorId) {
         Collaborator collaborator = repository.get(collaboratorId);
         if (collaborator == null || !collaborator.company().id().equals(comapnyId)) {
-            throw new RessourceNotFound("Collaborator not found with id: " + collaboratorId);
+            throw new RessourceNotFound("Collaborator not found with value: " + collaboratorId);
         }
         emailPort.sendRequestFillProfilInvitationEmail(collaborator);
-	}
-	
+    }
+
     public Collaborator execute(ModifyCollaboratorPicture command) {
         Collaborator collaborator = repository.get(command.id());
         ExposedFile file = documentStoragePort.storeAndExposePicture(collaborator, command.picture());

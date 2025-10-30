@@ -1,6 +1,7 @@
 .magic-effect {
-	position: relative;
-	z-index: 0;
+	position: relative !important;
+	z-index: 0 !important;
+	overflow: visible !important;
 }
 
 .magic-effect::before {

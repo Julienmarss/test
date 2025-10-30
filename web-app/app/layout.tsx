@@ -7,8 +7,8 @@ export const metadata: Metadata = {
 	description:
 		"Pilotez vos ressources humaines de l’embauche à la fin du contrat de travail et garantissez votre conformité juridique avec le copilote de gestion automatisé LégiPilot !",
 	icons: {
-		icon: "./favicon.jpg",
-		apple: "./favicon_apple.jpg",
+		icon: "/favicon.jpg",
+		apple: "/favicon_apple.jpg",
 	},
 };
 

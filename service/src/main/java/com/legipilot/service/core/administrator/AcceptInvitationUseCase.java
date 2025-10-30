@@ -1,7 +1,7 @@
 package com.legipilot.service.core.administrator;
 
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;
-import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
+import com.legipilot.service.core.authorization.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.InvitationRepository;
 import com.legipilot.service.core.administrator.domain.error.AdministratorNotFound;
 import com.legipilot.service.core.administrator.domain.error.InvitationErrors.*;

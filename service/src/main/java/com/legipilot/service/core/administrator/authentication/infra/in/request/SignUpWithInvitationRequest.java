@@ -38,6 +38,7 @@ public record SignUpWithInvitationRequest(
         String legalForm,
         String nafCode,
         String activityDomain,
+        String principalActivity,
         String collectiveAgreement,
         String idcc,
 
@@ -75,6 +76,7 @@ public record SignUpWithInvitationRequest(
                 .siret(siret != null ? siret : "")
                 .nafCode(nafCode != null ? nafCode : "")
                 .activityDomain(activityDomain != null ? activityDomain : "")
+                .principalActivity(principalActivity != null ? principalActivity : "")
                 .legalForm(legalForm != null ? legalForm : "")
                 .companyName(companyName != null ? companyName : "")
                 .password(new Password(password, encodedPassword))

@@ -1,6 +1,12 @@
 package com.legipilot.service.config;
 
 import com.legipilot.service.core.administrator.infra.out.JpaAdministratorRepository;
+import com.legipilot.service.core.collaborator.domain.model.Collaborator;
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
+import com.legipilot.service.core.collaborator.infra.out.JpaCollaboratorRepository;
+import com.legipilot.service.core.company.domain.model.Company;
+import com.legipilot.service.core.company.infra.out.CollaboratorDto;
+import com.legipilot.service.core.company.infra.out.CompanyDto;
 import com.legipilot.service.core.company.infra.out.JpaCompanyRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +18,10 @@ import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import static com.legipilot.service.core.administrator.AdministratorFixtures.JUSTIANA;
 import static org.awaitility.Awaitility.await;
 import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
 
@@ -29,6 +39,8 @@ public class BaseIntegrationTest {
     private JpaAdministratorRepository jpaAdministratorRepository;
     @Autowired
     private JpaCompanyRepository jpaCompanyRepository;
+    @Autowired
+    private JpaCollaboratorRepository jpaCollaboratorRepository;
 
     @BeforeAll
     static void beforeAll() {
@@ -39,6 +51,25 @@ public class BaseIntegrationTest {
     void setUp() {
         jpaAdministratorRepository.deleteAll();
         jpaCompanyRepository.deleteAll();
+        jpaCollaboratorRepository.deleteAll();
+    }
+
+    protected Collaborator etantDonneLeCollaborateur() {
+        CompanyDto companyDto = jpaCompanyRepository.save(CompanyDto.from(JUSTIANA));
+
+        Collaborator collaborator = Collaborator.initialize(
+                "Jean",
+                "Dupont",
+                "jean.dupont@test.fr",
+                "0612345678",
+                Optional.empty()
+        );
+        collaborator.associateWith(companyDto.toDomain());
+
+        CollaboratorDto dto = CollaboratorDto.from(collaborator);
+        jpaCollaboratorRepository.save(dto);
+
+        return dto.toDomain();
     }
 
     @DynamicPropertySource

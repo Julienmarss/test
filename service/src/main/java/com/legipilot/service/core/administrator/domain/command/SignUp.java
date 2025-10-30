@@ -23,6 +23,7 @@ public record SignUp(
         String legalForm,
         String nafCode,
         String activityDomain,
+        String principalActivity,
         String idcc,
         String collectiveAgreement) {
 }

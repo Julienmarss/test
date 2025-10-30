@@ -1,6 +1,6 @@
 {
 	"name": "legipilot-web-app",
-	"version": "1.0.10",
+	"version": "1.0.12",
 	"private": true,
 	"scripts": {
 		"build": "next build",
@@ -30,6 +30,7 @@
 		"class-variance-authority": "0.7.1",
 		"clsx": "2.1.1",
 		"cmdk": "1.1.1",
+		"docx-preview": "^0.3.7",
 		"embla-carousel-react": "8.5.1",
 		"framer-motion": "^12.23.20",
 		"input-otp": "1.4.2",

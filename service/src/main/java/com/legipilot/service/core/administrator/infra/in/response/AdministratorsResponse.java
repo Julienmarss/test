@@ -1,7 +1,7 @@
 package com.legipilot.service.core.administrator.infra.in.response;
 
 import com.legipilot.service.core.administrator.domain.model.Administrator;
-import com.legipilot.service.core.company.infra.in.CompanyResponse;
+import com.legipilot.service.core.company.infra.in.response.CompanyResponse;
 import lombok.Builder;
 
 import java.util.List;

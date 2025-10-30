@@ -2,6 +2,7 @@ package com.legipilot.service.core.collaborator.infra.out;
 
 import com.legipilot.service.core.collaborator.domain.CollaboratorRepository;
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
 import com.legipilot.service.core.company.infra.out.CollaboratorDto;
 import com.legipilot.service.shared.domain.error.RessourceNotFound;
 import com.legipilot.service.shared.domain.error.TechnicalError;
@@ -20,8 +21,8 @@ public class DatabaseCollaboratorRepository implements CollaboratorRepository {
 
     @Override
     @Transactional
-    public Collaborator get(UUID id) {
-        return repository.findById(id)
+    public Collaborator get(CollaboratorId id) {
+        return repository.findById(id.value())
                 .map(CollaboratorDto::toDomain)
                 .orElseThrow(() -> new RessourceNotFound("Désolé, nous n'avons pas trouvé le collaborateur."));
     }
@@ -36,9 +37,9 @@ public class DatabaseCollaboratorRepository implements CollaboratorRepository {
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(CollaboratorId id) {
         try {
-            repository.deleteById(id);
+            repository.deleteById(id.value());
         } catch (RessourceNotFound e) {
             throw new RessourceNotFound("Désolé, nous n'avons pas trouvé ce collaborateur.");
         }

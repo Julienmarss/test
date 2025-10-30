@@ -1,7 +1,8 @@
 package com.legipilot.service.core.administrator;
 
 import com.legipilot.service.core.administrator.domain.AdministratorRepository;
-import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
+import com.legipilot.service.core.authorization.domain.CompanyAdministratorRepository;
+import com.legipilot.service.core.authorization.domain.CompanyInfo;
 import com.legipilot.service.core.administrator.domain.command.DeleteAdministrator;
 import com.legipilot.service.core.administrator.domain.error.AdministratorRightsErrors.*;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,11 @@ public class DeleteAdministratorUseCase {
             throw new CannotDeleteOtherAccountError();
         }
 
-        List<CompanyAdministratorRepository.CompanyInfo> companies =
+        List<CompanyInfo> companies =
                 companyAdminRepository.findCompaniesByAdministrator(command.id());
 
         boolean isOwnerAnywhere = companies.stream()
-                .anyMatch(company -> company.getRights().isOwner());
+                .anyMatch(company -> company.rights().isOwner());
 
         if (isOwnerAnywhere) {
             throw new CannotDeleteAccountAsOwnerError();

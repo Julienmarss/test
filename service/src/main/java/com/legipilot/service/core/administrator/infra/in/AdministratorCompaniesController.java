@@ -2,7 +2,7 @@ package com.legipilot.service.core.administrator.infra.in;
 
 import com.legipilot.service.core.administrator.AdministratorService;
 import com.legipilot.service.core.administrator.CompanyRightsService;
-import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
+import com.legipilot.service.core.authorization.domain.CompanyInfo;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,11 +28,11 @@ public class AdministratorCompaniesController {
             summary = "Obtenir mes entreprises",
             description = "Récupère toutes les entreprises auxquelles l'utilisateur a accès"
     )
-    public ResponseEntity<List<CompanyAdministratorRepository.CompanyInfo>> getMyCompanies() {
+    public ResponseEntity<List<CompanyInfo>> getMyCompanies() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Administrator admin = administratorService.get(email);
 
-        List<CompanyAdministratorRepository.CompanyInfo> companies =
+        List<CompanyInfo> companies =
                 companyRightsService.getAdministratorCompanies(admin.id());
         return ResponseEntity.ok(companies);
     }

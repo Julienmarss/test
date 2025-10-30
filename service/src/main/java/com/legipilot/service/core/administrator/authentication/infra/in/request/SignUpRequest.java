@@ -55,6 +55,8 @@ public record SignUpRequest(
 
         String activityDomain,
 
+        String principalActivity,
+
         String collectiveAgreement,
 
         @Pattern(regexp = "^[0-9]{4}$", message = "L'IDCC doit contenir 4 chiffres")
@@ -94,6 +96,7 @@ public record SignUpRequest(
                 .siret(siret)
                 .nafCode(nafCode)
                 .activityDomain(activityDomain)
+                .principalActivity(principalActivity)
                 .legalForm(legalForm)
                 .companyName(companyName)
                 .password(new Password(password, encodedPassword))

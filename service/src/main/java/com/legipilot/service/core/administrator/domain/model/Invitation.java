@@ -1,5 +1,6 @@
 package com.legipilot.service.core.administrator.domain.model;
 
+import com.legipilot.service.core.authorization.domain.model.CompanyRight;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;

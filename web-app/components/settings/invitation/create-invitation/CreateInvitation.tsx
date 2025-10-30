@@ -1,4 +1,5 @@
 import { CreateInvitationRequest, useInvite } from "@/api/company/invitation.api";
+import { Right } from "@/api/company/right.api";
 import AccordionSubtitle from "@/components/ui/accordion/AccordionSubtitle";
 import { Button } from "@/components/ui/hero-ui/Button";
 import { Form } from "@/components/ui/hero-ui/Form";
@@ -6,18 +7,16 @@ import { Input } from "@/components/ui/hero-ui/Input";
 import { Select, SelectItem } from "@/components/ui/hero-ui/Select";
 import { PaperAirplane } from "@/components/ui/icons/PaperAirplane";
 import { useSelectedCompany } from "@/components/utils/CompanyProvider";
+import { getSelectorOptionByRight } from "@/components/utils/Right";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 
-export default function CreateInvitation() {
+export default function CreateInvitation({ right }: { right: Right }) {
 	const { company } = useSelectedCompany();
 	const addInvitation = useInvite();
-	const [selectedRight, setSelectedRight] = useState<"MANAGER" | "READONLY">("MANAGER");
+	const [selectedRight, setSelectedRight] = useState<Right>("MANAGER");
 
-	const rightOptions = [
-		{ key: "OWNER", label: "Propriétaire" },
-		{ key: "MANAGER", label: "Responsable" },
-	];
+	const rightOptions = getSelectorOptionByRight(right);
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -47,7 +46,7 @@ export default function CreateInvitation() {
 
 		const payload: CreateInvitationRequest = {
 			email,
-			rights: right as "MANAGER" | "READONLY",
+			rights: right as "MANAGER",
 		};
 
 		try {
@@ -64,6 +63,10 @@ export default function CreateInvitation() {
 			console.error("Erreur lors de l'envoi de l'invitation:", err);
 		}
 	};
+
+	if (rightOptions === undefined) {
+		return null;
+	}
 
 	return (
 		<div>
@@ -99,7 +102,7 @@ export default function CreateInvitation() {
 							isRequired
 							selectedKeys={[selectedRight]}
 							onSelectionChange={(keys) => {
-								const selected = Array.from(keys)[0] as "MANAGER" | "READONLY";
+								const selected = Array.from(keys)[0] as "MANAGER";
 								setSelectedRight(selected);
 							}}
 							placeholder="Sélectionnez un droit"

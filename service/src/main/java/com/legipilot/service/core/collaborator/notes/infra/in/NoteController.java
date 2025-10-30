@@ -1,5 +1,7 @@
 package com.legipilot.service.core.collaborator.notes.infra.in;
 
+import com.legipilot.service.core.collaborator.domain.model.Collaborator;
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
 import com.legipilot.service.core.collaborator.notes.AddNoteUseCase;
 import com.legipilot.service.core.collaborator.notes.DeleteNoteUseCase;
 import com.legipilot.service.core.collaborator.notes.ModifyNoteUseCase;
@@ -7,7 +9,7 @@ import com.legipilot.service.core.collaborator.notes.domain.AddNote;
 import com.legipilot.service.core.collaborator.notes.domain.DeleteNote;
 import com.legipilot.service.core.collaborator.notes.domain.ModifyNote;
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;
-import com.legipilot.service.core.company.infra.in.CollaboratorResponse;
+import com.legipilot.service.core.company.infra.in.response.CollaboratorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,7 +33,7 @@ public class NoteController {
         Authentication authenticatedAdmin = SecurityContextHolder.getContext().getAuthentication();
         Collaborator collaborator = addNoteUseCase.execute(
                 AddNote.builder()
-                        .collaboratorId(collaboratorId)
+                        .collaboratorId(new CollaboratorId(collaboratorId))
                         .title(request.title())
                         .content(request.content())
                         .administratorEmail(authenticatedAdmin.getName())
@@ -46,21 +48,21 @@ public class NoteController {
 //    const queryClient = useQueryClient();
 //
 //        return useMutation({
-//                mutationFn: async ({collaboratorId, companyId, content, title, id}: {
+//                mutationFn: async ({collaboratorId, companyId, content, title, value}: {
 //            collaboratorId: UUID,
 //                    companyId: UUID,
 //                    title: string,
 //                    content: string,
-//                    id: UUID,
+//                    value: UUID,
 //        }) => {
-//            const response = await serviceClient.patch<CollaboratorResponse>(`/companies/${companyId}/collaborators/${collaboratorId}/notes/${id}`, {
+//            const response = await serviceClient.patch<CollaboratorResponse>(`/companies/${companyId}/collaborators/${collaboratorId}/notes/${value}`, {
 //                title: title,
 //                        content: content
 //            });
 //            return response.data;
 //        },
 //        onSuccess: (collaborator: CollaboratorResponse) => {
-//            queryClient.setQueryData(["collaborator", collaborator.id], () => collaborator);
+//            queryClient.setQueryData(["collaborator", collaborator.value], () => collaborator);
 //        },
 //        onError: () => {
 //                toast({
@@ -79,7 +81,7 @@ public class NoteController {
         Authentication authenticatedAdmin = SecurityContextHolder.getContext().getAuthentication();
         Collaborator collaborator = modifyNoteUseCase.execute(
                 ModifyNote.builder()
-                        .collaboratorId(collaboratorId)
+                        .collaboratorId(new CollaboratorId(collaboratorId))
                         .noteId(id)
                         .title(request.title())
                         .content(request.content())
@@ -96,7 +98,7 @@ public class NoteController {
             @PathVariable("collaboratorId") UUID collaboratorId, @PathVariable("id") UUID id) {
         Collaborator collaborator = deleteNoteUseCase.execute(
                 DeleteNote.builder()
-                        .collaboratorId(collaboratorId)
+                        .collaboratorId(new CollaboratorId(collaboratorId))
                         .noteId(id)
                         .build()
         );

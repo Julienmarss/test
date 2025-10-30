@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableRetry
 @EnableAsync
-@EnableAspectJAutoProxy
 public class ServiceApplication {
 
 	public static void main(String[] args) {

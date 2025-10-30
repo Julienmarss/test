@@ -7,7 +7,7 @@ import com.legipilot.service.core.administrator.domain.command.DeleteAdministrat
 import com.legipilot.service.core.administrator.domain.command.ModifyAdministratorPicture;
 import com.legipilot.service.core.administrator.domain.error.AdministratorRightsErrors.*;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
-import com.legipilot.service.core.administrator.infra.in.request.ModifyAdministratorWithCompanyDetailsRequest;
+import com.legipilot.service.core.administrator.infra.in.request.ModifyAdministratorRequest;
 import com.legipilot.service.core.administrator.infra.in.response.AdministratorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class AdministratorController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<AdministratorResponse> modify(@PathVariable UUID id,
-                                                        @Valid @RequestBody ModifyAdministratorWithCompanyDetailsRequest request) {
+                                                        @Valid @RequestBody ModifyAdministratorRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Administrator currentAdmin = service.get(email);
 
@@ -68,7 +68,8 @@ public class AdministratorController {
                 ModifyAdministratorPicture.builder()
                         .id(id)
                         .picture(picture)
-                        .build()
+                        .build(),
+                        currentAdmin.id()
         );
         return ResponseEntity.ok(
                 AdministratorResponse.from(administrator)

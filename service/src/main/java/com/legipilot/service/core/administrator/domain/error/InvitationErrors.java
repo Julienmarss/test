@@ -38,7 +38,7 @@ public class InvitationErrors {
 
     public static class CannotInviteOwnerError extends NotAllowed {
         public CannotInviteOwnerError() {
-            super("Les invitations ne peuvent pas créer de propriétaire");
+            super("inviter un propriétaire. Seul un propriétaire peut ajouter un autre propriétaire");
         }
     }
 

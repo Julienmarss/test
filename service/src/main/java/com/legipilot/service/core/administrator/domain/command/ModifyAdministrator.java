@@ -13,8 +13,6 @@ public record ModifyAdministrator(
         Optional<String> lastname,
         Optional<String> email,
         Optional<String> phone,
-        Optional<Fonction> fonction,
-        Optional<Boolean> isNotifViewed,
-        Optional<Boolean> isNewsViewed
+        Optional<Fonction> fonction
 ) {
 }

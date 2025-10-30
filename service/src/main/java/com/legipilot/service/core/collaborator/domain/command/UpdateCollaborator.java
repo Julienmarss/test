@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 public record UpdateCollaborator(
         UUID companyId,
-        UUID collaboratorId,
+        CollaboratorId collaboratorId,
         Optional<String> firstname,
         Optional<String> lastname,
         Optional<Civility> civility,

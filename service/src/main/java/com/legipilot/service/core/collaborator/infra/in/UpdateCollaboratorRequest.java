@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 public record UpdateCollaboratorRequest(
         String token,
@@ -67,7 +66,7 @@ public record UpdateCollaboratorRequest(
         String status,
         String picture
 ) {
-    public UpdateCollaborator toDomain(UUID collaboratorId) {
+    public UpdateCollaborator toDomain(CollaboratorId collaboratorId) {
         return UpdateCollaborator.builder()
                 .collaboratorId(collaboratorId)
                 .firstname(Optional.ofNullable(firstname))

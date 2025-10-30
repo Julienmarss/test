@@ -1,5 +1,4 @@
 import { getServerSession } from "next-auth";
-import { getCompany } from "@/api/company/company.api";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import SidebarClient from "@/components/SidebarClient";

@@ -41,7 +41,7 @@ public class InvitationController {
             @RequestBody AcceptInvitationRequest request
     ) {
         acceptInvitationUseCase.execute(token, request.email());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     public record InvitationDetailsResponse(

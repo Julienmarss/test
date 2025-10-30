@@ -2,6 +2,7 @@ package com.legipilot.service.core.administrator.infra.out;
 
 import com.legipilot.service.core.administrator.domain.model.Invitation;
 import com.legipilot.service.core.administrator.domain.model.InvitationStatus;
+import com.legipilot.service.core.authorization.domain.model.CompanyRight;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -73,7 +74,7 @@ public class InvitationDto {
                 .token(token)
                 .email(email)
                 .status(InvitationStatus.valueOf(status))
-                .rights(com.legipilot.service.core.administrator.domain.model.CompanyRight.fromDbValue(rights))
+                .rights(CompanyRight.fromDbValue(rights))
                 .companyId(companyId)
                 .administratorId(administratorId)
                 .createdAt(createdAt)

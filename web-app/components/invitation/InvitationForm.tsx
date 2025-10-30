@@ -6,12 +6,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UUID } from "node:crypto";
 import { FormEvent, useMemo, useState } from "react";
-import { Button } from "../ui/hero-ui/Button";
-import { Checkbox } from "../ui/hero-ui/Checkbox";
-import { Form } from "../ui/hero-ui/Form";
-import { Input } from "../ui/hero-ui/Input";
-import { Select, SelectItem } from "../ui/hero-ui/Select";
-import { Check } from "../ui/icons/Check";
+import { Button } from "@/components/ui/hero-ui/Button";
+import { Checkbox } from "@/components/ui/hero-ui/Checkbox";
+import { Form } from "@/components/ui/hero-ui/Form";
+import { Input } from "@/components/ui/hero-ui/Input";
+import { Select, SelectItem } from "@/components/ui/hero-ui/Select";
+import { Check } from "@/components/ui/icons/Check";
 import { ROLE_OPTIONS } from "@/data/roles";
 
 export default function InvitationForm({

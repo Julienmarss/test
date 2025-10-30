@@ -1,7 +1,7 @@
 package com.legipilot.service.core.company;
 
 import com.legipilot.service.core.administrator.CompanyRightsService;
-import com.legipilot.service.core.administrator.domain.model.CompanyRight;
+import com.legipilot.service.core.authorization.domain.model.CompanyRight;
 import com.legipilot.service.core.company.domain.CompanyRepository;
 import com.legipilot.service.core.company.domain.error.InvalidRightsError;
 import com.legipilot.service.core.company.domain.model.Company;

@@ -3,7 +3,6 @@ package com.legipilot.service.core.collaborator.domain.model;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
 import com.legipilot.service.core.administrator.domain.model.ExposedFile;
 import com.legipilot.service.core.collaborator.documents.domain.DocumentType;
-import com.legipilot.service.core.collaborator.documents.domain.StoredDocument;
 import com.legipilot.service.core.collaborator.domain.command.CreateCollaborator;
 import com.legipilot.service.core.collaborator.domain.command.UpdateCollaborator;
 import com.legipilot.service.core.collaborator.notes.domain.AddNote;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @ToString
 public class Collaborator {
-    private final UUID id;
+    private final CollaboratorId id;
     private String firstname;
     private String lastname;
     private Optional<String> picture;

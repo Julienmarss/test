@@ -11,9 +11,11 @@ export const Accordion = React.forwardRef<HTMLDivElement, HAccordionProps>(({ ch
 	<HAccordion
 		className="border-spacing-6 rounded-xl border border-gray-200 bg-white px-0"
 		itemClasses={{
+			base: "!gap-0",
 			trigger: "py-6 px-6",
 			content: "p-6 pt-0",
 			title: "font-medium leading-7 text-lg",
+			indicator: "text-gray-900",
 		}}
 		defaultExpandedKeys={["1"]}
 		ref={ref}

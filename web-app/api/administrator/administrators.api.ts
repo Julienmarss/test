@@ -12,6 +12,8 @@ export type ModifyAdministratorRequest = {
     phone?: string;
     picture?: string;
     fonction?: string;
+    isNewsViewed?: boolean;
+    isNotifViewed?: boolean;
 };
 
 export function useValidateAccount() {
@@ -38,9 +40,13 @@ export function useAdministrator(id?: UUID) {
 
 export function useModifyAdministrator() {
     const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: async ({request, id}: { request: ModifyAdministratorRequest; id: UUID }) => {
-            const response = await serviceClient.patch<AdministratorResponse>(`/administrators/${id}`, request);
+            const response = await serviceClient.patch<AdministratorResponse>(
+                `/administrators/${id}`,
+                request
+            );
             return response.data;
         },
         onMutate: async ({request}) => {
@@ -59,31 +65,8 @@ export function useModifyAdministrator() {
                         ...(request.email !== undefined && {email: request.email}),
                         ...(request.phone !== undefined && {phone: request.phone}),
                         ...(request.fonction !== undefined && {fonction: request.fonction as FonctionRequest}),
-                        ...(request.picture !== undefined && {picture: request.picture}),
                         ...(request.isNewsViewed !== undefined && {isNewsViewed: request.isNewsViewed}),
                         ...(request.isNotifViewed !== undefined && {isNotifViewed: request.isNotifViewed}),
-                        companies: old.companies.map((company) => {
-                            if (company.id === request.idCompany) {
-                                return {
-                                    ...company,
-                                    ...(request.companyName !== undefined && {name: request.companyName}),
-                                    ...(request.siren !== undefined && {siren: request.siren}),
-                                    ...(request.siret !== undefined && {siret: request.siret}),
-                                    ...(request.legalForm !== undefined && {legalForm: request.legalForm}),
-                                    ...(request.nafCode !== undefined && {nafCode: request.nafCode}),
-                                    ...(request.activityDomain !== undefined && {activityDomain: request.activityDomain}),
-                                    ...(request.companyPicture !== undefined && {picture: request.companyPicture}),
-                                    ...(request.idcc !== undefined &&
-                                        request.collectiveAgreement !== undefined && {
-                                            collectiveAgreement: {
-                                                idcc: request.idcc,
-                                                titre: request.collectiveAgreement,
-                                            },
-                                        }),
-                                };
-                            }
-                            return company;
-                        }),
                     };
                 });
             }
@@ -107,8 +90,7 @@ export function useModifyAdministrator() {
             console.error("❌ Error:", error);
             toast({
                 title: "Modification échouée",
-                description:
-                    error?.response?.data?.message || "Désolé, une erreur est survenue lors de la mise à jour de votre compte.",
+                description: error?.response?.data?.message || "Une erreur est survenue.",
                 variant: "destructive",
             });
         },

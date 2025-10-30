@@ -5,7 +5,7 @@ import brevoApi.TransactionalEmailsApi;
 import brevoModel.SendSmtpEmail;
 import brevoModel.SendSmtpEmailTo;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
-import com.legipilot.service.core.administrator.domain.model.CompanyRight;
+import com.legipilot.service.core.authorization.domain.model.CompanyRight;
 import com.legipilot.service.core.company.domain.model.Company;
 import com.legipilot.service.shared.domain.model.ReinitialisationToken;
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;
@@ -32,7 +32,7 @@ public class BrevoEmailAdapter implements EmailPort {
 
     private final TransactionalEmailsApi transactionalEmailsApi;
 
-    private static final String ACTIVATION_PATH = "/api/auth/activate?id=";
+    private static final String ACTIVATION_PATH = "/api/auth/activate?value=";
     private static final String REINITIALISATION_PATH = "/change-password";
     private static final String FILL_PROFILE = "/collaborator?token=<token>";
 

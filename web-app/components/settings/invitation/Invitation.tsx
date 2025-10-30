@@ -4,8 +4,9 @@ import { Envelope } from "@/components/ui/icons/Envelope";
 import { useSelectedCompany } from "@/components/utils/CompanyProvider";
 import CreateInvitation from "./create-invitation/CreateInvitation";
 import PendingInvitation from "./pending-invitation/PendingInvitation";
+import { Right } from "@/api/company/right.api";
 
-export default function Invitation() {
+export default function Invitation({ right } : { right: Right }) {
 	const { company } = useSelectedCompany();
 
 	const { data: invitations = [], isLoading, isError } = useInvitations(company.id);
@@ -19,7 +20,7 @@ export default function Invitation() {
 				className="flex flex-col gap-4"
 			>
 				<div className="flex flex-col gap-6">
-					<CreateInvitation />
+					<CreateInvitation right={right} />
 
 					<PendingInvitation isLoading={isLoading} isError={isError} invitations={invitations} />
 				</div>

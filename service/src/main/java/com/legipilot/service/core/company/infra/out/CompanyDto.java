@@ -1,6 +1,6 @@
 package com.legipilot.service.core.company.infra.out;
 
-import com.legipilot.service.core.administrator.infra.out.CompanyAdministratorDto;
+import com.legipilot.service.core.authorization.infra.out.CompanyAdministratorDto;
 import com.legipilot.service.core.company.domain.model.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -44,6 +44,9 @@ public class CompanyDto {
     @Column(nullable = false)
     private String activityDomain;
 
+    @Column
+    private String principalActivity;
+
     @Column(nullable = false)
     private String idcc;
 
@@ -67,6 +70,7 @@ public class CompanyDto {
                 .legalForm(company.legalForm())
                 .nafCode(company.nafCode().value())
                 .activityDomain(company.activityDomain())
+                .principalActivity(company.principalActivity())
                 .idcc(company.collectiveAgreement().idcc())
                 .picture(company.picture().orElse(null))
                 .collectiveAgreement(company.collectiveAgreement().titre())
@@ -92,6 +96,7 @@ public class CompanyDto {
                 .legalForm(legalForm)
                 .nafCode(new NafCode(nafCode))
                 .activityDomain(activityDomain)
+                .principalActivity(principalActivity)
                 .collectiveAgreement(new CollectiveAgreement(idcc, collectiveAgreement))
                 .picture(Optional.ofNullable(picture))
                 .administrators(new ArrayList<>(administratorAssociations != null ?

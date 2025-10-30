@@ -30,6 +30,7 @@ public class Company {
     private String legalForm;
     private NafCode nafCode;
     private String activityDomain;
+    private String principalActivity;
     private CollectiveAgreement collectiveAgreement;
     private Optional<String> picture;
     private List<Administrator> administrators;
@@ -105,6 +106,7 @@ public class Company {
                 .legalForm(command.legalForm())
                 .nafCode(new NafCode(command.nafCode()))
                 .activityDomain(command.activityDomain())
+                .principalActivity(command.principalActivity())
                 .collectiveAgreement(new CollectiveAgreement(command.idcc(), command.collectiveAgreement()))
                 .administrators(List.of(administrator))
                 .collaborators(collaborators)
@@ -128,6 +130,7 @@ public class Company {
         command.legalForm().ifPresent(x -> this.legalForm = x);
         command.nafCode().ifPresent(x -> this.nafCode = new NafCode(x));
         command.activityDomain().ifPresent(x -> this.activityDomain = x);
+        command.principalActivity().ifPresent(x -> this.principalActivity = x);
         command.collectiveAgreement().ifPresent(x -> this.collectiveAgreement = x);
         command.idcc().ifPresent(idcc ->
                 this.collectiveAgreement = new CollectiveAgreement(idcc, this.collectiveAgreement.titre())

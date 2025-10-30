@@ -3,16 +3,18 @@ import { toast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UUID } from "node:crypto";
 
+export type Right = "OWNER" | "MANAGER" | "READONLY";
+
 export type CompanyAdministratorInfo = {
 	administratorId: UUID;
-	rights: "OWNER" | "MANAGER" | "READONLY";
+	rights: Right;
 	firstname: string;
 	lastname: string;
 	email: string;
 };
 
 export type CompanyRightInfo = {
-	right: "OWNER" | "MANAGER" | "READONLY";
+	right: Right;
 	displayName: string;
 };
 
@@ -38,7 +40,7 @@ export function useUpdateAdministratorRights() {
 		}: {
 			companyId: UUID;
 			administratorId: UUID;
-			rights: "OWNER" | "MANAGER" | "READONLY";
+			rights: Right;
 		}) => {
 			await serviceClient.put(`/companies/${companyId}/administrators/${administratorId}/rights`, { rights });
 		},

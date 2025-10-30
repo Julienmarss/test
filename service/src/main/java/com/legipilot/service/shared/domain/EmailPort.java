@@ -1,7 +1,7 @@
 package com.legipilot.service.shared.domain;
 
 import com.legipilot.service.core.administrator.domain.model.Administrator;
-import com.legipilot.service.core.administrator.domain.model.CompanyRight;
+import com.legipilot.service.core.authorization.domain.model.CompanyRight;
 import com.legipilot.service.core.company.domain.model.Company;
 import com.legipilot.service.shared.domain.model.ReinitialisationToken;
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;

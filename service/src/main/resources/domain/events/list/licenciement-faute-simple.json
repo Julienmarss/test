@@ -1,0 +1,254 @@
+{
+  "id": "6a891796-6388-447f-97fc-abf9dd386a51",
+  "eventCategoryId": "24c7e8a1-7b2f-4c9d-8a33-5e6f1d0a9b13",
+  "title": "Licenciement pour faute simple",
+  "subtitle": "Licencier un salarié pour une faute simple",
+  "documentationUrl": "https://www.legipilot.com/articles",
+  "actions": [
+    {
+      "id": "214f6c35-4782-4014-949e-c65decfed1c9",
+      "title": "Paramétrage & calculs",
+      "state": "COMPLETED",
+      "availabilityDate": "from:actionId.fieldId",
+      "dependencies": [],
+      "fields": [
+        {
+          "fieldType": "NUMBER",
+          "id": "seniority_year",
+          "label": "Années d'ancienneté",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "5",
+          "businessRule": "Tel qu'indiqué sur la fiche de paie",
+          "validation": {
+            "required": true,
+            "minimumNumber": 0
+          }
+        },
+        {
+          "fieldType": "NUMBER",
+          "id": "seniority_months",
+          "label": "Mois d'ancienneté",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "9",
+          "businessRule": "Ne pas inclure les années",
+          "validation": {
+            "required": true,
+            "minimumNumber": 0
+          }
+        },
+        {
+          "fieldType": "AMOUNT",
+          "id": "avg_12_months",
+          "label": "Moyenne des 12 derniers mois de salaires bruts",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Ex. 2 450,00 €",
+          "businessRule": "Inclure primes selon règles applicables",
+          "validation": {
+            "required": true,
+            "minimumAmount": 0
+          }
+        },
+        {
+          "fieldType": "AMOUNT",
+          "id": "avg_3_months",
+          "label": "Moyenne des 3 derniers mois de salaires bruts",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Ex. 2 650,00 €",
+          "businessRule": "Inclure primes selon règles applicables",
+          "validation": {
+            "required": true,
+            "minimumAmount": 0
+          }
+        },
+        {
+          "fieldType": "SELECTION",
+          "selectionType": "CollectiveBargainingAgreementType",
+          "id": "collective_agreement",
+          "label": "Convention collective",
+          "value": "",
+          "options": ["SYNTEC", "OTHER"],
+          "source": "PREFILLED_FROM_CONTRACT",
+          "expectedFormat": "Sélectionner la convention collective",
+          "businessRule": "Pré-rempli depuis le contrat, modifiable si nécessaire",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "fieldType": "SELECTION",
+          "selectionType": "ContractType",
+          "id": "employment_category",
+          "label": "Catégorie d'emploi",
+          "value": "",
+          "options": ["CDI", "CDD", "APP", "PRO", "STA", "CTT", "CTI", "CUI"],
+          "source": "PREFILLED_FROM_EMPLOYEE_FILE",
+          "expectedFormat": "Sélectionner la catégorie d'emploi",
+          "businessRule": "Pré-remplie depuis la fiche salarié, modifiable",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "fieldType": "AMOUNT",
+          "id": "annual_gross_compensation",
+          "label": "Rémunération brute totale du 1 juin année N-1 au 31 mai année N",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Ex. 31 200,00 €",
+          "validation": {
+            "required": true,
+            "minimumAmount": 0
+          }
+        },
+        {
+          "fieldType": "NUMBER",
+          "id": "remaining_paid_leave",
+          "label": "CP ouvrés restants",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Ex. 5",
+          "validation": {
+            "required": true,
+            "minimumNumber": 0
+          }
+        },
+        {
+          "fieldType": "NUMBER",
+          "id": "acquired_paid_leave",
+          "label": "CP ouvrés acquis",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Ex. 25",
+          "validation": {
+            "required": true,
+            "minimumNumber": 0
+          }
+        },
+        {
+          "fieldType": "AMOUNT",
+          "id": "usual_monthly_salary",
+          "label": "Rémunération mensuelle brute habituelle",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Ex. 2 600,00 €",
+          "businessRule": "Salaire mensuel brut de référence",
+          "validation": {
+            "required": true,
+            "minimumAmount": 0
+          }
+        },
+        {
+          "fieldType": "BOOLEAN",
+          "id": "has_CSE",
+          "label": "L'entreprise a-t-elle un CSE ?",
+          "source": "MANUAL_INPUT",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "fieldType": "AMOUNT",
+          "id": "dismissal_compensation",
+          "label": "Indemnité de licenciement",
+          "value": "",
+          "source": "AUTOMATICALLY_CALCULATED",
+          "businessRule": "Calcul selon le plus favorable 1/12 ou 1/3 et ancienneté",
+          "validation": {
+            "required": false,
+            "minimumAmount": 0
+          }
+        },
+        {
+          "fieldType": "AMOUNT",
+          "id": "conventional_dismissal_compensation",
+          "label": "Indemnité conventionnelle de licenciement",
+          "value": "",
+          "source": "AUTOMATICALLY_CALCULATED",
+          "businessRule": "Selon CCN et catégorie d'emploi",
+          "validation": {
+            "required": false,
+            "minimumAmount": 0
+          }
+        },
+        {
+          "fieldType": "AMOUNT",
+          "id": "paid_leave_compensation",
+          "label": "Indemnité de congé payé",
+          "value": "",
+          "source": "AUTOMATICALLY_CALCULATED",
+          "businessRule": "Méthode du 1/10ème vs maintien (le plus favorable)",
+          "validation": {
+            "required": false,
+            "minimumAmount": 0
+          }
+        }
+      ],
+      "documents": [
+        {
+          "templateId": "328b95c8-342c-4b73-8d25-1356414e4371",
+          "state": "NOT_GENERATED",
+          "label": "Convocation à l'entretien",
+          "generatorAction": "Générer la convocation",
+          "exportOptions": ["DOWNLOAD", "MAIL", "LRAR"]
+        },
+        {
+          "templateId": "6004e57e-f3d6-47df-9a11-bfabb8ada89f",
+          "state": "GENERATED",
+          "label": "Résumé des indemnités",
+          "generatorAction": "Générer le résumé des indemnités",
+          "exportOptions": ["DOWNLOAD", "MAIL", "LRAR"]
+        }
+      ]
+    },
+    {
+      "id": "214f6c35-4782-4014-949e-c65decfed1c1",
+      "title": "Convocation à l'entretien",
+      "state": "IN_PROGRESS",
+      "availabilityDate": "from:actionId.fieldId",
+      "dependencies": [],
+      "fields": [
+        {
+          "fieldType": "SELECTION",
+          "selectionType": "SendingMethod",
+          "id": "sending_choice",
+          "label": "Choix de l'envoi",
+          "options": ["REGISTERED_MAIL", "HAND_DELIVERY"],
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Choisissez la méthode d'envoi",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "fieldType": "DATE",
+          "id": "sending_date",
+          "label": "Date d'envoi ou de remise en main propre",
+          "value": "",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Date d'envoi ou de remise en main propre",
+          "validation": {
+            "required": true
+          }
+        },
+        {
+          "fieldType": "DATE",
+          "id": "interview_date",
+          "label": "Date de l'entretien",
+          "value": "",
+          "source": "MANUAL_INPUT",
+          "expectedFormat": "Date de l'entretien",
+          "validation": {
+            "required": true,
+            "minimumDate": "2025-10-30",
+            "maximumDate": "2025-11-30"
+          }
+        }
+      ],
+      "documents": [
+        {
+          "templateId": "6004e57e-f3d6-47df-9a11-bfabb8ada89f",
+          "state": "PROCESSED",
+          "label": "Résumé des indemnités",
+          "generatorAction": "Consulter le résumé des indemnités",
+          "exportOptions": ["DOWNLOAD", "MAIL", "ESIGN"]
+        }
+      ]
+    }
+  ]
+}

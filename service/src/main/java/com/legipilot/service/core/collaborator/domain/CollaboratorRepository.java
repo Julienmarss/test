@@ -1,15 +1,16 @@
 package com.legipilot.service.core.collaborator.domain;
 
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface CollaboratorRepository {
 
-    Collaborator get(UUID id);
+    Collaborator get(CollaboratorId id);
 
-    void delete(UUID id);
+    void delete(CollaboratorId id);
 
     List<Collaborator> getFromCompany(UUID companyId);
 

@@ -1,8 +1,8 @@
 package com.legipilot.service.core.administrator;
 
-import com.legipilot.service.core.administrator.domain.CompanyAdministratorRepository;
+import com.legipilot.service.core.authorization.domain.CompanyAdministratorRepository;
 import com.legipilot.service.core.administrator.domain.model.Administrator;
-import com.legipilot.service.core.administrator.domain.model.CompanyRight;
+import com.legipilot.service.core.authorization.domain.model.CompanyRight;
 import com.legipilot.service.core.company.domain.model.Company;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

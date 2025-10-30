@@ -2,6 +2,7 @@ package com.legipilot.service.core.collaborator;
 
 import com.legipilot.service.core.collaborator.domain.CollaboratorRepository;
 import com.legipilot.service.core.collaborator.domain.model.Collaborator;
+import com.legipilot.service.core.collaborator.domain.model.CollaboratorId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public class CollaboratorService {
 
     private final CollaboratorRepository repository;
 
-    public Collaborator get(UUID id) {
+    public Collaborator get(CollaboratorId id) {
         return repository.get(id);
     }
 

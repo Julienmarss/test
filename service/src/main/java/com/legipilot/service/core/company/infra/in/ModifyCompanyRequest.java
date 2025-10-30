@@ -6,11 +6,6 @@ import com.legipilot.service.core.company.domain.model.CollectiveAgreement;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Request pour modifier une entreprise
- *
- * Contient uniquement les données de l'entreprise
- */
 public record ModifyCompanyRequest(
         String companyName,
         String siren,
