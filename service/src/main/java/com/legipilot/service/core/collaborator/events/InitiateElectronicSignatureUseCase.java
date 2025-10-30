@@ -93,12 +93,32 @@ public class InitiateElectronicSignatureUseCase {
 
     private byte[] loadTemplateDocument(String templateId) {
         try {
-            String path = "domain/events/list/licenciement-faute-simple/test.docx";
+            String path = resolveTemplatePath(templateId);
             ClassPathResource resource = new ClassPathResource(path);
+
+            if (!resource.exists()) {
+                log.error("Template file not found at path: {}", path);
+                throw new RessourceNotFound("Template document not found: " + templateId);
+            }
+
             return resource.getInputStream().readAllBytes();
         } catch (IOException e) {
             log.error("Failed to load template document for templateId: {}", templateId, e);
             throw new RessourceNotFound("Template document not found: " + templateId);
         }
+    }
+
+    private String resolveTemplatePath(String templateId) {
+        // Mapping des templateId vers les chemins de fichiers
+        return switch (templateId) {
+            case "550e8400-e29b-41d4-a716-446655440000" ->
+                    "domain/events/list/licenciement-faute-simple/test.docx";
+            case "autre-template-id" ->
+                    "domain/events/list/licenciement-faute-simple/test.pdf";
+            default -> {
+                log.warn("Unknown templateId: {}, using default template path", templateId);
+                yield "domain/events/list/licenciement-faute-simple/tests.docx";
+            }
+        };
     }
 }
