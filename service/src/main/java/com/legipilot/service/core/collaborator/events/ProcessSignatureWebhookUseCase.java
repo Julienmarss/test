@@ -1,3 +1,4 @@
+// ProcessSignatureWebhookUseCase.java - VERSION SIMPLIFIÉE
 package com.legipilot.service.core.collaborator.events;
 
 import com.legipilot.service.core.collaborator.documents.domain.DocumentStoragePort;
@@ -32,33 +33,47 @@ public class ProcessSignatureWebhookUseCase {
     }
 
     private void handleSignerSigned(YousignWebhookEvent event) {
-        log.info("Signer {} has signed document {}", event.signerEmail(), event.signatureRequestId());
+        log.info("Signer {} has signed document {}",
+                event.signerEmail(), event.signatureRequestId());
+
+        // TODO: Envoyer notification à l'admin si c'est l'employé qui a signé
     }
 
     private void handleSignatureCompleted(YousignWebhookEvent event) {
         log.info("All signatures completed for document {}", event.signatureRequestId());
 
         try {
-            byte[] signedDocument = electronicSignaturePort.downloadSignedDocument(event.signatureRequestId());
+            byte[] signedDocument = electronicSignaturePort.downloadSignedDocument(
+                    event.signatureRequestId()
+            );
 
-            log.info("Signed document downloaded for signature request {}", event.signatureRequestId());
+            // TODO: Stocker le document signé dans S3
+            log.info("Signed document downloaded for signature request {}",
+                    event.signatureRequestId());
 
         } catch (Exception e) {
-            log.error("Error processing completed signature for {}", event.signatureRequestId(), e);
+            log.error("Error processing completed signature for {}",
+                    event.signatureRequestId(), e);
         }
     }
 
     private void handleSignatureDeclined(YousignWebhookEvent event) {
         log.warn("Signature declined by {} for document {}",
                 event.signerEmail(), event.signatureRequestId());
+
+        // TODO: Notifier les parties prenantes
     }
 
     private void handleSignatureExpired(YousignWebhookEvent event) {
         log.warn("Signature expired for document {}", event.signatureRequestId());
+
+        // TODO: Notifier les parties prenantes
     }
 
     private void handleSignerError(YousignWebhookEvent event) {
         log.error("Error during signature process for signer {} on document {}",
                 event.signerEmail(), event.signatureRequestId());
+
+        // TODO: Gérer l'erreur
     }
 }

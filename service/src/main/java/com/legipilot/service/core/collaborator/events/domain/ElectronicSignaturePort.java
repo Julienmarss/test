@@ -1,20 +1,33 @@
+// domain/ElectronicSignaturePort.java - MISE À JOUR
 package com.legipilot.service.core.collaborator.events.domain;
 
+import com.legipilot.service.core.collaborator.events.domain.model.signature.SignatureFieldMention;
 import java.util.List;
 
 public interface ElectronicSignaturePort {
 
-    SignatureSession initiateSignature(byte[] documentContent, String documentName, List<Signer> signers);
+    /**
+     * Initier une signature avec des mentions de champs (@signature)
+     */
+    SignatureSession initiateSignatureWithMentions(
+            byte[] documentContent,
+            String documentName,
+            List<SignerWithMention> signers
+    );
 
     SignatureSession getSignatureStatus(String signatureRequestId);
 
     byte[] downloadSignedDocument(String signatureRequestId);
 
-    record Signer(
+    /**
+     * Signataire avec mention de champ
+     */
+    record SignerWithMention(
             String email,
             String firstName,
             String lastName,
             SignerRole role,
+            SignatureFieldMention mention,
             int signatureOrder
     ) {}
 

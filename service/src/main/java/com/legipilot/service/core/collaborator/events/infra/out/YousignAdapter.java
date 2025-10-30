@@ -1,3 +1,4 @@
+// YousignAdapter.java - VERSION AVEC MENTIONS
 package com.legipilot.service.core.collaborator.events.infra.out;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,30 +34,41 @@ public class YousignAdapter implements ElectronicSignaturePort {
     private String webhookUrl;
 
     @Override
-    public SignatureSession initiateSignature(byte[] documentContent, String documentName, List<Signer> signers) {
+    public SignatureSession initiateSignatureWithMentions(
+            byte[] documentContent,
+            String documentName,
+            List<SignerWithMention> signers
+    ) {
         try {
+            // 1. Upload du document
             String documentId = uploadDocument(documentContent, documentName);
             log.info("Document uploaded to Yousign with ID: {}", documentId);
 
-            YousignSignatureRequest request = buildSignatureRequest(documentId, documentName, signers);
+            // 2. Créer la signature request avec mentions
+            YousignSignatureRequestDto request = buildSignatureRequestWithMentions(
+                    documentId,
+                    documentName,
+                    signers
+            );
 
             HttpHeaders headers = createHeaders();
-            HttpEntity<YousignSignatureRequest> entity = new HttpEntity<>(request, headers);
+            HttpEntity<YousignSignatureRequestDto> entity = new HttpEntity<>(request, headers);
 
-            ResponseEntity<YousignSignatureResponse> response = restTemplate.exchange(
+            ResponseEntity<YousignSignatureResponseDto> response = restTemplate.exchange(
                     apiUrl + "/signature_requests",
                     HttpMethod.POST,
                     entity,
-                    YousignSignatureResponse.class
+                    YousignSignatureResponseDto.class
             );
 
             if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
                 throw new TechnicalError("Échec de la création de la demande de signature sur Yousign");
             }
 
-            YousignSignatureResponse yousignResponse = response.getBody();
+            YousignSignatureResponseDto yousignResponse = response.getBody();
             log.info("Signature request created with ID: {}", yousignResponse.id());
 
+            // 3. Activer (pour envoyer les emails automatiquement)
             activateSignatureRequest(yousignResponse.id());
 
             return mapToSignatureSession(yousignResponse);
@@ -67,17 +79,52 @@ public class YousignAdapter implements ElectronicSignaturePort {
         }
     }
 
+    private YousignSignatureRequestDto buildSignatureRequestWithMentions(
+            String documentId,
+            String documentName,
+            List<SignerWithMention> signers
+    ) {
+        List<YousignSignerDto> yousignSigners = signers.stream()
+                .map(signer -> new YousignSignerDto(
+                        new YousignSignerInfoDto(
+                                signer.firstName(),
+                                signer.lastName(),
+                                signer.email(),
+                                "fr"
+                        ),
+                        List.of(new YousignSignatureFieldDto(
+                                documentId,
+                                "signature",
+                                signer.mention().toMentionText() // @signature(employee) ou @signature(admin)
+                        )),
+                        "handwritten",
+                        signer.signatureOrder()
+                ))
+                .collect(Collectors.toList());
+
+        String webhook = (webhookUrl != null && !webhookUrl.isEmpty()) ? webhookUrl : null;
+
+        return new YousignSignatureRequestDto(
+                documentName,
+                "Demande de signature pour le document " + documentName,
+                signers.stream().map(SignerWithMention::email).collect(Collectors.toList()),
+                yousignSigners,
+                webhook,
+                "email" // delivery_mode
+        );
+    }
+
     @Override
     public SignatureSession getSignatureStatus(String signatureRequestId) {
         try {
             HttpHeaders headers = createHeaders();
             HttpEntity<?> entity = new HttpEntity<>(headers);
 
-            ResponseEntity<YousignSignatureResponse> response = restTemplate.exchange(
+            ResponseEntity<YousignSignatureResponseDto> response = restTemplate.exchange(
                     apiUrl + "/signature_requests/" + signatureRequestId,
                     HttpMethod.GET,
                     entity,
-                    YousignSignatureResponse.class
+                    YousignSignatureResponseDto.class
             );
 
             if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
@@ -95,12 +142,6 @@ public class YousignAdapter implements ElectronicSignaturePort {
     @Override
     public byte[] downloadSignedDocument(String signatureRequestId) {
         try {
-            SignatureSession session = getSignatureStatus(signatureRequestId);
-
-            if (session.status() != SignatureStatus.DONE) {
-                throw new TechnicalError("Le document n'est pas encore entièrement signé");
-            }
-
             HttpHeaders headers = createHeaders();
             HttpEntity<?> entity = new HttpEntity<>(headers);
 
@@ -127,20 +168,20 @@ public class YousignAdapter implements ElectronicSignaturePort {
         try {
             String base64Content = Base64.getEncoder().encodeToString(documentContent);
 
-            YousignDocumentUpload upload = new YousignDocumentUpload(
+            YousignDocumentUploadDto upload = new YousignDocumentUploadDto(
                     documentName,
                     "base64",
                     base64Content
             );
 
             HttpHeaders headers = createHeaders();
-            HttpEntity<YousignDocumentUpload> entity = new HttpEntity<>(upload, headers);
+            HttpEntity<YousignDocumentUploadDto> entity = new HttpEntity<>(upload, headers);
 
-            ResponseEntity<YousignDocumentResponse> response = restTemplate.exchange(
+            ResponseEntity<YousignDocumentResponseDto> response = restTemplate.exchange(
                     apiUrl + "/documents",
                     HttpMethod.POST,
                     entity,
-                    YousignDocumentResponse.class
+                    YousignDocumentResponseDto.class
             );
 
             if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
@@ -175,38 +216,6 @@ public class YousignAdapter implements ElectronicSignaturePort {
         }
     }
 
-    private YousignSignatureRequest buildSignatureRequest(String documentId, String documentName, List<Signer> signers) {
-        List<YousignSigner> yousignSigners = signers.stream()
-                .map(signer -> new YousignSigner(
-                        new YousignSignerInfo(
-                                signer.firstName(),
-                                signer.lastName(),
-                                signer.email(),
-                                null
-                        ),
-                        List.of(new YousignSignatureField(
-                                documentId,
-                                "signature",
-                                1,
-                                100,
-                                signer.role() == SignerRole.ADMINISTRATOR ? 100 : 200,
-                                200,
-                                50
-                        )),
-                        "optional"
-                ))
-                .collect(Collectors.toList());
-
-        String webhook = (webhookUrl != null && !webhookUrl.isEmpty()) ? webhookUrl : null;
-
-        return new YousignSignatureRequest(
-                documentName,
-                "Une demande de signature pour le document " + documentName,
-                yousignSigners,
-                webhook
-        );
-    }
-
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -214,7 +223,7 @@ public class YousignAdapter implements ElectronicSignaturePort {
         return headers;
     }
 
-    private SignatureSession mapToSignatureSession(YousignSignatureResponse response) {
+    private SignatureSession mapToSignatureSession(YousignSignatureResponseDto response) {
         List<SignerInfo> signerInfos = response.signers().stream()
                 .map(ys -> new SignerInfo(
                         ys.info().email(),
@@ -242,56 +251,56 @@ public class YousignAdapter implements ElectronicSignaturePort {
         };
     }
 
-    private record YousignDocumentUpload(
+    // DTOs Yousign
+    private record YousignDocumentUploadDto(
             String name,
             String nature,
             @JsonProperty("content_base64") String contentBase64
     ) {}
 
-    private record YousignDocumentResponse(
+    private record YousignDocumentResponseDto(
             String id,
             String name
     ) {}
 
-    private record YousignSignatureRequest(
+    private record YousignSignatureRequestDto(
             String name,
             String description,
-            List<YousignSigner> signers,
-            String webhook
+            List<String> recipients,
+            List<YousignSignerDto> signers,
+            String webhook,
+            @JsonProperty("delivery_mode") String deliveryMode
     ) {}
 
-    private record YousignSigner(
-            YousignSignerInfo info,
-            @JsonProperty("signature_fields") List<YousignSignatureField> signatureFields,
-            @JsonProperty("signature_level") String signatureLevel
+    private record YousignSignerDto(
+            YousignSignerInfoDto info,
+            @JsonProperty("signature_fields") List<YousignSignatureFieldDto> signatureFields,
+            @JsonProperty("signature_level") String signatureLevel,
+            @JsonProperty("signature_order") int signatureOrder
     ) {}
 
-    private record YousignSignerInfo(
+    private record YousignSignerInfoDto(
             @JsonProperty("first_name") String firstName,
             @JsonProperty("last_name") String lastName,
             String email,
             String locale
     ) {}
 
-    private record YousignSignatureField(
+    private record YousignSignatureFieldDto(
             @JsonProperty("document_id") String documentId,
             String type,
-            Integer page,
-            Integer x,
-            Integer y,
-            Integer width,
-            Integer height
+            String mention // "@signature(employee)" ou "@signature(admin)"
     ) {}
 
-    private record YousignSignatureResponse(
+    private record YousignSignatureResponseDto(
             String id,
             String name,
             String status,
-            List<YousignSignerResponse> signers
+            List<YousignSignerResponseDto> signers
     ) {}
 
-    private record YousignSignerResponse(
-            YousignSignerInfo info,
+    private record YousignSignerResponseDto(
+            YousignSignerInfoDto info,
             String status,
             @JsonProperty("signature_link") String signatureLink
     ) {}
