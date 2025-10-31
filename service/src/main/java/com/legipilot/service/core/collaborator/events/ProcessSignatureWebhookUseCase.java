@@ -1,4 +1,3 @@
-// ProcessSignatureWebhookUseCase.java - VERSION SIMPLIFIÉE
 package com.legipilot.service.core.collaborator.events;
 
 import com.legipilot.service.core.collaborator.documents.domain.DocumentStoragePort;
